@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 class CalcController extends ChangeNotifier {
   final mfg = TextEditingController();
@@ -74,10 +76,21 @@ class CalcController extends ChangeNotifier {
     } else {
       isShowed++;
       totalDay = expDate.difference(mfgDate).inDays;
-      currentPercent = (expDate.difference(DateTime.now()).inDays /
-              expDate.difference(mfgDate).inDays *
+      currentPercent = (expDate
+                  .difference(DateTime(
+                    DateTime.now().year,
+                    DateTime.now().month,
+                    DateTime.now().day,
+                  ))
+                  .inDays /
+              (expDate.difference(mfgDate).inDays + 1) *
               100)
           .toInt();
+      print('${expDate.difference(DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+          )).inDays} ${expDate.difference(mfgDate).inDays + 1}');
       twentyPercent = (totalDay * .8).toInt();
       thirtyPercent = (totalDay * .7).toInt();
       fourtyPercent = (totalDay * .6).toInt();

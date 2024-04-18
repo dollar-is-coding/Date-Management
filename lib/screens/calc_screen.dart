@@ -6,7 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/screens/noti_screen.dart';
-import 'package:sg_date/screens/upload_screen.dart';
+import 'package:sg_date/screens/product_screen.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
 class CalcScreen extends StatelessWidget {
@@ -23,24 +23,17 @@ class CalcScreen extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset(
-                    'asset/icons/data.svg',
-                    fit: BoxFit.scaleDown,
-                  ),
-                ),
-                IconButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       PageTransition(
-                        child: UploadScreen(),
+                        child: ProductScreen(),
                         type: PageTransitionType.rightToLeft,
                       ),
                     );
                   },
                   icon: SvgPicture.asset(
-                    'asset/icons/upload.svg',
+                    'asset/icons/data.svg',
                     fit: BoxFit.scaleDown,
                   ),
                 ),
@@ -424,16 +417,17 @@ class CalcScreen extends StatelessWidget {
                       ? Container()
                       : Container(
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.shade300,
-                                  offset: Offset(0, 0),
-                                  blurRadius: 6,
-                                  spreadRadius: 2,
-                                ),
-                              ]),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade300,
+                                offset: Offset(0, 0),
+                                blurRadius: 6,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
                           child: ExpansionTile(
                             initiallyExpanded: true,
                             controller: calc.expansionController,
