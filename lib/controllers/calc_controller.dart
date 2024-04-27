@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sg_date/models/product.dart';
+import 'package:sg_date/services/dio_client.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 
 class CalcController extends ChangeNotifier {
   final mfg = TextEditingController();
   final exp = TextEditingController();
-  final barcode = TextEditingController();
   final sku = TextEditingController();
+  Future<List<Product>?>? apiProducts;
+  List<Product>? list;
+  int dataLength = 0;
+  var checkboxes;
+  var snackBar;
 
   DateTime mfgDate = DateTime(
     DateTime.now().year,
@@ -50,14 +54,12 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  calcDate(context) {
-    int twentyPercent = 0, thirtyPercent = 0, fourtyPercent = 0;
+  getResult(context) async {
     DateTime now = DateTime(
       DateTime.now().year,
       DateTime.now().month,
       DateTime.now().day,
     );
-    final snackBar;
     if (expDate == now && mfgDate == now) {
       snackBar = snackBarWidget(
         context: context,
@@ -74,40 +76,70 @@ class CalcController extends ChangeNotifier {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
-      isShowed++;
-      totalDay = expDate.difference(mfgDate).inDays;
-      currentPercent = (expDate
-                  .difference(DateTime(
-                    DateTime.now().year,
-                    DateTime.now().month,
-                    DateTime.now().day,
-                  ))
-                  .inDays /
-              (expDate.difference(mfgDate).inDays + 1) *
-              100)
-          .toInt();
-      print('${expDate.difference(DateTime(
-            DateTime.now().year,
-            DateTime.now().month,
-            DateTime.now().day,
-          )).inDays} ${expDate.difference(mfgDate).inDays + 1}');
-      twentyPercent = (totalDay * .8).toInt();
-      thirtyPercent = (totalDay * .7).toInt();
-      fourtyPercent = (totalDay * .6).toInt();
-      twentyPercentLeft = DateFormat('dd/MM/yyyy')
-          .format(mfgDate.add(Duration(days: twentyPercent)));
-      thirtyPercentLeft = DateFormat('dd/MM/yyyy')
-          .format(mfgDate.add(Duration(days: thirtyPercent)));
-      fourtyPercentLeft = DateFormat('dd/MM/yyyy')
-          .format(mfgDate.add(Duration(days: fourtyPercent)));
-      allowedDay = mfgDate
-          .add(Duration(days: twentyPercent))
-          .difference(DateTime.now())
-          .inDays;
-      if (isShowed >= 2 && !expansionController.isExpanded) {
-        expansionController.expand();
-      }
+      search(sku.text);
       notifyListeners();
     }
+  }
+
+  calcDate() {
+    int twentyPercent = 0, thirtyPercent = 0, fourtyPercent = 0;
+    totalDay = expDate.difference(mfgDate).inDays;
+    currentPercent = (expDate
+                .difference(DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                ))
+                .inDays /
+            expDate.difference(mfgDate).inDays *
+            100)
+        .round()
+        .toInt();
+    print('calc date: ${expDate.difference(DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+        )).inDays} ${expDate.difference(mfgDate).inDays}');
+    twentyPercent = (totalDay * .8).toInt();
+    thirtyPercent = (totalDay * .7).toInt();
+    fourtyPercent = (totalDay * .6).toInt();
+    twentyPercentLeft = DateFormat('dd/MM/yyyy')
+        .format(mfgDate.add(Duration(days: twentyPercent)));
+    thirtyPercentLeft = DateFormat('dd/MM/yyyy')
+        .format(mfgDate.add(Duration(days: thirtyPercent)));
+    fourtyPercentLeft = DateFormat('dd/MM/yyyy')
+        .format(mfgDate.add(Duration(days: fourtyPercent)));
+    allowedDay = mfgDate
+        .add(Duration(days: twentyPercent))
+        .difference(DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+        ))
+        .inDays
+        .round();
+    notifyListeners();
+  }
+
+  Future search(String search) async {
+    apiProducts = DioClient().getSearches(search);
+    list = await apiProducts;
+    dataLength = list!.length;
+    checkboxes = List.filled(dataLength, false);
+    if (dataLength == 1) {
+      calcDate();
+    }
+    notifyListeners();
+  }
+
+  getProduct(int index) async {
+    List<Product>? tempList;
+    tempList = list;
+    list = [];
+    list!.add(tempList![index]);
+    print(list);
+    apiProducts = Future.value(list);
+    calcDate();
+    notifyListeners();
   }
 }

@@ -14,9 +14,10 @@ Row rowWidget({
         child: Container(
           child: Text(
             label,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: Colors.grey.shade700,
-                ),
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: Colors.grey.shade700),
           ),
         ),
       ),
@@ -38,24 +39,30 @@ SnackBar snackBarWidget({required context, required warningText}) {
         SvgPicture.asset(
           'asset/icons/danger.svg',
           fit: BoxFit.scaleDown,
+          width: 16,
+          height: 16,
           color: Colors.white,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 12),
-          child: Text(
-            warningText,
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: Colors.white),
+          child: Wrap(
+            children: [
+              Text(
+                warningText,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Colors.white),
+              ),
+            ],
           ),
         )
       ],
     ),
     behavior: SnackBarBehavior.floating,
-    backgroundColor: Color.fromARGB(255, 237, 13, 13),
+    backgroundColor: Color.fromARGB(255, 94, 18, 99),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(8),
     ),
   );
 }

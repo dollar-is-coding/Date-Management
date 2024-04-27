@@ -4,18 +4,25 @@ part 'date.g.dart';
 @JsonSerializable()
 class Date {
   int? id;
-  DateTime mfg;
-  DateTime exp;
-  DateTime fourtyPercent;
-  DateTime thirtyPercent;
-  DateTime twentyPercent;
+  int sku;
+  String mfg;
+  String exp;
+  @JsonKey(name: 'twenty_pct')
+  String twentyPercent;
+  @JsonKey(name: 'thirty_pct')
+  String thirtyPerrcent;
+  @JsonKey(name: 'fourty_pct')
+  String fourtyPercent;
+
+
   Date({
     this.id,
+    required this.sku,
     required this.mfg,
     required this.exp,
-    required this.fourtyPercent,
-    required this.thirtyPercent,
     required this.twentyPercent,
+    required this.thirtyPerrcent,
+    required this.fourtyPercent,
   });
 
   factory Date.fromJson(Map<String, dynamic> json) => _$DateFromJson(json);

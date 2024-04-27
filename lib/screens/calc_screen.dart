@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
+import 'package:sg_date/models/product.dart';
 import 'package:sg_date/screens/noti_screen.dart';
-import 'package:sg_date/screens/product_screen.dart';
-import 'package:sg_date/widgets/common_widgets.dart';
+import 'package:sg_date/screens/products_screen.dart';
 
 class CalcScreen extends StatelessWidget {
   @override
@@ -16,47 +17,74 @@ class CalcScreen extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       // backgroundColor: Color.fromARGB(255, 249, 251, 253),
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('SG Date'),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        child: ProductScreen(),
-                        type: PageTransitionType.rightToLeft,
+            Flexible(
+              child: InkWell(
+                overlayColor: WidgetStateColor.transparent,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      child: ProductsScreen(),
+                      type: PageTransitionType.rightToLeft,
+                    ),
+                  );
+                },
+                child: TextField(
+                  enabled: false,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: Colors.transparent,
                       ),
-                    );
-                  },
-                  icon: SvgPicture.asset(
-                    'asset/icons/data.svg',
-                    fit: BoxFit.scaleDown,
+                    ),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: SvgPicture.asset(
+                        'asset/icons/search.svg',
+                        width: 16,
+                        height: 16,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
+                    hintText: 'Tìm kiếm sản phẩm',
+                    hintStyle: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.black54),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        child: NotiScreen(),
-                        type: PageTransitionType.rightToLeft,
-                      ),
-                    );
-                  },
-                  icon: SvgPicture.asset(
-                    'asset/icons/no_noti.svg',
-                    fit: BoxFit.scaleDown,
+              ),
+            ),
+            IconButton(
+              highlightColor: Colors.transparent,
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
+              style: ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    child: NotiScreen(),
+                    type: PageTransitionType.rightToLeft,
                   ),
-                ),
-              ],
+                );
+              },
+              icon: SvgPicture.asset(
+                'asset/icons/no_noti.svg',
+                fit: BoxFit.scaleDown,
+              ),
             )
           ],
         ),
-        backgroundColor: Colors.transparent,
       ),
       body: Consumer<CalcController>(
         builder: (context, calc, child) {
@@ -69,50 +97,12 @@ class CalcScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: TextField(
-                      focusNode: calc.barcodeFocus,
-                      controller: calc.barcode,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      keyboardType: TextInputType.number,
-                      maxLength: 13,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        counterText: '',
-                        prefixIcon: SvgPicture.asset(
-                          'asset/icons/barcode.svg',
-                          fit: BoxFit.scaleDown,
-                          color: Colors.black87,
-                        ),
-                        hintText: 'Barcode',
-                        hintStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.grey.shade500),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            width: 1.6,
-                            color: Color.fromARGB(255, 227, 227, 227),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            width: 1.6,
-                            color: Color.fromARGB(255, 173, 173, 173),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: TextField(
                       focusNode: calc.skuFocus,
                       controller: calc.sku,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       keyboardType: TextInputType.number,
                       maxLength: 7,
+                      style: Theme.of(context).textTheme.bodyMedium,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -125,7 +115,7 @@ class CalcScreen extends StatelessWidget {
                         hintText: 'SKU',
                         hintStyle: Theme.of(context)
                             .textTheme
-                            .bodyMedium!
+                            .bodySmall!
                             .copyWith(color: Colors.grey.shade500),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -153,13 +143,14 @@ class CalcScreen extends StatelessWidget {
                             controller: calc.mfg,
                             focusNode: calc.mfgFocus,
                             readOnly: true,
+                            style: Theme.of(context).textTheme.bodyMedium,
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (context) {
                                   return Container(
                                     height:
-                                        MediaQuery.of(context).size.height * .4,
+                                        MediaQuery.of(context).size.height * .5,
                                     child: Column(
                                       children: [
                                         Container(
@@ -195,7 +186,7 @@ class CalcScreen extends StatelessWidget {
                                                     'Ngày sản xuất',
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .bodyLarge,
+                                                        .bodyMedium,
                                                   ),
                                                 ],
                                               ),
@@ -239,7 +230,7 @@ class CalcScreen extends StatelessWidget {
                               hintText: 'Ngày sản xuất',
                               hintStyle: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium!
+                                  .bodySmall!
                                   .copyWith(color: Colors.grey.shade500),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -264,13 +255,14 @@ class CalcScreen extends StatelessWidget {
                             focusNode: calc.expFocus,
                             controller: calc.exp,
                             readOnly: true,
+                            style: Theme.of(context).textTheme.bodyMedium,
                             onTap: () {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (context) {
                                   return Container(
                                     height:
-                                        MediaQuery.of(context).size.height * .4,
+                                        MediaQuery.of(context).size.height * .5,
                                     child: Column(
                                       children: [
                                         Container(
@@ -306,7 +298,7 @@ class CalcScreen extends StatelessWidget {
                                                     'Hạn sử dụng',
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .bodyLarge,
+                                                        .bodyMedium,
                                                   ),
                                                 ],
                                               ),
@@ -349,7 +341,7 @@ class CalcScreen extends StatelessWidget {
                               hintText: 'Hạn sử dụng',
                               hintStyle: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium!
+                                  .bodySmall!
                                   .copyWith(color: Colors.grey.shade500),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -386,7 +378,7 @@ class CalcScreen extends StatelessWidget {
                       ),
                       onPressed: () {
                         calc.clearAllFocus(context);
-                        calc.calcDate(context);
+                        calc.getResult(context);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -394,6 +386,8 @@ class CalcScreen extends StatelessWidget {
                           SvgPicture.asset(
                             'asset/icons/search.svg',
                             color: Colors.white,
+                            width: 16,
+                            height: 16,
                             fit: BoxFit.scaleDown,
                           ),
                           Padding(
@@ -402,7 +396,7 @@ class CalcScreen extends StatelessWidget {
                               'Tìm kiếm',
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium!
+                                  .bodySmall!
                                   .copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
@@ -413,84 +407,112 @@ class CalcScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  calc.isShowed < 1
-                      ? Container()
-                      : Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade300,
-                                offset: Offset(0, 0),
-                                blurRadius: 6,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: ExpansionTile(
-                            initiallyExpanded: true,
-                            controller: calc.expansionController,
-                            childrenPadding: EdgeInsets.fromLTRB(16, 0, 16, 12),
-                            shape: Border(), // remove 2 line when collapse
-                            title: Text(
-                              'Tên sản phẩm',
-                              textAlign: TextAlign.justify,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            children: [
-                              rowWidget(
-                                text: calc.fourtyPercentLeft,
-                                label: '40%',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text: calc.thirtyPercentLeft,
-                                label: '30%',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text: calc.twentyPercentLeft,
-                                label: '20%',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text:
-                                    '${calc.currentPercent == 0 ? 0 : calc.currentPercent}%',
-                                label: '% hiện tại',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text: '${calc.allowedDay} ngày',
-                                label: 'Còn bán',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text:
-                                    '${calc.totalDay == 0 ? 0 : calc.totalDay} ngày',
-                                label: 'Ngày sử dụng',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text: '097465',
-                                label: 'SKU',
-                                context: context,
-                              ),
-                              Divider(),
-                              rowWidget(
-                                text: '09846537254, 9237564899, 746574647',
-                                label: 'Barcode',
-                                context: context,
+                  FutureBuilder<List<Product>?>(
+                    future: calc.apiProducts,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasData) {
+                        var products = snapshot.data;
+                        return products!.length > 1
+                            ? Column(
+                                children: List.generate(
+                                  products.length,
+                                  (index) {
+                                    print(products.length);
+                                    return Card(
+                                      child: ListTile(
+                                        leading: Checkbox(
+                                          value: calc.checkboxes[index],
+                                          onChanged: (val) async {
+                                            calc.getProduct(index);
+                                          },
+                                        ),
+                                        title: Text(
+                                            products[index].sku.toString()),
+                                        subtitle: Text(products[index].name),
+                                      ),
+                                    );
+                                  },
+                                ),
                               )
-                            ],
-                          ),
-                        ),
+                            : products.length == 1
+                                ? Card(
+                                    child: ExpansionTile(
+                                      shape: Border(),
+                                      controller: calc.expansionController,
+                                      title: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(products[0].sku.toString()),
+                                          Icon(Icons.bookmark_outline_rounded),
+                                        ],
+                                      ),
+                                      subtitle: Text(products[0].name),
+                                      children: [
+                                        IntrinsicHeight(
+                                          child: Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text('NSX: ${calc.mfg.text}'),
+                                                  Text('NSX: ${calc.mfg.text}'),
+                                                  Text(
+                                                    '40%: ${calc.fourtyPercentLeft}',
+                                                  ),
+                                                  Text(
+                                                    '30%: ${calc.thirtyPercentLeft}',
+                                                  ),
+                                                  Text(
+                                                    '20%: ${calc.twentyPercentLeft}',
+                                                  ),
+                                                  Text(
+                                                    'Còn: ${calc.allowedDay} ngày',
+                                                  ),
+                                                ],
+                                              ),
+                                              VerticalDivider(),
+                                              Container(
+                                                child: CircularPercentIndicator(
+                                                  radius: 20.0,
+                                                  animation: true,
+                                                  animationDuration: 1200,
+                                                  lineWidth: 8.0,
+                                                  percent: 0.4,
+                                                  center: Text(
+                                                    calc.currentPercent
+                                                        .toString(),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                  circularStrokeCap:
+                                                      CircularStrokeCap.round,
+                                                  backgroundColor:
+                                                      Colors.yellow,
+                                                  progressColor: Colors.red,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Center(
+                                    child: Text('No data'),
+                                  );
+                      }
+                      return Center(
+                        child: Text('No data'),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
