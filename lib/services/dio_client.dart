@@ -4,7 +4,7 @@ import 'package:sg_date/models/product.dart';
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbyUfRfkQvbc7sKtU5mQjMk68xMYz1V-wgvx1FiyPb8cfueudzM2_lgjKBopR1bJX9sw/exec';
+      'https://script.google.com/macros/s/AKfycbwJskXYJcLBdmhJ3GFqH7aqztQIuo2OqX3XvkK9zKhgTHrHmVLQszzMYw8wM_PS5QoZlw/exec';
 
   Future<List<Product>?> getProductList() async {
     var response = await _dio.get(_urlBase);
@@ -23,13 +23,16 @@ class DioClient {
   }
 
   Future<List<Product>?> getSearches(String search) async {
-    var response = await _dio.get(_urlBase + '?search=' + search);
+    var response = await _dio.get(
+      _urlBase + '?search=' + search + '&isDate=true',
+    );
     List<Product>? products;
     try {
       if (response.statusCode == 200) {
         var getProducts = response.data as List;
         print(getProducts);
-        products = getProducts.map((e) => Product.fromJson(e)).toList();
+        products =
+            getProducts.take(20).map((e) => Product.fromJson(e)).toList();
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {
@@ -38,18 +41,21 @@ class DioClient {
     return products;
   }
 
-  Future<Product?> getProduct({required String sku}) async {
-    var response = await _dio.get(_urlBase + '?detail=' + sku);
-    Product? product;
+  Future<List<Product>?> getCalc(String calc) async {
+    var response = await _dio.get(_urlBase + '?search=' + calc);
+    List<Product>? products;
     try {
       if (response.statusCode == 200) {
-        product = Product.fromJson(response.data[0]);
-        print(product.name);
+        var getProducts = response.data as List;
+        print(getProducts);
+        products = getProducts.take(20).map((e) {
+          return Product.fromJson(e);
+        }).toList();
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {
-      print('catch: ' + e.toString());
+      print(e);
     }
-    return product;
+    return products;
   }
 }

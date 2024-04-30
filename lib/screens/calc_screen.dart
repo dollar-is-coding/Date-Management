@@ -422,17 +422,28 @@ class CalcScreen extends StatelessWidget {
                                   products.length,
                                   (index) {
                                     print(products.length);
-                                    return Card(
-                                      child: ListTile(
-                                        leading: Checkbox(
-                                          value: calc.checkboxes[index],
-                                          onChanged: (val) async {
-                                            calc.getProduct(index);
-                                          },
+                                    return InkWell(
+                                      onTap: () async {
+                                        calc.getProduct(index);
+                                      },
+                                      child: Card(
+                                        color: Colors.white,
+                                        child: ListTile(
+                                          dense: true,
+                                          visualDensity: VisualDensity(
+                                            horizontal: 0,
+                                            vertical: -4,
+                                          ),
+                                          leading: Checkbox(
+                                            value: calc.checkboxes[index],
+                                            onChanged: (val) async {
+                                              calc.getProduct(index);
+                                            },
+                                          ),
+                                          title: Text(
+                                              products[index].sku.toString()),
+                                          subtitle: Text(products[index].name),
                                         ),
-                                        title: Text(
-                                            products[index].sku.toString()),
-                                        subtitle: Text(products[index].name),
                                       ),
                                     );
                                   },
@@ -440,72 +451,169 @@ class CalcScreen extends StatelessWidget {
                               )
                             : products.length == 1
                                 ? Card(
+                                    color: Colors.white,
                                     child: ExpansionTile(
                                       shape: Border(),
+                                      dense: true,
                                       controller: calc.expansionController,
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(products[0].sku.toString()),
-                                          Icon(Icons.bookmark_outline_rounded),
-                                        ],
+                                      childrenPadding:
+                                          EdgeInsets.only(bottom: 12),
+                                      visualDensity: VisualDensity(
+                                        horizontal: 0,
+                                        vertical: -4,
                                       ),
+                                      leading: Icon(
+                                        Icons.bookmark_outline_outlined,
+                                      ),
+                                      title: Text(products[0].sku.toString()),
                                       subtitle: Text(products[0].name),
                                       children: [
-                                        IntrinsicHeight(
-                                          child: Row(
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('NSX: ${calc.mfg.text}'),
-                                                  Text('NSX: ${calc.mfg.text}'),
-                                                  Text(
-                                                    '40%: ${calc.fourtyPercentLeft}',
-                                                  ),
-                                                  Text(
-                                                    '30%: ${calc.thirtyPercentLeft}',
-                                                  ),
-                                                  Text(
-                                                    '20%: ${calc.twentyPercentLeft}',
-                                                  ),
-                                                  Text(
-                                                    'Còn: ${calc.allowedDay} ngày',
-                                                  ),
-                                                ],
-                                              ),
-                                              VerticalDivider(),
-                                              Container(
-                                                child: CircularPercentIndicator(
-                                                  radius: 20.0,
-                                                  animation: true,
-                                                  animationDuration: 1200,
-                                                  lineWidth: 8.0,
-                                                  percent: 0.4,
-                                                  center: Text(
-                                                    calc.currentPercent
-                                                        .toString(),
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                  circularStrokeCap:
-                                                      CircularStrokeCap.round,
-                                                  backgroundColor:
-                                                      Colors.yellow,
-                                                  progressColor: Colors.red,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: IntrinsicHeight(
+                                            child: Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'NSX: ${calc.mfg.text}',
+                                                    ),
+                                                    Text(
+                                                      'NSX: ${calc.mfg.text}',
+                                                    ),
+                                                    Text(
+                                                      '40%: ${calc.fourtyPercentLeft}',
+                                                    ),
+                                                    Text(
+                                                      '30%: ${calc.thirtyPercentLeft}',
+                                                    ),
+                                                    Text(
+                                                      '20%: ${calc.twentyPercentLeft}',
+                                                    ),
+                                                    Text(
+                                                      'Còn: ${calc.allowedDay} ngày',
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
+                                                Expanded(
+                                                  child:
+                                                      CircularPercentIndicator(
+                                                    radius: 50.0,
+                                                    animation: true,
+                                                    animationDuration: 1000,
+                                                    lineWidth: 8.0,
+                                                    percent:
+                                                        calc.currentPercent /
+                                                            100,
+                                                    center: Text(
+                                                      calc.currentPercent
+                                                              .toString() +
+                                                          '%',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                    circularStrokeCap:
+                                                        CircularStrokeCap.round,
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                            255, 210, 225, 255),
+                                                    progressColor:
+                                                        Color.fromARGB(
+                                                            255, 255, 121, 36),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   )
-                                : Center(
-                                    child: Text('No data'),
+                                : Card(
+                                    color: Colors.white,
+                                    child: ExpansionTile(
+                                      initiallyExpanded: true,
+                                      shape: Border(),
+                                      dense: true,
+                                      controller: calc.expansionController,
+                                      childrenPadding:
+                                          EdgeInsets.only(bottom: 12),
+                                      visualDensity: VisualDensity(
+                                        horizontal: 0,
+                                        vertical: -4,
+                                      ),
+                                      leading: Icon(
+                                        Icons.bookmark_outline_outlined,
+                                      ),
+                                      title: Text('not found'),
+                                      subtitle: Text('not found'),
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: IntrinsicHeight(
+                                            child: Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'NSX: ${calc.mfg.text}',
+                                                    ),
+                                                    Text(
+                                                      'NSX: ${calc.mfg.text}',
+                                                    ),
+                                                    Text(
+                                                      '40%: ${calc.fourtyPercentLeft}',
+                                                    ),
+                                                    Text(
+                                                      '30%: ${calc.thirtyPercentLeft}',
+                                                    ),
+                                                    Text(
+                                                      '20%: ${calc.twentyPercentLeft}',
+                                                    ),
+                                                    Text(
+                                                      'Còn: ${calc.allowedDay} ngày',
+                                                    ),
+                                                  ],
+                                                ),
+                                                Expanded(
+                                                  child:
+                                                      CircularPercentIndicator(
+                                                    radius: 50.0,
+                                                    animation: true,
+                                                    animationDuration: 1000,
+                                                    lineWidth: 8.0,
+                                                    percent: 0.4,
+                                                    center: Text(
+                                                      calc.currentPercent
+                                                              .toString() +
+                                                          '%',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                    circularStrokeCap:
+                                                        CircularStrokeCap.round,
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                            255, 210, 225, 255),
+                                                    progressColor:
+                                                        Color.fromARGB(
+                                                            255, 255, 121, 36),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                       }
                       return Center(

@@ -36,7 +36,7 @@ class ProductsScreen extends StatelessWidget {
                   return Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.yellowAccent,
+                      color: Color.fromARGB(255, 210, 225, 255),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -139,7 +139,7 @@ class ProductsScreen extends StatelessWidget {
                                 width: 32,
                                 height: 32,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Color.fromARGB(255, 210, 225, 255),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Center(
@@ -148,7 +148,7 @@ class ProductsScreen extends StatelessWidget {
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
-                                        .copyWith(color: Colors.white),
+                                        .copyWith(color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -178,17 +178,23 @@ class ProductsScreen extends StatelessWidget {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               Container(
+                                                padding:
+                                                    EdgeInsets.only(top: 4),
                                                 child: CircularPercentIndicator(
                                                   radius: 20.0,
                                                   animation: true,
                                                   animationDuration: 1200,
-                                                  lineWidth: 8.0,
-                                                  percent: 0.4,
+                                                  lineWidth: 6.0,
+                                                  percent: pro.count(
+                                                          dates[i].mfg,
+                                                          dates[i].exp) /
+                                                      100,
                                                   center: Text(
                                                     pro
-                                                        .count(dates[i].mfg,
-                                                            dates[i].exp)
-                                                        .toString(),
+                                                            .count(dates[i].mfg,
+                                                                dates[i].exp)
+                                                            .toString() +
+                                                        '%',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall,
@@ -196,21 +202,20 @@ class ProductsScreen extends StatelessWidget {
                                                   circularStrokeCap:
                                                       CircularStrokeCap.round,
                                                   backgroundColor:
-                                                      Colors.yellow,
-                                                  progressColor: Colors.red,
+                                                      Color.fromARGB(
+                                                          255, 210, 225, 255),
+                                                  progressColor: Color.fromARGB(
+                                                      255, 255, 121, 36),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          VerticalDivider(
-                                            width: 24,
-                                            thickness: .8,
-                                          ),
                                           Expanded(
                                             child: Container(
                                               padding: EdgeInsets.fromLTRB(
-                                                  8, 8, 0, 8),
+                                                  12, 8, 0, 8),
                                               margin: EdgeInsets.only(
+                                                  left: 12,
                                                   bottom: i == dates.length - 1
                                                       ? 0
                                                       : 12),

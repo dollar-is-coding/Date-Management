@@ -36,7 +36,7 @@ class CalcController extends ChangeNotifier {
   late String thirtyPercentLeft = '';
   late String fourtyPercentLeft = '';
   int allowedDay = 0;
-  final expansionController = ExpansionTileController();
+  ExpansionTileController? expansionController = ExpansionTileController();
 
   clearAllFocus(context) {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -122,7 +122,7 @@ class CalcController extends ChangeNotifier {
   }
 
   Future search(String search) async {
-    apiProducts = DioClient().getSearches(search);
+    apiProducts = DioClient().getCalc(search);
     list = await apiProducts;
     dataLength = list!.length;
     checkboxes = List.filled(dataLength, false);
