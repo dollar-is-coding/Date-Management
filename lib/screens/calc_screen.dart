@@ -15,9 +15,13 @@ class CalcScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      // backgroundColor: Color.fromARGB(255, 249, 251, 253),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -482,7 +486,7 @@ class CalcScreen extends StatelessWidget {
                                                       'NSX: ${calc.mfg.text}',
                                                     ),
                                                     Text(
-                                                      'NSX: ${calc.mfg.text}',
+                                                      'HSD: ${calc.exp.text}',
                                                     ),
                                                     Text(
                                                       '40%: ${calc.fourtyPercentLeft}',
