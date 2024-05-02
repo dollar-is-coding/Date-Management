@@ -7,7 +7,6 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/models/product.dart';
-import 'package:sg_date/screens/noti_screen.dart';
 import 'package:sg_date/screens/products_screen.dart';
 
 class CalcScreen extends StatelessWidget {
@@ -16,78 +15,72 @@ class CalcScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Colors.white10,
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
         ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              child: InkWell(
-                overlayColor: WidgetStateColor.transparent,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      child: ProductsScreen(),
-                      type: PageTransitionType.rightToLeft,
+        title: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                child: ProductsScreen(),
+                type: PageTransitionType.rightToLeft,
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'asset/icons/search.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
+                    Expanded(
+                      child: TextField(
+                        textAlignVertical: TextAlignVertical.center,
+                        enabled: false,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 1,
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          isDense: true,
+                          counterText: '',
+                          contentPadding: EdgeInsets.only(left: 10),
+                          hintText: 'Tìm kiếm sản phẩm',
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: Colors.black87),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Consumer<CalcController>(
+                builder: (context, calc, child) {
+                  return IconButton(
+                    highlightColor: Colors.transparent,
+                    onPressed: () {
+                      calc.refreshScreen();
+                    },
+                    icon: Icon(
+                      Icons.refresh_rounded,
                     ),
                   );
                 },
-                child: TextField(
-                  enabled: false,
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: SvgPicture.asset(
-                        'asset/icons/search.svg',
-                        width: 16,
-                        height: 16,
-                        fit: BoxFit.scaleDown,
-                      ),
-                    ),
-                    hintText: 'Tìm kiếm sản phẩm',
-                    hintStyle: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.black54),
-                  ),
-                ),
-              ),
-            ),
-            IconButton(
-              highlightColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              constraints: BoxConstraints(),
-              style: ButtonStyle(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  PageTransition(
-                    child: NotiScreen(),
-                    type: PageTransitionType.rightToLeft,
-                  ),
-                );
-              },
-              icon: SvgPicture.asset(
-                'asset/icons/no_noti.svg',
-                fit: BoxFit.scaleDown,
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
       body: Consumer<CalcController>(
@@ -95,44 +88,59 @@ class CalcScreen extends StatelessWidget {
           return SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Container(
-              padding: EdgeInsets.fromLTRB(12, 6, 12, 12),
+              padding: EdgeInsets.all(12),
               child: Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: TextField(
-                      focusNode: calc.skuFocus,
-                      controller: calc.sku,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      keyboardType: TextInputType.number,
-                      maxLength: 7,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        counterText: '',
-                        prefixIcon: SvgPicture.asset(
-                          'asset/icons/sku.svg',
-                          fit: BoxFit.scaleDown,
-                          color: Colors.black87,
-                        ),
-                        hintText: 'SKU',
-                        hintStyle: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.grey.shade500),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            width: 1.6,
-                            color: Color.fromARGB(255, 227, 227, 227),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(.04),
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: Offset(0, 2),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            width: 1.6,
-                            color: Color.fromARGB(255, 173, 173, 173),
+                        ],
+                      ),
+                      child: TextField(
+                        focusNode: calc.skuFocus,
+                        controller: calc.sku,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: TextInputType.number,
+                        maxLength: 13,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          counterText: '',
+                          prefixIcon: SvgPicture.asset(
+                            'asset/icons/sku.svg',
+                            fit: BoxFit.scaleDown,
+                            color: Colors.black87,
+                          ),
+                          hintText: 'Sku hoặc barcode',
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.grey.shade500),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              width: 1,
+                              color: Colors.transparent,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              width: 1,
+                              color: Color.fromARGB(255, 227, 227, 227),
+                            ),
                           ),
                         ),
                       ),
@@ -143,111 +151,126 @@ class CalcScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Flexible(
-                          child: TextField(
-                            controller: calc.mfg,
-                            focusNode: calc.mfgFocus,
-                            readOnly: true,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return Container(
-                                    height:
-                                        MediaQuery.of(context).size.height * .5,
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                width: 1,
-                                                color: Colors.grey.shade400,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    icon: Icon(
-                                                        Icons.close_rounded),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Ngày sản xuất',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            child: Localizations.override(
-                                              context: context,
-                                              locale: const Locale('vi'),
-                                              child: CupertinoDatePicker(
-                                                initialDateTime: calc.mfgDate,
-                                                dateOrder:
-                                                    DatePickerDateOrder.dmy,
-                                                mode: CupertinoDatePickerMode
-                                                    .date,
-                                                minimumYear: 2015,
-                                                maximumYear: 2030,
-                                                onDateTimeChanged: (date) {
-                                                  calc.changeMfg(date);
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              prefixIcon: SvgPicture.asset(
-                                'asset/icons/mfg.svg',
-                                fit: BoxFit.scaleDown,
-                                color: Colors.black87,
-                              ),
-                              hintText: 'Ngày sản xuất',
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: Colors.grey.shade500),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 1.6,
-                                  color: Color.fromARGB(255, 227, 227, 227),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(.04),
+                                  spreadRadius: 2,
+                                  blurRadius: 3,
+                                  offset: Offset(0, 2),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 1.6,
-                                  color: Color.fromARGB(255, 173, 173, 173),
+                              ],
+                            ),
+                            child: TextField(
+                              controller: calc.mfg,
+                              focusNode: calc.mfgFocus,
+                              readOnly: true,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .5,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    IconButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      icon: Icon(
+                                                          Icons.close_rounded),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'Ngày sản xuất',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Localizations.override(
+                                                context: context,
+                                                locale: const Locale('vi'),
+                                                child: CupertinoDatePicker(
+                                                  initialDateTime: calc.mfgDate,
+                                                  dateOrder:
+                                                      DatePickerDateOrder.dmy,
+                                                  mode: CupertinoDatePickerMode
+                                                      .date,
+                                                  minimumYear: 2015,
+                                                  maximumYear: 2030,
+                                                  onDateTimeChanged: (date) {
+                                                    calc.changeMfg(date);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                prefixIcon: SvgPicture.asset(
+                                  'asset/icons/mfg.svg',
+                                  fit: BoxFit.scaleDown,
+                                  color: Colors.black87,
+                                ),
+                                hintText: 'Ngày sản xuất',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.grey.shade500),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
                                 ),
                               ),
                             ),
@@ -255,110 +278,125 @@ class CalcScreen extends StatelessWidget {
                         ),
                         Padding(padding: EdgeInsets.only(left: 12)),
                         Flexible(
-                          child: TextField(
-                            focusNode: calc.expFocus,
-                            controller: calc.exp,
-                            readOnly: true,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return Container(
-                                    height:
-                                        MediaQuery.of(context).size.height * .5,
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                width: 1,
-                                                color: Colors.grey.shade400,
-                                              ),
-                                            ),
-                                          ),
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    icon: Icon(
-                                                        Icons.close_rounded),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Hạn sử dụng',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                            child: Localizations.override(
-                                              context: context,
-                                              locale: const Locale('vi'),
-                                              child: CupertinoDatePicker(
-                                                initialDateTime: calc.expDate,
-                                                dateOrder:
-                                                    DatePickerDateOrder.dmy,
-                                                mode: CupertinoDatePickerMode
-                                                    .date,
-                                                minimumYear: 2015,
-                                                maximumYear: 2030,
-                                                onDateTimeChanged: (date) =>
-                                                    calc.changeExp(date),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              prefixIcon: SvgPicture.asset(
-                                'asset/icons/exp.svg',
-                                fit: BoxFit.scaleDown,
-                                color: Colors.black87,
-                              ),
-                              hintText: 'Hạn sử dụng',
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: Colors.grey.shade500),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 1.6,
-                                  color: Color.fromARGB(255, 227, 227, 227),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(.04),
+                                  spreadRadius: 2,
+                                  blurRadius: 3,
+                                  offset: Offset(0, 2),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  width: 1.6,
-                                  color: Color.fromARGB(255, 173, 173, 173),
+                              ],
+                            ),
+                            child: TextField(
+                              focusNode: calc.expFocus,
+                              controller: calc.exp,
+                              readOnly: true,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .5,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    IconButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      icon: Icon(
+                                                          Icons.close_rounded),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'Hạn sử dụng',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Localizations.override(
+                                                context: context,
+                                                locale: const Locale('vi'),
+                                                child: CupertinoDatePicker(
+                                                  initialDateTime: calc.expDate,
+                                                  dateOrder:
+                                                      DatePickerDateOrder.dmy,
+                                                  mode: CupertinoDatePickerMode
+                                                      .date,
+                                                  minimumYear: 2015,
+                                                  maximumYear: 2030,
+                                                  onDateTimeChanged: (date) =>
+                                                      calc.changeExp(date),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                prefixIcon: SvgPicture.asset(
+                                  'asset/icons/exp.svg',
+                                  fit: BoxFit.scaleDown,
+                                  color: Colors.black87,
+                                ),
+                                hintText: 'Hạn sử dụng',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.grey.shade500),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
                                 ),
                               ),
                             ),
@@ -370,15 +408,26 @@ class CalcScreen extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width * .4,
                     margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.04),
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 14),
                         shadowColor: Colors.white,
-                        elevation: 2,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        backgroundColor: Color.fromARGB(255, 255, 121, 36),
+                        backgroundColor: Color.fromARGB(255, 112, 82, 255),
                       ),
                       onPressed: () {
                         calc.clearAllFocus(context);
@@ -411,220 +460,222 @@ class CalcScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  FutureBuilder<List<Product>?>(
-                    future: calc.apiProducts,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasData) {
-                        var products = snapshot.data;
-                        return products!.length > 1
-                            ? Column(
-                                children: List.generate(
-                                  products.length,
-                                  (index) {
-                                    print(products.length);
-                                    return InkWell(
-                                      onTap: () async {
-                                        calc.getProduct(index);
-                                      },
-                                      child: Card(
-                                        color: Colors.white,
-                                        child: ListTile(
-                                          dense: true,
-                                          visualDensity: VisualDensity(
-                                            horizontal: 0,
-                                            vertical: -4,
+                  !calc.isResultShowed
+                      ? Container()
+                      : Container(
+                          padding: EdgeInsets.fromLTRB(20, 20, 20, 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(.04),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Row(
+                                  children: [
+                                    IntrinsicWidth(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 12),
+                                            child:
+                                                Text('NSX: ${calc.mfg.text}'),
                                           ),
-                                          leading: Checkbox(
-                                            value: calc.checkboxes[index],
-                                            onChanged: (val) async {
-                                              calc.getProduct(index);
-                                            },
+                                          Divider(
+                                            color: Colors.grey.shade300,
+                                            height: 8,
                                           ),
-                                          title: Text(
-                                              products[index].sku.toString()),
-                                          subtitle: Text(products[index].name),
+                                          Text('HSD: ${calc.exp.text}'),
+                                          Divider(
+                                            color: Colors.grey.shade300,
+                                            height: 8,
+                                          ),
+                                          Text(
+                                              '40%: ${calc.fourtyPercentLeft}'),
+                                          Divider(
+                                            color: Colors.grey.shade300,
+                                            height: 8,
+                                          ),
+                                          Text(
+                                              '30%: ${calc.thirtyPercentLeft}'),
+                                          Divider(
+                                            color: Colors.grey.shade300,
+                                            height: 8,
+                                          ),
+                                          Text(
+                                              '20%: ${calc.twentyPercentLeft}'),
+                                          Divider(
+                                            color: Colors.grey.shade300,
+                                            height: 8,
+                                          ),
+                                          Text('Còn: ${calc.allowedDay} ngày'),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: CircularPercentIndicator(
+                                        radius:
+                                            MediaQuery.of(context).size.width *
+                                                .14,
+                                        animation: true,
+                                        animationDuration: 1000,
+                                        lineWidth: 10,
+                                        percent: calc.currentPercent / 100,
+                                        center: Text(
+                                          calc.currentPercent.toString() + '%',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
                                         ),
+                                        circularStrokeCap:
+                                            CircularStrokeCap.round,
+                                        backgroundColor:
+                                            Color.fromARGB(255, 210, 225, 255),
+                                        progressColor:
+                                            Color.fromARGB(255, 112, 82, 255),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              FutureBuilder<List<Product>?>(
+                                future: calc.apiProducts,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasData) {
+                                    var products = snapshot.data;
+                                    return Column(
+                                      children: List.generate(
+                                        products!.length,
+                                        (index) {
+                                          return Column(
+                                            children: [
+                                              index > 0
+                                                  ? Container()
+                                                  : Divider(height: 0),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  products.length > 1
+                                                      ? calc.getProduct(index)
+                                                      : null;
+                                                },
+                                                child: ListTile(
+                                                  dense: true,
+                                                  horizontalTitleGap: 10,
+                                                  enableFeedback: true,
+                                                  contentPadding:
+                                                      EdgeInsets.all(0),
+                                                  visualDensity: VisualDensity(
+                                                    horizontal: 0,
+                                                    vertical: -4,
+                                                  ),
+                                                  leading: Container(
+                                                    width: 28,
+                                                    height: 28,
+                                                    decoration: BoxDecoration(
+                                                      color: products.length ==
+                                                              1
+                                                          ? Color.fromARGB(
+                                                              255, 112, 82, 255)
+                                                          : Color.fromARGB(255,
+                                                              222, 224, 226),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                    ),
+                                                    child: Center(
+                                                      child:
+                                                          products.length == 1
+                                                              ? Icon(
+                                                                  Icons
+                                                                      .check_rounded,
+                                                                  size: 20,
+                                                                  color: Colors
+                                                                      .white,
+                                                                )
+                                                              : Text(
+                                                                  '${index + 1}',
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodySmall!
+                                                                      .copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                ),
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    products[index]
+                                                        .sku
+                                                        .toString(),
+                                                  ),
+                                                  subtitle: Text(
+                                                      products[index].name),
+                                                  trailing: products.length == 1
+                                                      ? InkWell(
+                                                          onTap: () async {
+                                                            if (!calc.isSaved) {
+                                                              calc.addNewDate(
+                                                                context,
+                                                                products[index]
+                                                                    .sku
+                                                                    .toString(),
+                                                                calc.mfg.text,
+                                                                calc.exp.text,
+                                                                calc.twentyPercentLeft,
+                                                                calc.thirtyPercentLeft,
+                                                                calc.fourtyPercentLeft,
+                                                              );
+                                                            }
+                                                          },
+                                                          child: Icon(
+                                                            calc.isSaved
+                                                                ? Icons
+                                                                    .bookmark_rounded
+                                                                : Icons
+                                                                    .bookmark_outline_rounded,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    44,
+                                                                    59,
+                                                                    93),
+                                                          ),
+                                                        )
+                                                      : null,
+                                                ),
+                                              ),
+                                              index == products.length - 1
+                                                  ? Container()
+                                                  : Divider(height: 0),
+                                            ],
+                                          );
+                                        },
                                       ),
                                     );
-                                  },
-                                ),
+                                  }
+                                  return Container();
+                                },
                               )
-                            : products.length == 1
-                                ? Card(
-                                    color: Colors.white,
-                                    child: ExpansionTile(
-                                      shape: Border(),
-                                      dense: true,
-                                      controller: calc.expansionController,
-                                      childrenPadding:
-                                          EdgeInsets.only(bottom: 12),
-                                      visualDensity: VisualDensity(
-                                        horizontal: 0,
-                                        vertical: -4,
-                                      ),
-                                      leading: Icon(
-                                        Icons.bookmark_outline_outlined,
-                                      ),
-                                      title: Text(products[0].sku.toString()),
-                                      subtitle: Text(products[0].name),
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: IntrinsicHeight(
-                                            child: Row(
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'NSX: ${calc.mfg.text}',
-                                                    ),
-                                                    Text(
-                                                      'HSD: ${calc.exp.text}',
-                                                    ),
-                                                    Text(
-                                                      '40%: ${calc.fourtyPercentLeft}',
-                                                    ),
-                                                    Text(
-                                                      '30%: ${calc.thirtyPercentLeft}',
-                                                    ),
-                                                    Text(
-                                                      '20%: ${calc.twentyPercentLeft}',
-                                                    ),
-                                                    Text(
-                                                      'Còn: ${calc.allowedDay} ngày',
-                                                    ),
-                                                  ],
-                                                ),
-                                                Expanded(
-                                                  child:
-                                                      CircularPercentIndicator(
-                                                    radius: 50.0,
-                                                    animation: true,
-                                                    animationDuration: 1000,
-                                                    lineWidth: 8.0,
-                                                    percent:
-                                                        calc.currentPercent /
-                                                            100,
-                                                    center: Text(
-                                                      calc.currentPercent
-                                                              .toString() +
-                                                          '%',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                    circularStrokeCap:
-                                                        CircularStrokeCap.round,
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                            255, 210, 225, 255),
-                                                    progressColor:
-                                                        Color.fromARGB(
-                                                            255, 255, 121, 36),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Card(
-                                    color: Colors.white,
-                                    child: ExpansionTile(
-                                      initiallyExpanded: true,
-                                      shape: Border(),
-                                      dense: true,
-                                      controller: calc.expansionController,
-                                      childrenPadding:
-                                          EdgeInsets.only(bottom: 12),
-                                      visualDensity: VisualDensity(
-                                        horizontal: 0,
-                                        vertical: -4,
-                                      ),
-                                      leading: Icon(
-                                        Icons.bookmark_outline_outlined,
-                                      ),
-                                      title: Text('not found'),
-                                      subtitle: Text('not found'),
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: IntrinsicHeight(
-                                            child: Row(
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      'NSX: ${calc.mfg.text}',
-                                                    ),
-                                                    Text(
-                                                      'NSX: ${calc.mfg.text}',
-                                                    ),
-                                                    Text(
-                                                      '40%: ${calc.fourtyPercentLeft}',
-                                                    ),
-                                                    Text(
-                                                      '30%: ${calc.thirtyPercentLeft}',
-                                                    ),
-                                                    Text(
-                                                      '20%: ${calc.twentyPercentLeft}',
-                                                    ),
-                                                    Text(
-                                                      'Còn: ${calc.allowedDay} ngày',
-                                                    ),
-                                                  ],
-                                                ),
-                                                Expanded(
-                                                  child:
-                                                      CircularPercentIndicator(
-                                                    radius: 50.0,
-                                                    animation: true,
-                                                    animationDuration: 1000,
-                                                    lineWidth: 8.0,
-                                                    percent: 0.4,
-                                                    center: Text(
-                                                      calc.currentPercent
-                                                              .toString() +
-                                                          '%',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-                                                    circularStrokeCap:
-                                                        CircularStrokeCap.round,
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                            255, 210, 225, 255),
-                                                    progressColor:
-                                                        Color.fromARGB(
-                                                            255, 255, 121, 36),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                      }
-                      return Center(
-                        child: Text('No data'),
-                      );
-                    },
-                  ),
+                            ],
+                          ),
+                        ),
                 ],
               ),
             ),

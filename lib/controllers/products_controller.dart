@@ -7,10 +7,24 @@ class ProductsController extends ChangeNotifier {
   Future<List<Product>?>? apiProducts;
   int dataLength = 0;
   final searchController = TextEditingController();
+  List<List<bool>>? dateShowed = [];
+  List<bool>? proShowed = [];
+  List<Product>? proList;
 
   ProductsController() {
     apiProducts = DioClient().getProductList();
     addDataLength();
+    apiProducts!.then(
+      (proList) {
+        proShowed = List.filled(proList!.length, true);
+        for (var i = 0; i < dataLength; i++) {
+          var singleList;
+          singleList = List.filled(proList[i].dates.length, true);
+          dateShowed!.add(singleList);
+        }
+        print(dateShowed);
+      },
+    );
     scrollController.addListener(scrollListener);
   }
 
@@ -37,14 +51,38 @@ class ProductsController extends ChangeNotifier {
   Future refresh() async {
     apiProducts = DioClient().getProductList();
     dataLength = 0;
+    dateShowed = [];
     addDataLength();
+    apiProducts!.then(
+      (proList) {
+        proShowed = List.filled(proList!.length, true);
+        for (var i = 0; i < dataLength; i++) {
+          var singleList;
+          singleList = List.filled(proList[i].dates.length, true);
+          dateShowed!.add(singleList);
+        }
+        print(dateShowed);
+      },
+    );
     notifyListeners();
   }
 
   Future search(String search) async {
     dataLength = 0;
+    dateShowed = [];
     apiProducts = DioClient().getSearches(search);
     addDataLength();
+    apiProducts!.then(
+      (proList) {
+        proShowed = List.filled(proList!.length, true);
+        for (var i = 0; i < dataLength; i++) {
+          var singleList;
+          singleList = List.filled(proList[i].dates.length, true);
+          dateShowed!.add(singleList);
+        }
+        print(dateShowed);
+      },
+    );
     notifyListeners();
   }
 
@@ -67,5 +105,27 @@ class ProductsController extends ChangeNotifier {
     int fullRangeTime = end.difference(start).inDays;
     int leftRangeTime = end.difference(now).inDays;
     return (leftRangeTime / fullRangeTime * 100).round().toInt();
+  }
+
+  int dayLefts(String twenty_pct) {
+    DateTime twenty = DateTime(
+      int.parse(twenty_pct.substring(6, 10)),
+      int.parse(twenty_pct.substring(3, 5)),
+      int.parse(twenty_pct.substring(0, 2)),
+    );
+    DateTime now = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    return twenty.difference(now).inDays;
+  }
+
+  changeDateList(int id, int dateIndex, int productIndex) async {
+    dateShowed![productIndex][dateIndex] = false;
+    proShowed![productIndex] =
+        dateShowed![productIndex].every((element) => false);
+    notifyListeners();
+    await DioClient().removeDate(id.toString());
   }
 }

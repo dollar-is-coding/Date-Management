@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/controllers/products_controller.dart';
@@ -30,7 +29,7 @@ class SGDate extends StatelessWidget {
         ],
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          scaffoldBackgroundColor: const Color.fromARGB(255, 236, 242, 255),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 239, 249, 255),
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),

@@ -13,6 +13,8 @@ class CalcController extends ChangeNotifier {
   int dataLength = 0;
   var checkboxes;
   var snackBar;
+  var isResultShowed = false;
+  var isSaved = false;
 
   DateTime mfgDate = DateTime(
     DateTime.now().year,
@@ -75,10 +77,17 @@ class CalcController extends ChangeNotifier {
             : 'Hạn sử dụng nhỏ hơn 10 ngày',
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (sku.text.isEmpty) {
+      isResultShowed = true;
+      apiProducts = Future.value([]);
+      calcDate();
     } else {
+      isResultShowed = true;
+      isSaved = false;
+      calcDate();
       search(sku.text);
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   calcDate() {
@@ -126,9 +135,6 @@ class CalcController extends ChangeNotifier {
     list = await apiProducts;
     dataLength = list!.length;
     checkboxes = List.filled(dataLength, false);
-    if (dataLength == 1) {
-      calcDate();
-    }
     notifyListeners();
   }
 
@@ -140,6 +146,44 @@ class CalcController extends ChangeNotifier {
     print(list);
     apiProducts = Future.value(list);
     calcDate();
+    notifyListeners();
+  }
+
+  addNewDate(
+    context,
+    String sku,
+    String mfg,
+    String exp,
+    String twenty_pct,
+    String thirty_pct,
+    String fourty_pct,
+  ) async {
+    DioClient().setDate(sku, mfg, exp, twenty_pct, thirty_pct, fourty_pct);
+    isSaved = true;
+    snackBar = snackBarWidget(
+      context: context,
+      warningText: 'Đã thêm date mới',
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    notifyListeners();
+  }
+
+  refreshScreen() {
+    sku.clear();
+    mfg.clear();
+    exp.clear();
+    mfgDate = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    expDate = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    apiProducts = Future.value([]);
+    isResultShowed = false;
     notifyListeners();
   }
 }
