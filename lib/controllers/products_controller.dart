@@ -9,6 +9,8 @@ class ProductsController extends ChangeNotifier {
   final searchController = TextEditingController();
   List<List<bool>>? dateShowed = [];
   List<bool>? proShowed = [];
+  List<bool> chosenOptions = [true, false, false, false];
+  List<String> textOptions = ['Tất cả', '40%', '30%', '20%'];
   List<Product>? proList;
 
   ProductsController() {
@@ -128,5 +130,11 @@ class ProductsController extends ChangeNotifier {
         dateShowed![productIndex].every((element) => false);
     notifyListeners();
     await DioClient().removeDate(id.toString());
+  }
+
+  changeOption(index) {
+    chosenOptions.fillRange(0, 4, false);
+    chosenOptions[index] = true;
+    notifyListeners();
   }
 }
