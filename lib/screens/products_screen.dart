@@ -123,7 +123,7 @@ class ProductsScreen extends StatelessWidget {
             springAnimationDurationInMilliseconds: 800,
             animSpeedFactor: 2,
             color: Color.fromARGB(255, 112, 82, 255),
-            backgroundColor: Color.fromARGB(255, 44, 59, 93),
+            backgroundColor: Colors.white.withOpacity(.9),
             onRefresh: () async {
               pro.refresh();
             },
@@ -253,77 +253,77 @@ class ProductsScreen extends StatelessWidget {
                                                             alignment: Alignment
                                                                 .topRight,
                                                             children: [
-                                                              Expanded(
-                                                                child:
-                                                                    Container(
-                                                                  padding: EdgeInsets
-                                                                      .fromLTRB(
-                                                                          14,
-                                                                          8,
-                                                                          0,
-                                                                          8),
-                                                                  margin: EdgeInsets.only(
-                                                                      top: 8,
-                                                                      left: 12,
-                                                                      right: 4,
-                                                                      bottom: i ==
-                                                                              dates.length - 1
-                                                                          ? 0
-                                                                          : 12),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Color.fromARGB(
-                                                                            255,
-                                                                            112,
-                                                                            82,
-                                                                            255)
-                                                                        .withOpacity(
-                                                                            .16),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .only(
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              28),
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              20),
-                                                                      bottomRight:
-                                                                          Radius.circular(
-                                                                              20),
+                                                              Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .fromLTRB(
+                                                                            14,
+                                                                            8,
+                                                                            0,
+                                                                            8),
+                                                                margin: EdgeInsets.only(
+                                                                    top: 8,
+                                                                    left: 12,
+                                                                    right: 4,
+                                                                    bottom: i ==
+                                                                            dates.length -
+                                                                                1
+                                                                        ? 0
+                                                                        : 12),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Color.fromARGB(
+                                                                          255,
+                                                                          112,
+                                                                          82,
+                                                                          255)
+                                                                      .withOpacity(
+                                                                          .16),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .only(
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                            28),
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            20),
+                                                                    bottomRight:
+                                                                        Radius.circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                child: Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          '${dates[i].mfg} - ${dates[i].exp}',
+                                                                        ),
+                                                                        Text(
+                                                                          '40%: ${dates[i].fourtyPercent}',
+                                                                        ),
+                                                                        Text(
+                                                                          '30%: ${dates[i].thirtyPerrcent}',
+                                                                        ),
+                                                                        Text(
+                                                                          '20%: ${dates[i].twentyPercent}',
+                                                                        ),
+                                                                        Text(
+                                                                          'Còn ${pro.dayLefts(dates[i].twentyPercent)} ngày',
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                  ),
-                                                                  child: Row(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            '${dates[i].mfg} - ${dates[i].exp}',
-                                                                          ),
-                                                                          Text(
-                                                                            '40%: ${dates[i].fourtyPercent}',
-                                                                          ),
-                                                                          Text(
-                                                                            '30%: ${dates[i].thirtyPerrcent}',
-                                                                          ),
-                                                                          Text(
-                                                                            '20%: ${dates[i].twentyPercent}',
-                                                                          ),
-                                                                          Text(
-                                                                            'Còn ${pro.dayLefts(dates[i].twentyPercent)} ngày',
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                               InkWell(
