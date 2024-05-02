@@ -6,6 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
+import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/screens/products_screen.dart';
 
@@ -15,10 +16,10 @@ class CalcScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 112, 82, 255),
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white10,
-          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.black12,
+          statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.light,
         ),
         title: InkWell(
@@ -39,6 +40,7 @@ class CalcScreen extends StatelessWidget {
                     SvgPicture.asset(
                       'asset/icons/search.svg',
                       fit: BoxFit.scaleDown,
+                      color: Colors.white,
                     ),
                     Expanded(
                       child: TextField(
@@ -59,7 +61,7 @@ class CalcScreen extends StatelessWidget {
                           hintStyle: Theme.of(context)
                               .textTheme
                               .bodyMedium!
-                              .copyWith(color: Colors.black87),
+                              .copyWith(color: Colors.white70),
                         ),
                       ),
                     ),
@@ -75,6 +77,7 @@ class CalcScreen extends StatelessWidget {
                     },
                     icon: Icon(
                       Icons.refresh_rounded,
+                      color: Colors.white,
                     ),
                   );
                 },
@@ -121,7 +124,7 @@ class CalcScreen extends StatelessWidget {
                           prefixIcon: SvgPicture.asset(
                             'asset/icons/sku.svg',
                             fit: BoxFit.scaleDown,
-                            color: Colors.black87,
+                            color: Colors.black.withOpacity(.8),
                           ),
                           hintText: 'Sku hoặc barcode',
                           hintStyle: Theme.of(context)
@@ -251,7 +254,7 @@ class CalcScreen extends StatelessWidget {
                                 prefixIcon: SvgPicture.asset(
                                   'asset/icons/mfg.svg',
                                   fit: BoxFit.scaleDown,
-                                  color: Colors.black87,
+                                  color: Colors.black.withOpacity(.8),
                                 ),
                                 hintText: 'Ngày sản xuất',
                                 hintStyle: Theme.of(context)
@@ -377,7 +380,7 @@ class CalcScreen extends StatelessWidget {
                                 prefixIcon: SvgPicture.asset(
                                   'asset/icons/exp.svg',
                                   fit: BoxFit.scaleDown,
-                                  color: Colors.black87,
+                                  color: Colors.black.withOpacity(.8),
                                 ),
                                 hintText: 'Hạn sử dụng',
                                 hintStyle: Theme.of(context)
@@ -600,13 +603,59 @@ class CalcScreen extends StatelessWidget {
                                                     child: Center(
                                                       child:
                                                           products.length == 1
-                                                              ? Icon(
-                                                                  Icons
-                                                                      .check_rounded,
-                                                                  size: 20,
-                                                                  color: Colors
-                                                                      .white,
-                                                                )
+                                                              ? calc.isSaved
+                                                                  ? InkWell(
+                                                                      onTap:
+                                                                          () async {
+                                                                        if (!calc
+                                                                            .isSaved) {
+                                                                          calc.addNewDate(
+                                                                            context,
+                                                                            products[index].sku.toString(),
+                                                                            calc.mfg.text,
+                                                                            calc.exp.text,
+                                                                            calc.twentyPercentLeft,
+                                                                            calc.thirtyPercentLeft,
+                                                                            calc.fourtyPercentLeft,
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .check_rounded,
+                                                                        size:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                    )
+                                                                  : InkWell(
+                                                                      onTap:
+                                                                          () async {
+                                                                        if (!calc
+                                                                            .isSaved) {
+                                                                          calc.addNewDate(
+                                                                            context,
+                                                                            products[index].sku.toString(),
+                                                                            calc.mfg.text,
+                                                                            calc.exp.text,
+                                                                            calc.twentyPercentLeft,
+                                                                            calc.thirtyPercentLeft,
+                                                                            calc.fourtyPercentLeft,
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .add_rounded,
+                                                                        size:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                    )
                                                               : Text(
                                                                   '${index + 1}',
                                                                   style: Theme.of(
@@ -628,35 +677,30 @@ class CalcScreen extends StatelessWidget {
                                                   subtitle: Text(
                                                       products[index].name),
                                                   trailing: products.length == 1
-                                                      ? InkWell(
-                                                          onTap: () async {
-                                                            if (!calc.isSaved) {
-                                                              calc.addNewDate(
-                                                                context,
-                                                                products[index]
+                                                      ? IconButton(
+                                                          highlightColor: Colors
+                                                              .transparent,
+                                                          onPressed: () {
+                                                            Provider.of<ProductsController>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .search(products[
+                                                                        index]
                                                                     .sku
-                                                                    .toString(),
-                                                                calc.mfg.text,
-                                                                calc.exp.text,
-                                                                calc.twentyPercentLeft,
-                                                                calc.thirtyPercentLeft,
-                                                                calc.fourtyPercentLeft,
-                                                              );
-                                                            }
+                                                                    .toString());
+                                                            Navigator.push(
+                                                              context,
+                                                              PageTransition(
+                                                                child:
+                                                                    ProductsScreen(),
+                                                                type: PageTransitionType
+                                                                    .rightToLeft,
+                                                              ),
+                                                            );
                                                           },
-                                                          child: Icon(
-                                                            calc.isSaved
-                                                                ? Icons
-                                                                    .bookmark_rounded
-                                                                : Icons
-                                                                    .bookmark_outline_rounded,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    44,
-                                                                    59,
-                                                                    93),
-                                                          ),
+                                                          icon: Icon(Icons
+                                                              .chevron_right_outlined),
                                                         )
                                                       : null,
                                                 ),

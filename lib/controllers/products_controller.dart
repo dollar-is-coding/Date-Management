@@ -70,6 +70,7 @@ class ProductsController extends ChangeNotifier {
   Future search(String search) async {
     dataLength = 0;
     dateShowed = [];
+    searchController.text = search;
     apiProducts = DioClient().getSearches(search);
     addDataLength();
     apiProducts!.then(
