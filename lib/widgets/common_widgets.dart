@@ -41,7 +41,10 @@ SnackBar snackBarWidget({required context, required warningText}) {
           fit: BoxFit.scaleDown,
           width: 16,
           height: 16,
-          color: Colors.white,
+          colorFilter: ColorFilter.mode(
+            Colors.white,
+            BlendMode.srcIn,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 12),

@@ -12,6 +12,7 @@ class ProductsController extends ChangeNotifier {
   List<bool> chosenOptions = [true, false, false, false];
   List<String> textOptions = ['Tất cả', '40%', '30%', '20%'];
   List<Product>? proList;
+  bool sortShowed = false;
 
   ProductsController() {
     apiProducts = DioClient().getProductList();
@@ -19,15 +20,19 @@ class ProductsController extends ChangeNotifier {
     apiProducts!.then(
       (proList) {
         proShowed = List.filled(proList!.length, true);
-        for (var i = 0; i < dataLength; i++) {
+        for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);
         }
-        print(dateShowed);
       },
     );
     scrollController.addListener(scrollListener);
+  }
+
+  showSortTool() {
+    sortShowed = !sortShowed;
+    notifyListeners();
   }
 
   scrollListener() async {
@@ -42,23 +47,29 @@ class ProductsController extends ChangeNotifier {
 
   addDataLength() {
     dataLength += 20;
-    apiProducts!.then((value) {
-      if (value != null && value.length < dataLength) {
-        dataLength = value.length;
-      }
-    });
+    apiProducts!.then(
+      (value) {
+        if (value != null && value.length < dataLength) {
+          dataLength = value.length;
+        }
+        print('new length : ${value!.length}');
+      },
+    );
     notifyListeners();
   }
 
   Future refresh() async {
-    apiProducts = DioClient().getProductList();
+    apiProducts = searchController.text.isEmpty
+        ? DioClient().getProductList()
+        : DioClient().getSearches(searchController.text);
     dataLength = 0;
     dateShowed = [];
     addDataLength();
     apiProducts!.then(
       (proList) {
-        proShowed = List.filled(proList!.length, true);
-        for (var i = 0; i < dataLength; i++) {
+        print('refresh length: ${proList!.length}');
+        proShowed = List.filled(proList.length, true);
+        for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);
@@ -78,7 +89,7 @@ class ProductsController extends ChangeNotifier {
     apiProducts!.then(
       (proList) {
         proShowed = List.filled(proList!.length, true);
-        for (var i = 0; i < dataLength; i++) {
+        for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);

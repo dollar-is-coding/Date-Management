@@ -6,6 +6,28 @@ class DioClient {
   final _urlBase =
       'https://script.google.com/macros/s/AKfycbwpfp4VSBuUzkQzKYYhLyAInJU9nVYWEteevee1hAQSFnTIDxm233_HDGv-QfNePFaGeA/exec';
 
+  // Calculate date percentage
+  int count(String mfg, exp) {
+    DateTime start = DateTime(
+      int.parse(mfg.substring(6, 10)),
+      int.parse(mfg.substring(3, 5)),
+      int.parse(mfg.substring(0, 2)),
+    );
+    DateTime end = DateTime(
+      int.parse(exp.substring(6, 10)),
+      int.parse(exp.substring(3, 5)),
+      int.parse(exp.substring(0, 2)),
+    );
+    DateTime now = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    int fullRangeTime = end.difference(start).inDays;
+    int leftRangeTime = end.difference(now).inDays;
+    return (leftRangeTime / fullRangeTime * 100).round().toInt();
+  }
+
   // Lấy ds sản phẩm
   Future<List<Product>?> getProductList() async {
     var response = await _dio.get(_urlBase);
@@ -15,6 +37,13 @@ class DioClient {
         var getProducts = response.data as List;
         // print(getProducts);
         products = getProducts.map((e) => Product.fromJson(e)).toList();
+        for (var i = 0; i < products.length; i++) {
+          products[i].dates.sort(
+                (a, b) => count(a.mfg, a.exp).compareTo(
+                  count(b.mfg, b.exp),
+                ),
+              );
+        }
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {
@@ -35,6 +64,13 @@ class DioClient {
         // print(getProducts);
         products =
             getProducts.take(20).map((e) => Product.fromJson(e)).toList();
+        for (var i = 0; i < products.length; i++) {
+          products[i].dates.sort(
+                (a, b) => count(a.mfg, a.exp).compareTo(
+                  count(b.mfg, b.exp),
+                ),
+              );
+        }
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {

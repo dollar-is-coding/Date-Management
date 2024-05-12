@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/products_controller.dart';
@@ -55,7 +56,10 @@ class ProductsScreen extends StatelessWidget {
                           'asset/icons/search.svg',
                           width: 20,
                           height: 20,
-                          color: Colors.black.withOpacity(.8),
+                          colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(.8),
+                            BlendMode.srcIn,
+                          ),
                           fit: BoxFit.scaleDown,
                         ),
                         Expanded(
@@ -97,21 +101,27 @@ class ProductsScreen extends StatelessWidget {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: IconButton(
-                padding: EdgeInsets.only(left: 12),
-                constraints: BoxConstraints(),
-                highlightColor: Colors.transparent,
-                onPressed: () {},
-                style: ButtonStyle(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                icon: Icon(
-                  Icons.tune_rounded,
-                  color: Colors.white,
-                ),
-              ),
+            Consumer<ProductsController>(
+              builder: (context, value, child) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: IconButton(
+                    padding: EdgeInsets.only(left: 12),
+                    constraints: BoxConstraints(),
+                    highlightColor: Colors.transparent,
+                    onPressed: () {
+                      value.showSortTool();
+                    },
+                    style: ButtonStyle(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: Icon(
+                      Icons.tune_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -129,68 +139,74 @@ class ProductsScreen extends StatelessWidget {
             },
             child: Column(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 44,
-                  margin: EdgeInsets.fromLTRB(20, 10, 20, 8),
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 210, 225, 255),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(.04),
-                        spreadRadius: 2,
-                        blurRadius: 2,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: List.generate(
-                      4,
-                      (index) {
-                        return Expanded(
-                          flex: pro.chosenOptions[index] ? 3 : 2,
-                          child: InkWell(
-                            onTap: () => pro.changeOption(index),
-                            child: Container(
-                              height: 44,
-                              margin: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: pro.chosenOptions[index]
-                                    ? Color.fromARGB(255, 112, 82, 255)
-                                    : null,
-                                boxShadow: pro.chosenOptions[index]
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(.02),
-                                          spreadRadius: 2,
-                                          blurRadius: 2,
-                                          offset: Offset(0, 2),
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  pro.textOptions[index],
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                          color: pro.chosenOptions[index]
-                                              ? Colors.white
-                                              : null),
-                                ),
-                              ),
+                pro.sortShowed
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 44,
+                        margin: EdgeInsets.fromLTRB(20, 10, 20, 8),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(.04),
+                              spreadRadius: 2,
+                              blurRadius: 2,
+                              offset: Offset(0, 2),
                             ),
+                          ],
+                        ),
+                        child: Row(
+                          children: List.generate(
+                            4,
+                            (index) {
+                              return Expanded(
+                                flex: pro.chosenOptions[index] ? 3 : 2,
+                                child: InkWell(
+                                  onTap: () async {
+                                    pro.changeOption(index);
+                                    // pro.filterProducts(index);
+                                  },
+                                  child: Container(
+                                    height: 44,
+                                    margin: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: pro.chosenOptions[index]
+                                          ? Color.fromARGB(255, 112, 82, 255)
+                                          : null,
+                                      boxShadow: pro.chosenOptions[index]
+                                          ? [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(.02),
+                                                spreadRadius: 2,
+                                                blurRadius: 2,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ]
+                                          : null,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        pro.textOptions[index],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                                color: pro.chosenOptions[index]
+                                                    ? Colors.white
+                                                    : null),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                        ),
+                      )
+                    : Container(),
                 Container(
                   child: Expanded(
                     child: FutureBuilder<List<Product>?>(
@@ -199,7 +215,10 @@ class ProductsScreen extends StatelessWidget {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return Center(
-                            child: CircularProgressIndicator(),
+                            child: LoadingAnimationWidget.fourRotatingDots(
+                              color: Color.fromARGB(255, 112, 82, 255),
+                              size: 30,
+                            ),
                           );
                         } else if (snapshot.hasData) {
                           var products = snapshot.data;
@@ -241,7 +260,8 @@ class ProductsScreen extends StatelessWidget {
                                                 vertical: -4,
                                               ),
                                               title: Text(
-                                                products[index].sku.toString(),
+                                                products[index].sku.toString() +
+                                                    ' (${products[index].dates.length})',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyMedium,
@@ -406,15 +426,18 @@ class ProductsScreen extends StatelessWidget {
                                             ),
                                           );
                                   } else {
-                                    return (pro.dataLength < 20 ||
-                                            pro.dataLength % 2 != 0)
+                                    return (pro.dataLength <= 20 ||
+                                            pro.dataLength % 20 != 0)
                                         ? Container()
                                         : Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 20),
                                             child: Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                              child: LoadingAnimationWidget
+                                                  .staggeredDotsWave(
+                                                color: Colors.blue,
+                                                size: 30,
+                                              ),
                                             ),
                                           );
                                   }

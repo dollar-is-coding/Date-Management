@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
-import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/screens/products_screen.dart';
 
@@ -40,7 +40,10 @@ class CalcScreen extends StatelessWidget {
                     SvgPicture.asset(
                       'asset/icons/search.svg',
                       fit: BoxFit.scaleDown,
-                      color: Colors.white,
+                      colorFilter: ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     Expanded(
                       child: TextField(
@@ -94,11 +97,12 @@ class CalcScreen extends StatelessWidget {
               padding: EdgeInsets.all(12),
               child: Column(
                 children: [
+                  // sku & barcode
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(.04),
@@ -124,7 +128,10 @@ class CalcScreen extends StatelessWidget {
                           prefixIcon: SvgPicture.asset(
                             'asset/icons/sku.svg',
                             fit: BoxFit.scaleDown,
-                            color: Colors.black.withOpacity(.8),
+                            colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(.8),
+                              BlendMode.srcIn,
+                            ),
                           ),
                           hintText: 'Sku hoặc barcode',
                           hintStyle: Theme.of(context)
@@ -132,14 +139,14 @@ class CalcScreen extends StatelessWidget {
                               .bodySmall!
                               .copyWith(color: Colors.grey.shade500),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(
                               width: 1,
                               color: Colors.transparent,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(
                               width: 1,
                               color: Color.fromARGB(255, 227, 227, 227),
@@ -149,14 +156,16 @@ class CalcScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // mfg & exp
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: Row(
                       children: [
+                        // mfg
                         Flexible(
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(.04),
@@ -254,7 +263,10 @@ class CalcScreen extends StatelessWidget {
                                 prefixIcon: SvgPicture.asset(
                                   'asset/icons/mfg.svg',
                                   fit: BoxFit.scaleDown,
-                                  color: Colors.black.withOpacity(.8),
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.8),
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                                 hintText: 'Ngày sản xuất',
                                 hintStyle: Theme.of(context)
@@ -262,14 +274,14 @@ class CalcScreen extends StatelessWidget {
                                     .bodySmall!
                                     .copyWith(color: Colors.grey.shade500),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(
                                     width: 1,
                                     color: Colors.transparent,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(
                                     width: 1,
                                     color: Color.fromARGB(255, 227, 227, 227),
@@ -280,10 +292,11 @@ class CalcScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(padding: EdgeInsets.only(left: 12)),
+                        // exp
                         Flexible(
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(.04),
@@ -380,7 +393,10 @@ class CalcScreen extends StatelessWidget {
                                 prefixIcon: SvgPicture.asset(
                                   'asset/icons/exp.svg',
                                   fit: BoxFit.scaleDown,
-                                  color: Colors.black.withOpacity(.8),
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.8),
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                                 hintText: 'Hạn sử dụng',
                                 hintStyle: Theme.of(context)
@@ -388,14 +404,14 @@ class CalcScreen extends StatelessWidget {
                                     .bodySmall!
                                     .copyWith(color: Colors.grey.shade500),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(
                                     width: 1,
                                     color: Colors.transparent,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(
                                     width: 1,
                                     color: Color.fromARGB(255, 227, 227, 227),
@@ -408,11 +424,12 @@ class CalcScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // Button
                   Container(
                     width: MediaQuery.of(context).size.width * .4,
                     margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(.04),
@@ -428,7 +445,7 @@ class CalcScreen extends StatelessWidget {
                         shadowColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         backgroundColor: Color.fromARGB(255, 112, 82, 255),
                       ),
@@ -441,7 +458,10 @@ class CalcScreen extends StatelessWidget {
                         children: [
                           SvgPicture.asset(
                             'asset/icons/search.svg',
-                            color: Colors.white,
+                            colorFilter: ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
                             width: 16,
                             height: 16,
                             fit: BoxFit.scaleDown,
@@ -463,263 +483,329 @@ class CalcScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  !calc.isResultShowed
-                      ? Container()
-                      : Container(
-                          padding: EdgeInsets.fromLTRB(20, 20, 20, 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(.04),
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
+                  // result
+                  Container(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(.04),
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Column(
+                        children: [
+                          // Date calced
+                          Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Row(
+                              IntrinsicWidth(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    IntrinsicWidth(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 12),
-                                            child:
-                                                Text('NSX: ${calc.mfg.text}'),
-                                          ),
-                                          Divider(
-                                            color: Colors.grey.shade300,
-                                            height: 8,
-                                          ),
-                                          Text('HSD: ${calc.exp.text}'),
-                                          Divider(
-                                            color: Colors.grey.shade300,
-                                            height: 8,
-                                          ),
-                                          Text(
-                                              '40%: ${calc.fourtyPercentLeft}'),
-                                          Divider(
-                                            color: Colors.grey.shade300,
-                                            height: 8,
-                                          ),
-                                          Text(
-                                              '30%: ${calc.thirtyPercentLeft}'),
-                                          Divider(
-                                            color: Colors.grey.shade300,
-                                            height: 8,
-                                          ),
-                                          Text(
-                                              '20%: ${calc.twentyPercentLeft}'),
-                                          Divider(
-                                            color: Colors.grey.shade300,
-                                            height: 8,
-                                          ),
-                                          Text('Còn: ${calc.allowedDay} ngày'),
-                                        ],
-                                      ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: Text('NSX: ${calc.mfg.text}'),
                                     ),
-                                    Expanded(
-                                      child: CircularPercentIndicator(
-                                        radius:
-                                            MediaQuery.of(context).size.width *
-                                                .14,
-                                        animation: true,
-                                        animationDuration: 1000,
-                                        lineWidth: 10,
-                                        percent: calc.currentPercent / 100,
-                                        center: Text(
-                                          calc.currentPercent.toString() + '%',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge,
-                                        ),
-                                        circularStrokeCap:
-                                            CircularStrokeCap.round,
-                                        backgroundColor:
-                                            Color.fromARGB(255, 210, 225, 255),
-                                        progressColor:
-                                            Color.fromARGB(255, 112, 82, 255),
-                                      ),
+                                    Divider(
+                                      color: Colors.grey.shade300,
+                                      height: 8,
                                     ),
+                                    Text('HSD: ${calc.exp.text}'),
+                                    Divider(
+                                      color: Colors.grey.shade300,
+                                      height: 8,
+                                    ),
+                                    Text('40%: ${calc.fourtyPercentLeft}'),
+                                    Divider(
+                                      color: Colors.grey.shade300,
+                                      height: 8,
+                                    ),
+                                    Text('30%: ${calc.thirtyPercentLeft}'),
+                                    Divider(
+                                      color: Colors.grey.shade300,
+                                      height: 8,
+                                    ),
+                                    Text('20%: ${calc.twentyPercentLeft}'),
+                                    Divider(
+                                      color: Colors.grey.shade300,
+                                      height: 8,
+                                    ),
+                                    Text('Còn: ${calc.allowedDay} ngày'),
                                   ],
                                 ),
                               ),
-                              FutureBuilder<List<Product>?>(
-                                future: calc.apiProducts,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
-                                  } else if (snapshot.hasData) {
-                                    var products = snapshot.data;
-                                    return Column(
-                                      children: List.generate(
-                                        products!.length,
-                                        (index) {
-                                          return Column(
-                                            children: [
-                                              index > 0
-                                                  ? Container()
-                                                  : Divider(height: 0),
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  products.length > 1
-                                                      ? calc.getProduct(index)
-                                                      : null;
+                              Expanded(
+                                child: CircularPercentIndicator(
+                                  radius:
+                                      MediaQuery.of(context).size.width * .14,
+                                  animation: true,
+                                  animationDuration: 1000,
+                                  lineWidth: 10,
+                                  percent: calc.currentPercent / 100,
+                                  center: Text(
+                                    calc.currentPercent.toString() + '%',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                  backgroundColor:
+                                      Color.fromARGB(255, 210, 225, 255),
+                                  progressColor:
+                                      Color.fromARGB(255, 112, 82, 255),
+                                ),
+                              ),
+                            ],
+                          ),
+                          // result ffrom API
+                          FutureBuilder<List<Product>?>(
+                            future: calc.productApi,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return LoadingAnimationWidget.staggeredDotsWave(
+                                  color: Color.fromARGB(255, 112, 82, 255),
+                                  size: 30,
+                                );
+                              } else if (snapshot.hasData) {
+                                var products = snapshot.data;
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Column(
+                                    children: [
+                                      Divider(
+                                        color: Colors.grey.shade300,
+                                        height: 8,
+                                      ),
+                                      products!.length > 1
+                                          ?
+                                          // Có nhiều hơn 1 sản phẩm hiển thị
+                                          Column(
+                                              children: List.generate(
+                                                products.length,
+                                                (index) {
+                                                  return CheckboxListTile(
+                                                    value:
+                                                        calc.checkboxes[index],
+                                                    onChanged: (value) => calc
+                                                        .chooseProduct(index),
+                                                    dense: true,
+                                                    activeColor: Color.fromARGB(
+                                                        255, 112, 82, 255),
+                                                    visualDensity:
+                                                        VisualDensity(
+                                                      horizontal: -4,
+                                                      vertical: -2,
+                                                    ),
+                                                    contentPadding:
+                                                        EdgeInsets.all(0),
+                                                    title: Text(
+                                                      products[index]
+                                                          .sku
+                                                          .toString(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                    subtitle: Text(
+                                                      products[index].name,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                              color: Colors
+                                                                  .black54),
+                                                    ),
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                  );
                                                 },
-                                                child: ListTile(
+                                              ),
+                                            )
+                                          :
+                                          // Chỉ có 1 sản phẩm
+                                          Column(
+                                              children: [
+                                                ListTile(
                                                   dense: true,
-                                                  horizontalTitleGap: 10,
-                                                  enableFeedback: true,
+                                                  visualDensity: VisualDensity(
+                                                    horizontal: -4,
+                                                    vertical: -2,
+                                                  ),
                                                   contentPadding:
                                                       EdgeInsets.all(0),
-                                                  visualDensity: VisualDensity(
-                                                    horizontal: 0,
-                                                    vertical: -4,
-                                                  ),
                                                   leading: Container(
-                                                    width: 28,
-                                                    height: 28,
+                                                    width: 30,
+                                                    height: 30,
                                                     decoration: BoxDecoration(
-                                                      color: products.length ==
-                                                              1
-                                                          ? Color.fromARGB(
-                                                              255, 112, 82, 255)
-                                                          : Color.fromARGB(255,
-                                                              222, 224, 226),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              50),
+                                                              20),
                                                     ),
-                                                    child: Center(
-                                                      child:
-                                                          products.length == 1
-                                                              ? calc.isSaved
-                                                                  ? InkWell(
-                                                                      onTap:
-                                                                          () async {
-                                                                        if (!calc
-                                                                            .isSaved) {
-                                                                          calc.addNewDate(
-                                                                            context,
-                                                                            products[index].sku.toString(),
-                                                                            calc.mfg.text,
-                                                                            calc.exp.text,
-                                                                            calc.twentyPercentLeft,
-                                                                            calc.thirtyPercentLeft,
-                                                                            calc.fourtyPercentLeft,
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .check_rounded,
-                                                                        size:
-                                                                            20,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    )
-                                                                  : InkWell(
-                                                                      onTap:
-                                                                          () async {
-                                                                        if (!calc
-                                                                            .isSaved) {
-                                                                          calc.addNewDate(
-                                                                            context,
-                                                                            products[index].sku.toString(),
-                                                                            calc.mfg.text,
-                                                                            calc.exp.text,
-                                                                            calc.twentyPercentLeft,
-                                                                            calc.thirtyPercentLeft,
-                                                                            calc.fourtyPercentLeft,
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .add_rounded,
-                                                                        size:
-                                                                            20,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    )
-                                                              : Text(
-                                                                  '${index + 1}',
-                                                                  style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .bodySmall!
-                                                                      .copyWith(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                      ),
-                                                                ),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        calc.saveNewDate(
+                                                            products[0]
+                                                                .sku
+                                                                .toString(),
+                                                            context);
+                                                      },
+                                                      child: Icon(
+                                                        calc.isSaved
+                                                            ? Icons
+                                                                .bookmark_rounded
+                                                            : Icons
+                                                                .bookmark_outline_rounded,
+                                                        color: Color.fromARGB(
+                                                            255, 112, 82, 255),
+                                                      ),
                                                     ),
                                                   ),
                                                   title: Text(
-                                                    products[index]
-                                                        .sku
-                                                        .toString(),
+                                                    '${products[0].sku} (${products[0].dates.length})',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
                                                   ),
                                                   subtitle: Text(
-                                                      products[index].name),
-                                                  trailing: products.length == 1
-                                                      ? IconButton(
-                                                          highlightColor: Colors
-                                                              .transparent,
-                                                          onPressed: () {
-                                                            Provider.of<ProductsController>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .search(products[
-                                                                        index]
-                                                                    .sku
-                                                                    .toString());
-                                                            Navigator.push(
-                                                              context,
-                                                              PageTransition(
-                                                                child:
-                                                                    ProductsScreen(),
-                                                                type: PageTransitionType
-                                                                    .rightToLeft,
-                                                              ),
-                                                            );
-                                                          },
-                                                          icon: Icon(Icons
-                                                              .chevron_right_outlined),
-                                                        )
-                                                      : null,
+                                                    products[0].name,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            color:
+                                                                Colors.black54),
+                                                  ),
                                                 ),
-                                              ),
-                                              index == products.length - 1
-                                                  ? Container()
-                                                  : Divider(height: 0),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  }
-                                  return Container();
-                                },
-                              )
-                            ],
+                                                Column(
+                                                  children: List.generate(
+                                                    products[0].dates.length,
+                                                    (i) {
+                                                      var dates =
+                                                          products[0].dates;
+                                                      return Column(
+                                                        children: [
+                                                          Stack(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            children: [
+                                                              Stack(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                children: [
+                                                                  Container(
+                                                                    width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width,
+                                                                    height: 16,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          210,
+                                                                          225,
+                                                                          255),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        100 *
+                                                                        calc.count(
+                                                                            dates[i].mfg,
+                                                                            dates[i].exp),
+                                                                    height: 16,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          112,
+                                                                          82,
+                                                                          255),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                '${calc.count(dates[i].mfg, dates[i].exp)}%',
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall!
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .white),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    top: 4,
+                                                                    bottom: 10),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  dates[i].mfg,
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodySmall,
+                                                                ),
+                                                                Text(
+                                                                  '${calc.dayLefts(dates[i].twentyPercent)} ngày',
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodySmall,
+                                                                ),
+                                                                Text(
+                                                                  dates[i].exp,
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .bodySmall,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              return Container();
+                            },
                           ),
-                        ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
