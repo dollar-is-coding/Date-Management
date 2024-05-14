@@ -18,6 +18,7 @@ class CalcController extends ChangeNotifier {
   int allowedDay = 0;
   int dataLength = 0;
   bool isSaved = false;
+  bool isShowResult = false;
   List<bool> checkboxes = [];
   late String twentyPercentLeft = '';
   late String thirtyPercentLeft = '';
@@ -33,23 +34,7 @@ class CalcController extends ChangeNotifier {
     DateTime.now().day,
   );
 
-  clearAllFocus(context) {
-    FocusScope.of(context).requestFocus(FocusNode());
-  }
-
-  changeMfg(DateTime date) {
-    mfgDate = date;
-    mfg.text = DateFormat('dd/MM/yyyy').format(mfgDate);
-    notifyListeners();
-  }
-
-  changeExp(DateTime date) {
-    expDate = date;
-    exp.text = DateFormat('dd/MM/yyyy').format(expDate);
-    notifyListeners();
-  }
-
-  getResult(context) async {
+  showResult(context) async {
     isSaved = false;
     DateTime now = DateTime(
       DateTime.now().year,
@@ -72,16 +57,17 @@ class CalcController extends ChangeNotifier {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (sku.text.isEmpty) {
-      calcDate();
+      calcThingsAboutDate();
+      isShowResult = true;
     } else {
-      calcDate();
-      getProductFromApi();
+      calcThingsAboutDate();
+      getProducts();
+      isShowResult = true;
     }
     notifyListeners();
   }
 
-  // Calculate day lefts
-  calcDate() {
+  calcThingsAboutDate() {
     int twentyPercent = 0, thirtyPercent = 0, fourtyPercent = 0;
     totalDay = expDate.difference(mfgDate).inDays;
     currentPercent = (expDate
@@ -116,8 +102,8 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  getProductFromApi() {
-    productApi = DioClient().getCalc(sku.text);
+  getProducts() {
+    productApi = DioClient().getAnyProducts(sku.text);
     productApi!.then((value) {
       dataLength = value!.length;
       checkboxes = List.filled(dataLength, false);
@@ -125,13 +111,26 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  chooseProduct(int index) {
+  saveNewDate(String sku, context) {
+    isSaved = true;
+    DioClient().addNewDateToSheet(
+      sku,
+      mfg.text,
+      exp.text,
+      twentyPercentLeft,
+      thirtyPercentLeft,
+      fourtyPercentLeft,
+    );
+    snackBar = snackBarWidget(context: context, warningText: 'Đã lưu date mới');
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    notifyListeners();
+  }
+
+  chooseDisplayProduct(int index) {
     var tempItem;
     productApi!.then((value) {
       tempItem = value![index];
-      do {
-        value.removeAt(0);
-      } while (value.length > 0);
+      value.clear();
       value.add(tempItem);
     });
     checkboxes.fillRange(0, dataLength, false);
@@ -139,10 +138,11 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  refreshScreen() {
+  clearScreen() {
     sku.clear();
     mfg.clear();
     exp.clear();
+    isShowResult = false;
     mfgDate = DateTime(
       DateTime.now().year,
       DateTime.now().month,
@@ -156,7 +156,7 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  int count(String mfg, exp) {
+  int calcCurrentPercent(String mfg, exp) {
     DateTime start = DateTime(
       int.parse(mfg.substring(6, 10)),
       int.parse(mfg.substring(3, 5)),
@@ -177,7 +177,7 @@ class CalcController extends ChangeNotifier {
     return (leftRangeTime / fullRangeTime * 100).round().toInt();
   }
 
-  int dayLefts(String twenty_pct) {
+  int calcRemainingDays(String twenty_pct) {
     DateTime twenty = DateTime(
       int.parse(twenty_pct.substring(6, 10)),
       int.parse(twenty_pct.substring(3, 5)),
@@ -191,18 +191,19 @@ class CalcController extends ChangeNotifier {
     return twenty.difference(now).inDays;
   }
 
-  saveNewDate(String sku, context) {
-    isSaved = true;
-    DioClient().setDate(
-      sku,
-      mfg.text,
-      exp.text,
-      twentyPercentLeft,
-      thirtyPercentLeft,
-      fourtyPercentLeft,
-    );
-    snackBar = snackBarWidget(context: context, warningText: 'Đã lưu date mới');
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  clearAllFocuses(context) {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  changeMfg(DateTime date) {
+    mfgDate = date;
+    mfg.text = DateFormat('dd/MM/yyyy').format(mfgDate);
+    notifyListeners();
+  }
+
+  changeExp(DateTime date) {
+    expDate = date;
+    exp.text = DateFormat('dd/MM/yyyy').format(expDate);
     notifyListeners();
   }
 }

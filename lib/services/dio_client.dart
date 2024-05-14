@@ -4,92 +4,24 @@ import 'package:sg_date/models/product.dart';
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbwpfp4VSBuUzkQzKYYhLyAInJU9nVYWEteevee1hAQSFnTIDxm233_HDGv-QfNePFaGeA/exec';
+      'https://script.google.com/macros/s/AKfycbxmAZ50IO9PpuNEEvWMbspZoCH3cUarckgwaYkZG0_EhLcOFHUemN44FGnqxL8k1RTPJQ/exec';
 
-  // Calculate date percentage
-  int count(String mfg, exp) {
-    DateTime start = DateTime(
-      int.parse(mfg.substring(6, 10)),
-      int.parse(mfg.substring(3, 5)),
-      int.parse(mfg.substring(0, 2)),
-    );
-    DateTime end = DateTime(
-      int.parse(exp.substring(6, 10)),
-      int.parse(exp.substring(3, 5)),
-      int.parse(exp.substring(0, 2)),
-    );
-    DateTime now = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-    int fullRangeTime = end.difference(start).inDays;
-    int leftRangeTime = end.difference(now).inDays;
-    return (leftRangeTime / fullRangeTime * 100).round().toInt();
-  }
-
-  // Lấy ds sản phẩm
-  Future<List<Product>?> getProductList() async {
-    var response = await _dio.get(_urlBase);
+  Future<List<Product>?> getAnyProducts(String product) async {
+    var response = await _dio.get(_urlBase + '?search=' + product);
     List<Product>? products;
     try {
       if (response.statusCode == 200) {
         var getProducts = response.data as List;
-        // print(getProducts);
-        products = getProducts.map((e) => Product.fromJson(e)).toList();
-        for (var i = 0; i < products.length; i++) {
-          products[i].dates.sort(
-                (a, b) => count(a.mfg, a.exp).compareTo(
-                  count(b.mfg, b.exp),
-                ),
-              );
-        }
-      } else
-        print('Status code is ' + response.statusCode.toString());
-    } catch (e) {
-      print(e);
-    }
-    return products;
-  }
-
-  // tìm sản phẩm có ghi date
-  Future<List<Product>?> getSearches(String search) async {
-    var response = await _dio.get(
-      _urlBase + '?search=' + search + '&isDate=true',
-    );
-    List<Product>? products;
-    try {
-      if (response.statusCode == 200) {
-        var getProducts = response.data as List;
-        // print(getProducts);
-        products =
-            getProducts.take(20).map((e) => Product.fromJson(e)).toList();
-        for (var i = 0; i < products.length; i++) {
-          products[i].dates.sort(
-                (a, b) => count(a.mfg, a.exp).compareTo(
-                  count(b.mfg, b.exp),
-                ),
-              );
-        }
-      } else
-        print('Status code is ' + response.statusCode.toString());
-    } catch (e) {
-      print(e);
-    }
-    return products;
-  }
-
-  // Tìm sản phẩm bất kỳ không quan tâm có ghi date hay không
-  Future<List<Product>?> getCalc(String calc) async {
-    var response = await _dio.get(_urlBase + '?search=' + calc);
-    List<Product>? products;
-    try {
-      if (response.statusCode == 200) {
-        var getProducts = response.data as List;
-        // print(getProducts);
         products = getProducts.take(20).map((e) {
           return Product.fromJson(e);
         }).toList();
+        for (var i = 0; i < products.length; i++) {
+          products[i].dates.sort(
+                (a, b) => calcCurrentPercent(a.mfg, a.exp).compareTo(
+                  calcCurrentPercent(b.mfg, b.exp),
+                ),
+              );
+        }
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {
@@ -98,7 +30,32 @@ class DioClient {
     return products;
   }
 
-  setDate(
+  Future<List<Product>?> searchForDatedProductsWithFilter(
+      String product, int filter) async {
+    var response = await _dio.get(
+      _urlBase + '?search=${product}&isDate=true&percent=${filter}',
+    );
+    List<Product>? products;
+    try {
+      if (response.statusCode == 200) {
+        var getProducts = response.data as List;
+        products = getProducts.map((e) => Product.fromJson(e)).toList();
+        for (var i = 0; i < products.length; i++) {
+          products[i].dates.sort(
+                (a, b) => calcCurrentPercent(a.mfg, a.exp).compareTo(
+                  calcCurrentPercent(b.mfg, b.exp),
+                ),
+              );
+        }
+      } else
+        print('Status code is ' + response.statusCode.toString());
+    } catch (e) {
+      print(e);
+    }
+    return products;
+  }
+
+  addNewDateToSheet(
     String sku,
     String mfg,
     String exp,
@@ -132,7 +89,7 @@ class DioClient {
     }
   }
 
-  removeDate(String id) async {
+  removeDateFromSheet(String id) async {
     try {
       var response = await _dio.post(_urlBase + '?id=' + id);
       if (response.statusCode == 200) {
@@ -143,5 +100,26 @@ class DioClient {
     } catch (e) {
       print(e);
     }
+  }
+
+  int calcCurrentPercent(String mfg, exp) {
+    DateTime start = DateTime(
+      int.parse(mfg.substring(6, 10)),
+      int.parse(mfg.substring(3, 5)),
+      int.parse(mfg.substring(0, 2)),
+    );
+    DateTime end = DateTime(
+      int.parse(exp.substring(6, 10)),
+      int.parse(exp.substring(3, 5)),
+      int.parse(exp.substring(0, 2)),
+    );
+    DateTime now = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    int fullRangeTime = end.difference(start).inDays;
+    int leftRangeTime = end.difference(now).inDays;
+    return (leftRangeTime / fullRangeTime * 100).round().toInt();
   }
 }

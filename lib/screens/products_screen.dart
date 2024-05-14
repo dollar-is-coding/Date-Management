@@ -32,9 +32,13 @@ class ProductsScreen extends StatelessWidget {
                 style: ButtonStyle(
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
+                icon: SvgPicture.asset(
+                  'asset/icons/arrow_left_icon.svg',
+                  fit: BoxFit.scaleDown,
+                  colorFilter: ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -53,7 +57,7 @@ class ProductsScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         SvgPicture.asset(
-                          'asset/icons/search.svg',
+                          'asset/icons/search2_icon.svg',
                           width: 20,
                           height: 20,
                           colorFilter: ColorFilter.mode(
@@ -90,8 +94,11 @@ class ProductsScreen extends StatelessWidget {
                                   .bodySmall!
                                   .copyWith(color: Colors.black54),
                             ),
-                            onChanged: (value) async {
-                              pro.search(value);
+                            onSubmitted: (value) async {
+                              pro.searchWithFilter(
+                                pro.chosenOptions.indexOf(true),
+                                value,
+                              );
                             },
                           ),
                         ),
@@ -109,15 +116,17 @@ class ProductsScreen extends StatelessWidget {
                     padding: EdgeInsets.only(left: 12),
                     constraints: BoxConstraints(),
                     highlightColor: Colors.transparent,
-                    onPressed: () {
-                      value.showSortTool();
-                    },
+                    onPressed: () => value.changeFilterShowed(),
                     style: ButtonStyle(
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    icon: Icon(
-                      Icons.tune_rounded,
-                      color: Colors.white,
+                    icon: SvgPicture.asset(
+                      'asset/icons/filter_icon.svg',
+                      fit: BoxFit.scaleDown,
+                      colorFilter: ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 );
@@ -135,69 +144,62 @@ class ProductsScreen extends StatelessWidget {
             color: Color.fromARGB(255, 112, 82, 255),
             backgroundColor: Colors.white.withOpacity(.9),
             onRefresh: () async {
-              pro.refresh();
+              pro.searchWithFilter(
+                pro.chosenOptions.indexOf(true),
+                pro.searchController.text,
+              );
             },
-            child: Column(
+            child: ListView(
+              physics: AlwaysScrollableScrollPhysics(),
               children: [
-                pro.sortShowed
-                    ? Container(
+                !pro.filterShowed
+                    ? Container()
+                    : Container(
                         width: MediaQuery.of(context).size.width,
                         height: 44,
-                        margin: EdgeInsets.fromLTRB(20, 10, 20, 8),
+                        margin: EdgeInsets.fromLTRB(12, 8, 12, 0),
                         decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(.04),
                               spreadRadius: 2,
-                              blurRadius: 2,
-                              offset: Offset(0, 2),
+                              blurRadius: 3,
+                              offset: Offset(0, 0),
                             ),
                           ],
                         ),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: List.generate(
                             4,
                             (index) {
-                              return Expanded(
-                                flex: pro.chosenOptions[index] ? 3 : 2,
-                                child: InkWell(
-                                  onTap: () async {
-                                    pro.changeOption(index);
-                                    // pro.filterProducts(index);
-                                  },
-                                  child: Container(
-                                    height: 44,
-                                    margin: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: pro.chosenOptions[index]
-                                          ? Color.fromARGB(255, 112, 82, 255)
-                                          : null,
-                                      boxShadow: pro.chosenOptions[index]
-                                          ? [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(.02),
-                                                spreadRadius: 2,
-                                                blurRadius: 2,
-                                                offset: Offset(0, 2),
-                                              ),
-                                            ]
-                                          : null,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        pro.textOptions[index],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                color: pro.chosenOptions[index]
-                                                    ? Colors.white
-                                                    : null),
-                                      ),
+                              return InkWell(
+                                onTap: () async {
+                                  pro.changeFilterOption(index);
+                                  pro.searchWithFilter(
+                                    index,
+                                    pro.searchController.text,
+                                  );
+                                },
+                                child: Container(
+                                  height: 44,
+                                  margin: EdgeInsets.all(2),
+                                  child: Center(
+                                    child: Text(
+                                      pro.textOptions[index],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: pro.chosenOptions[index]
+                                                ? Colors.black
+                                                : Colors.black54,
+                                            fontWeight: pro.chosenOptions[index]
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -205,8 +207,7 @@ class ProductsScreen extends StatelessWidget {
                             },
                           ),
                         ),
-                      )
-                    : Container(),
+                      ),
                 Container(
                   child: Expanded(
                     child: FutureBuilder<List<Product>?>(
@@ -214,10 +215,14 @@ class ProductsScreen extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(
-                            child: LoadingAnimationWidget.fourRotatingDots(
-                              color: Color.fromARGB(255, 112, 82, 255),
-                              size: 30,
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * .8,
+                            child: Center(
+                              child: LoadingAnimationWidget.fourRotatingDots(
+                                color: Color.fromARGB(255, 112, 82, 255),
+                                size: 30,
+                              ),
                             ),
                           );
                         } else if (snapshot.hasData) {
@@ -225,7 +230,6 @@ class ProductsScreen extends StatelessWidget {
                           if (products!.length > 0) {
                             return ListView(
                               shrinkWrap: true,
-                              physics: AlwaysScrollableScrollPhysics(),
                               controller: pro.scrollController,
                               children: List.generate(
                                 pro.dataLength + 1,
@@ -237,7 +241,7 @@ class ProductsScreen extends StatelessWidget {
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(12),
+                                                  BorderRadius.circular(4),
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.black
@@ -249,12 +253,12 @@ class ProductsScreen extends StatelessWidget {
                                               ],
                                             ),
                                             margin: EdgeInsets.fromLTRB(
-                                                12, 4, 12, 4),
+                                                12, index == 0 ? 8 : 2, 12, 4),
                                             child: ExpansionTile(
                                               shape: Border(),
                                               dense: true,
                                               childrenPadding:
-                                                  EdgeInsets.only(bottom: 16),
+                                                  EdgeInsets.only(bottom: 12),
                                               visualDensity: VisualDensity(
                                                 horizontal: 0,
                                                 vertical: -4,
@@ -308,10 +312,10 @@ class ProductsScreen extends StatelessWidget {
                                                                             lineWidth:
                                                                                 6.0,
                                                                             percent:
-                                                                                pro.count(dates[i].mfg, dates[i].exp) / 100,
+                                                                                pro.calcCurrentPercent(dates[i].mfg, dates[i].exp) / 100,
                                                                             center:
                                                                                 Text(
-                                                                              pro.count(dates[i].mfg, dates[i].exp).toString() + '%',
+                                                                              pro.calcCurrentPercent(dates[i].mfg, dates[i].exp).toString() + '%',
                                                                               style: Theme.of(context).textTheme.bodySmall,
                                                                             ),
                                                                             circularStrokeCap:
@@ -339,22 +343,18 @@ class ProductsScreen extends StatelessWidget {
                                                                           Container(
                                                                             padding: EdgeInsets.fromLTRB(
                                                                                 14,
-                                                                                8,
+                                                                                4,
                                                                                 0,
-                                                                                8),
+                                                                                4),
                                                                             margin: EdgeInsets.only(
                                                                                 top: 8,
                                                                                 left: 12,
                                                                                 right: 4,
-                                                                                bottom: i == dates.length - 1 ? 0 : 12),
+                                                                                bottom: i == dates.length - 1 ? 0 : 2),
                                                                             decoration:
                                                                                 BoxDecoration(
                                                                               color: Color.fromARGB(255, 112, 82, 255).withOpacity(.16),
-                                                                              borderRadius: BorderRadius.only(
-                                                                                topRight: Radius.circular(28),
-                                                                                bottomLeft: Radius.circular(20),
-                                                                                bottomRight: Radius.circular(20),
-                                                                              ),
+                                                                              borderRadius: BorderRadius.circular(6),
                                                                             ),
                                                                             child:
                                                                                 Row(
@@ -377,7 +377,7 @@ class ProductsScreen extends StatelessWidget {
                                                                                       '20%: ${dates[i].twentyPercent}',
                                                                                     ),
                                                                                     Text(
-                                                                                      'Còn ${pro.dayLefts(dates[i].twentyPercent)} ngày',
+                                                                                      'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
                                                                                     ),
                                                                                   ],
                                                                                 ),
@@ -394,13 +394,13 @@ class ProductsScreen extends StatelessWidget {
                                                                               margin: EdgeInsets.only(top: 3),
                                                                               decoration: BoxDecoration(
                                                                                 color: Color.fromARGB(255, 255, 121, 36),
-                                                                                borderRadius: BorderRadius.circular(8),
+                                                                                borderRadius: BorderRadius.circular(4),
                                                                                 boxShadow: [
                                                                                   BoxShadow(
                                                                                     color: Colors.black.withOpacity(.04),
                                                                                     spreadRadius: 2,
                                                                                     blurRadius: 3,
-                                                                                    offset: Offset(0, 3),
+                                                                                    offset: Offset(0, 0),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -445,23 +445,31 @@ class ProductsScreen extends StatelessWidget {
                               ),
                             );
                           }
-                          return Center(
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * .8,
+                            child: Center(
+                              child: Text(
+                                'Không tìm thấy',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(color: Colors.black26),
+                              ),
+                            ),
+                          );
+                        }
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * .8,
+                          child: Center(
                             child: Text(
-                              'No data',
+                              'Không tìm thấy',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
                                   .copyWith(color: Colors.black26),
                             ),
-                          );
-                        }
-                        return Center(
-                          child: Text(
-                            'No data',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(color: Colors.black26),
                           ),
                         );
                       },

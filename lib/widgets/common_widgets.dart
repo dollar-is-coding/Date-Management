@@ -65,7 +65,7 @@ SnackBar snackBarWidget({required context, required warningText}) {
     behavior: SnackBarBehavior.floating,
     backgroundColor: Color.fromARGB(255, 94, 18, 99),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(4),
     ),
   );
 }

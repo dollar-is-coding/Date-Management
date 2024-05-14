@@ -61,7 +61,7 @@ flutter_localizations:
 flutter_icons:
   android: true
   ios: true
-  image_path: "asset/logo/avatar.png"
+  image_path: 'asset/logo/avatar.png'
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -82,18 +82,19 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - asset/icons/barcode.svg
-      - asset/icons/sku.svg
-      - asset/icons/mfg.svg
-      - asset/icons/exp.svg
-      - asset/icons/noti.svg
-      - asset/icons/search.svg
-      - asset/icons/data.svg
-      - asset/icons/upload.svg
-      - asset/icons/danger.svg
-      - asset/icons/no_noti.svg
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+    - asset/icons/mfg_icon.svg
+    - asset/icons/exp_icon.svg
+    - asset/icons/sku_icon.svg
+    - asset/icons/refresh_icon.svg
+    - asset/icons/search_icon.svg
+    - asset/icons/search2_icon.svg
+    - asset/icons/info_icon.svg
+    - asset/icons/warning_icon.svg
+    - asset/icons/bookmark_icon.svg
+    - asset/icons/bookmark_done_icon.svg
+    - asset/icons/arrow_right_icon.svg
+    - asset/icons/arrow_left_icon.svg
+    - asset/icons/filter_icon.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
