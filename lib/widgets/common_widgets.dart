@@ -32,17 +32,24 @@ Row rowWidget({
   );
 }
 
-SnackBar snackBarWidget({required context, required warningText}) {
+SnackBar snackBarWidget({
+  required context,
+  required text,
+  required icon,
+  required color,
+  required textColor,
+}) {
   return SnackBar(
     content: Row(
       children: [
         SvgPicture.asset(
-          'asset/icons/danger.svg',
+          // 'asset/icons/warning_icon.svg',
+          icon,
           fit: BoxFit.scaleDown,
           width: 16,
           height: 16,
           colorFilter: ColorFilter.mode(
-            Colors.white,
+            textColor,
             BlendMode.srcIn,
           ),
         ),
@@ -51,11 +58,11 @@ SnackBar snackBarWidget({required context, required warningText}) {
           child: Wrap(
             children: [
               Text(
-                warningText,
+                text,
                 style: Theme.of(context)
                     .textTheme
-                    .labelMedium!
-                    .copyWith(color: Colors.white),
+                    .bodySmall!
+                    .copyWith(color: textColor),
               ),
             ],
           ),
@@ -63,7 +70,7 @@ SnackBar snackBarWidget({required context, required warningText}) {
       ],
     ),
     behavior: SnackBarBehavior.floating,
-    backgroundColor: Color.fromARGB(255, 94, 18, 99),
+    backgroundColor: color,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(4),
     ),

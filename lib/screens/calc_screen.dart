@@ -494,7 +494,7 @@ class CalcScreen extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Column(
                                   children: [
-                                    FutureBuilder(
+                                    FutureBuilder<List<Product>?>(
                                       future: calc.productApi,
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
@@ -531,7 +531,7 @@ class CalcScreen extends StatelessWidget {
                                             ),
                                             contentPadding: EdgeInsets.all(0),
                                             leading: InkWell(
-                                              onTap: () {
+                                              onTap: () async {
                                                 calc.saveNewDate(
                                                     product![0].sku.toString(),
                                                     context);
@@ -539,18 +539,36 @@ class CalcScreen extends StatelessWidget {
                                               child: calc.isSaved
                                                   ? SvgPicture.asset(
                                                       'asset/icons/bookmark_done_icon.svg',
-                                                      color: Color.fromARGB(
-                                                          255, 38, 58, 150),
+                                                      colorFilter:
+                                                          ColorFilter.mode(
+                                                        Color.fromARGB(
+                                                            255, 38, 58, 150),
+                                                        BlendMode.srcIn,
+                                                      ),
                                                     )
                                                   : SvgPicture.asset(
                                                       'asset/icons/bookmark_icon.svg',
                                                     ),
                                             ),
-                                            title: Text(
-                                              '${product![0].sku} (${product[0].dates.length})',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
+                                            title: Row(
+                                              children: [
+                                                Text(
+                                                  '${product![0].sku} ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                Text(
+                                                  '(${calc.firstProductDateLength})',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        color: Colors.black
+                                                            .withOpacity(.8),
+                                                      ),
+                                                ),
+                                              ],
                                             ),
                                             subtitle: Text(
                                               product[0].name,
@@ -690,7 +708,7 @@ class CalcScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // result ffrom API
+                            // result from API
                             FutureBuilder<List<Product>?>(
                               future: calc.productApi,
                               builder: (context, snapshot) {

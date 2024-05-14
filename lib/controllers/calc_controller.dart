@@ -19,6 +19,8 @@ class CalcController extends ChangeNotifier {
   int dataLength = 0;
   bool isSaved = false;
   bool isShowResult = false;
+  bool isExistedDate = false;
+  int firstProductDateLength = 0;
   List<bool> checkboxes = [];
   late String twentyPercentLeft = '';
   late String thirtyPercentLeft = '';
@@ -36,6 +38,7 @@ class CalcController extends ChangeNotifier {
 
   showResult(context) async {
     isSaved = false;
+    isExistedDate = false;
     DateTime now = DateTime(
       DateTime.now().year,
       DateTime.now().month,
@@ -44,17 +47,22 @@ class CalcController extends ChangeNotifier {
     if (expDate == now && mfgDate == now) {
       snackBar = snackBarWidget(
         context: context,
-        warningText: 'Chọn ngày sản xuất và hạn sử dụng',
+        text: 'Chọn ngày sản xuất và hạn sử dụng',
+        icon: 'asset/icons/warning_icon.svg',
+        color: Color.fromARGB(255, 255, 121, 36),
+        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (expDate.isBefore(mfgDate) ||
         expDate.difference(mfgDate).inDays < 10) {
       snackBar = snackBarWidget(
-        context: context,
-        warningText: expDate.isBefore(mfgDate)
-            ? 'Hạn sử dụng nhỏ hơn ngày sản xuất'
-            : 'Hạn sử dụng nhỏ hơn 10 ngày',
-      );
+          context: context,
+          text: expDate.isBefore(mfgDate)
+              ? 'Hạn sử dụng nhỏ hơn ngày sản xuất'
+              : 'Hạn sử dụng nhỏ hơn 10 ngày',
+          icon: 'asset/icons/warning_icon.svg',
+          color: Color.fromARGB(255, 255, 121, 36),
+          textColor: Colors.black87);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (sku.text.isEmpty) {
       calcThingsAboutDate();
@@ -111,18 +119,57 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  saveNewDate(String sku, context) {
-    isSaved = true;
-    DioClient().addNewDateToSheet(
-      sku,
-      mfg.text,
-      exp.text,
-      twentyPercentLeft,
-      thirtyPercentLeft,
-      fourtyPercentLeft,
+  saveNewDate(String sku, context) async {
+    int numberNewMfg = 0, numberNewExp = 0;
+    var splittedNewMfg = mfg.text.split('/');
+    var splittedNewExp = exp.text.split('/');
+    numberNewMfg = int.parse(splittedNewMfg.join(''));
+    numberNewExp = int.parse(splittedNewExp.join(''));
+    productApi!.then(
+      (products) {
+        for (var i = 0; i < products![0].dates.length; i++) {
+          var splittedMfg = products[0].dates[i].mfg.split('/');
+          var splittedExp = products[0].dates[i].exp.split('/');
+          var numberMfg = int.parse(splittedMfg.join(''));
+          var numberExp = int.parse(splittedExp.join(''));
+          if (numberMfg == numberNewMfg && numberExp == numberNewExp) {
+            isExistedDate = true;
+            print(isExistedDate);
+            break;
+          }
+        }
+        if (isExistedDate == false) {
+          isSaved = true;
+          isExistedDate = true;
+          firstProductDateLength += 1;
+          DioClient().addNewDateToSheet(
+            sku,
+            mfg.text,
+            exp.text,
+            twentyPercentLeft,
+            thirtyPercentLeft,
+            fourtyPercentLeft,
+          );
+          snackBar = snackBarWidget(
+            context: context,
+            text: 'Đã lưu date mới',
+            icon: 'asset/icons/info_icon.svg',
+            color: Color.fromARGB(255, 94, 18, 99),
+            textColor: Colors.white,
+          );
+        } else {
+          snackBar = snackBarWidget(
+            context: context,
+            text: 'Date đã tồn tại',
+            icon: 'asset/icons/warning_icon.svg',
+            color: Color.fromARGB(255, 255, 121, 36),
+            textColor: Colors.black87,
+          );
+        }
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      },
     );
-    snackBar = snackBarWidget(context: context, warningText: 'Đã lưu date mới');
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
     notifyListeners();
   }
 
@@ -132,6 +179,7 @@ class CalcController extends ChangeNotifier {
       tempItem = value![index];
       value.clear();
       value.add(tempItem);
+      firstProductDateLength = value[0].dates.length;
     });
     checkboxes.fillRange(0, dataLength, false);
     checkboxes[index] = true;

@@ -150,7 +150,6 @@ class ProductsScreen extends StatelessWidget {
               );
             },
             child: ListView(
-              physics: AlwaysScrollableScrollPhysics(),
               children: [
                 !pro.filterShowed
                     ? Container()
@@ -195,10 +194,7 @@ class ProductsScreen extends StatelessWidget {
                                           .copyWith(
                                             color: pro.chosenOptions[index]
                                                 ? Colors.black
-                                                : Colors.black54,
-                                            fontWeight: pro.chosenOptions[index]
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                                : Colors.black45,
                                           ),
                                     ),
                                   ),
@@ -209,253 +205,265 @@ class ProductsScreen extends StatelessWidget {
                         ),
                       ),
                 Container(
-                  child: Expanded(
-                    child: FutureBuilder<List<Product>?>(
-                      future: pro.apiProducts,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .8,
-                            child: Center(
-                              child: LoadingAnimationWidget.fourRotatingDots(
-                                color: Color.fromARGB(255, 112, 82, 255),
-                                size: 30,
-                              ),
+                  width: MediaQuery.of(context).size.width,
+                  child: FutureBuilder<List<Product>?>(
+                    future: pro.apiProducts,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * .8,
+                          child: Center(
+                            child: LoadingAnimationWidget.fourRotatingDots(
+                              color: Color.fromARGB(255, 112, 82, 255),
+                              size: 30,
                             ),
-                          );
-                        } else if (snapshot.hasData) {
-                          var products = snapshot.data;
-                          if (products!.length > 0) {
-                            return ListView(
-                              shrinkWrap: true,
-                              controller: pro.scrollController,
-                              children: List.generate(
-                                pro.dataLength + 1,
-                                (index) {
-                                  if (index < pro.dataLength) {
-                                    return !pro.proShowed![index]
-                                        ? Container()
-                                        : Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withOpacity(.04),
-                                                  spreadRadius: 2,
-                                                  blurRadius: 3,
-                                                  offset: Offset(0, 2),
+                          ),
+                        );
+                      } else if (snapshot.hasData) {
+                        var products = snapshot.data;
+                        if (products!.length > 0) {
+                          return ListView(
+                            shrinkWrap: true,
+                            controller: pro.scrollController,
+                            children: List.generate(
+                              pro.dataLength + 1,
+                              (index) {
+                                if (index < pro.dataLength) {
+                                  return !pro.proShowed![index]
+                                      ? Container()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(.04),
+                                                spreadRadius: 2,
+                                                blurRadius: 3,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          margin: EdgeInsets.fromLTRB(
+                                              12, index == 0 ? 8 : 2, 12, 4),
+                                          child: ExpansionTile(
+                                            shape: Border(),
+                                            dense: true,
+                                            childrenPadding:
+                                                EdgeInsets.only(bottom: 12),
+                                            visualDensity: VisualDensity(
+                                              horizontal: 0,
+                                              vertical: -4,
+                                            ),
+                                            title: Row(
+                                              children: [
+                                                Text(
+                                                  '${products[index].sku} ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                Text(
+                                                  '(${products[index].dates.length})',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        color: Colors.black
+                                                            .withOpacity(.8),
+                                                      ),
                                                 ),
                                               ],
                                             ),
-                                            margin: EdgeInsets.fromLTRB(
-                                                12, index == 0 ? 8 : 2, 12, 4),
-                                            child: ExpansionTile(
-                                              shape: Border(),
-                                              dense: true,
-                                              childrenPadding:
-                                                  EdgeInsets.only(bottom: 12),
-                                              visualDensity: VisualDensity(
-                                                horizontal: 0,
-                                                vertical: -4,
-                                              ),
-                                              title: Text(
-                                                products[index].sku.toString() +
-                                                    ' (${products[index].dates.length})',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                              subtitle: Text(
-                                                products[index].name,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(
-                                                        color: Colors.black54),
-                                              ),
-                                              children: List.generate(
-                                                products[index].dates.length,
-                                                (i) {
-                                                  var dates =
-                                                      products[index].dates;
-                                                  return Padding(
-                                                    padding: const EdgeInsets
-                                                        .fromLTRB(16, 0, 16, 0),
-                                                    child: IntrinsicHeight(
-                                                      child:
-                                                          !pro.dateShowed![
-                                                                  index][i]
-                                                              ? Container()
-                                                              : Row(
-                                                                  children: [
-                                                                    Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
+                                            subtitle: Text(
+                                              products[index].name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(
+                                                      color: Colors.black54),
+                                            ),
+                                            children: List.generate(
+                                              products[index].dates.length,
+                                              (i) {
+                                                var dates =
+                                                    products[index].dates;
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          16, 0, 16, 0),
+                                                  child: IntrinsicHeight(
+                                                    child:
+                                                        !pro.dateShowed![index]
+                                                                [i]
+                                                            ? Container()
+                                                            : Row(
+                                                                children: [
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Container(
+                                                                        padding:
+                                                                            EdgeInsets.only(top: 8),
+                                                                        child:
+                                                                            CircularPercentIndicator(
+                                                                          radius:
+                                                                              24.0,
+                                                                          animation:
+                                                                              true,
+                                                                          animationDuration:
+                                                                              1200,
+                                                                          lineWidth:
+                                                                              6.0,
+                                                                          percent:
+                                                                              pro.calcCurrentPercent(dates[i].mfg, dates[i].exp) / 100,
+                                                                          center:
+                                                                              Text(
+                                                                            pro.calcCurrentPercent(dates[i].mfg, dates[i].exp).toString() +
+                                                                                '%',
+                                                                            style:
+                                                                                Theme.of(context).textTheme.bodySmall,
+                                                                          ),
+                                                                          circularStrokeCap:
+                                                                              CircularStrokeCap.round,
+                                                                          backgroundColor: Color.fromARGB(
+                                                                              255,
+                                                                              210,
+                                                                              225,
+                                                                              255),
+                                                                          progressColor: Color.fromARGB(
+                                                                              255,
+                                                                              112,
+                                                                              82,
+                                                                              255),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Expanded(
+                                                                    child:
+                                                                        Stack(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .topRight,
                                                                       children: [
                                                                         Container(
-                                                                          padding:
-                                                                              EdgeInsets.only(top: 8),
+                                                                          padding: EdgeInsets.fromLTRB(
+                                                                              14,
+                                                                              4,
+                                                                              0,
+                                                                              4),
+                                                                          margin: EdgeInsets.only(
+                                                                              top: 8,
+                                                                              left: 12,
+                                                                              right: 4,
+                                                                              bottom: i == dates.length - 1 ? 0 : 2),
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                Color.fromARGB(255, 112, 82, 255).withOpacity(.16),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(6),
+                                                                          ),
                                                                           child:
-                                                                              CircularPercentIndicator(
-                                                                            radius:
-                                                                                24.0,
-                                                                            animation:
-                                                                                true,
-                                                                            animationDuration:
-                                                                                1200,
-                                                                            lineWidth:
-                                                                                6.0,
-                                                                            percent:
-                                                                                pro.calcCurrentPercent(dates[i].mfg, dates[i].exp) / 100,
-                                                                            center:
-                                                                                Text(
-                                                                              pro.calcCurrentPercent(dates[i].mfg, dates[i].exp).toString() + '%',
-                                                                              style: Theme.of(context).textTheme.bodySmall,
+                                                                              Row(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    '${dates[i].mfg} - ${dates[i].exp}',
+                                                                                  ),
+                                                                                  Text(
+                                                                                    '40%: ${dates[i].fourtyPercent}',
+                                                                                  ),
+                                                                                  Text(
+                                                                                    '30%: ${dates[i].thirtyPerrcent}',
+                                                                                  ),
+                                                                                  Text(
+                                                                                    '20%: ${dates[i].twentyPercent}',
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        InkWell(
+                                                                          onTap:
+                                                                              () async {
+                                                                            pro.changeDateList(
+                                                                                dates[i].id!,
+                                                                                i,
+                                                                                index);
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            margin:
+                                                                                EdgeInsets.only(top: 3),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: Color.fromARGB(255, 255, 121, 36),
+                                                                              borderRadius: BorderRadius.circular(4),
+                                                                              boxShadow: [
+                                                                                BoxShadow(
+                                                                                  color: Colors.black.withOpacity(.04),
+                                                                                  spreadRadius: 2,
+                                                                                  blurRadius: 3,
+                                                                                  offset: Offset(0, 0),
+                                                                                ),
+                                                                              ],
                                                                             ),
-                                                                            circularStrokeCap:
-                                                                                CircularStrokeCap.round,
-                                                                            backgroundColor: Color.fromARGB(
-                                                                                255,
-                                                                                210,
-                                                                                225,
-                                                                                255),
-                                                                            progressColor: Color.fromARGB(
-                                                                                255,
-                                                                                112,
-                                                                                82,
-                                                                                255),
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.all(3),
+                                                                              child: Icon(
+                                                                                Icons.close,
+                                                                                size: 22,
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    Expanded(
-                                                                      child:
-                                                                          Stack(
-                                                                        alignment:
-                                                                            Alignment.topRight,
-                                                                        children: [
-                                                                          Container(
-                                                                            padding: EdgeInsets.fromLTRB(
-                                                                                14,
-                                                                                4,
-                                                                                0,
-                                                                                4),
-                                                                            margin: EdgeInsets.only(
-                                                                                top: 8,
-                                                                                left: 12,
-                                                                                right: 4,
-                                                                                bottom: i == dates.length - 1 ? 0 : 2),
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: Color.fromARGB(255, 112, 82, 255).withOpacity(.16),
-                                                                              borderRadius: BorderRadius.circular(6),
-                                                                            ),
-                                                                            child:
-                                                                                Row(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                Column(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Text(
-                                                                                      '${dates[i].mfg} - ${dates[i].exp}',
-                                                                                    ),
-                                                                                    Text(
-                                                                                      '40%: ${dates[i].fourtyPercent}',
-                                                                                    ),
-                                                                                    Text(
-                                                                                      '30%: ${dates[i].thirtyPerrcent}',
-                                                                                    ),
-                                                                                    Text(
-                                                                                      '20%: ${dates[i].twentyPercent}',
-                                                                                    ),
-                                                                                    Text(
-                                                                                      'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          InkWell(
-                                                                            onTap:
-                                                                                () async {
-                                                                              pro.changeDateList(dates[i].id!, i, index);
-                                                                            },
-                                                                            child:
-                                                                                Container(
-                                                                              margin: EdgeInsets.only(top: 3),
-                                                                              decoration: BoxDecoration(
-                                                                                color: Color.fromARGB(255, 255, 121, 36),
-                                                                                borderRadius: BorderRadius.circular(4),
-                                                                                boxShadow: [
-                                                                                  BoxShadow(
-                                                                                    color: Colors.black.withOpacity(.04),
-                                                                                    spreadRadius: 2,
-                                                                                    blurRadius: 3,
-                                                                                    offset: Offset(0, 0),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.all(3),
-                                                                                child: Icon(
-                                                                                  Icons.close,
-                                                                                  size: 22,
-                                                                                  color: Colors.white,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                          );
-                                  } else {
-                                    return (pro.dataLength <= 20 ||
-                                            pro.dataLength % 20 != 0)
-                                        ? Container()
-                                        : Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 20),
-                                            child: Center(
-                                              child: LoadingAnimationWidget
-                                                  .staggeredDotsWave(
-                                                color: Colors.blue,
-                                                size: 30,
-                                              ),
+                                          ),
+                                        );
+                                } else {
+                                  return (pro.dataLength <= 20 ||
+                                          pro.dataLength % 20 != 0)
+                                      ? Container()
+                                      : Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 20),
+                                          child: Center(
+                                            child: LoadingAnimationWidget
+                                                .staggeredDotsWave(
+                                              color: Colors.blue,
+                                              size: 30,
                                             ),
-                                          );
-                                  }
-                                },
-                              ),
-                            );
-                          }
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * .8,
-                            child: Center(
-                              child: Text(
-                                'Không tìm thấy',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(color: Colors.black26),
-                              ),
+                                          ),
+                                        );
+                                }
+                              },
                             ),
                           );
                         }
@@ -472,8 +480,21 @@ class ProductsScreen extends StatelessWidget {
                             ),
                           ),
                         );
-                      },
-                    ),
+                      }
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * .8,
+                        child: Center(
+                          child: Text(
+                            'Không tìm thấy',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(color: Colors.black26),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
