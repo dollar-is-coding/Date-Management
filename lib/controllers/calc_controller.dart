@@ -20,6 +20,7 @@ class CalcController extends ChangeNotifier {
   bool isSaved = false;
   bool isShowResult = false;
   bool isExistedDate = false;
+  bool isResultFound = false;
   int firstProductDateLength = 0;
   List<bool> checkboxes = [];
   late String twentyPercentLeft = '';
@@ -56,13 +57,14 @@ class CalcController extends ChangeNotifier {
     } else if (expDate.isBefore(mfgDate) ||
         expDate.difference(mfgDate).inDays < 10) {
       snackBar = snackBarWidget(
-          context: context,
-          text: expDate.isBefore(mfgDate)
-              ? 'Hạn sử dụng nhỏ hơn ngày sản xuất'
-              : 'Hạn sử dụng nhỏ hơn 10 ngày',
-          icon: 'asset/icons/warning_icon.svg',
-          color: Color.fromARGB(255, 255, 121, 36),
-          textColor: Colors.black87);
+        context: context,
+        text: expDate.isBefore(mfgDate)
+            ? 'Hạn sử dụng nhỏ hơn ngày sản xuất'
+            : 'Hạn sử dụng nhỏ hơn 10 ngày',
+        icon: 'asset/icons/warning_icon.svg',
+        color: Color.fromARGB(255, 255, 121, 36),
+        textColor: Colors.white,
+      );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (sku.text.isEmpty) {
       calcThingsAboutDate();
@@ -71,6 +73,7 @@ class CalcController extends ChangeNotifier {
       calcThingsAboutDate();
       getProducts();
       isShowResult = true;
+      isResultFound = dataLength > 0 ? true : false;
     }
     notifyListeners();
   }
@@ -116,6 +119,7 @@ class CalcController extends ChangeNotifier {
       dataLength = value!.length;
       checkboxes = List.filled(dataLength, false);
     });
+
     notifyListeners();
   }
 
@@ -163,7 +167,7 @@ class CalcController extends ChangeNotifier {
             text: 'Date đã tồn tại',
             icon: 'asset/icons/warning_icon.svg',
             color: Color.fromARGB(255, 255, 121, 36),
-            textColor: Colors.black87,
+            textColor: Colors.white,
           );
         }
         ScaffoldMessenger.of(context).showSnackBar(snackBar);

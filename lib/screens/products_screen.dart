@@ -159,7 +159,7 @@ class ProductsScreen extends StatelessWidget {
                         margin: EdgeInsets.fromLTRB(12, 8, 12, 0),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(28),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(.04),
@@ -236,7 +236,7 @@ class ProductsScreen extends StatelessWidget {
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                                BorderRadius.circular(4),
+                                                BorderRadius.circular(12),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black

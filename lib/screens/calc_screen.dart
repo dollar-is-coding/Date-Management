@@ -104,16 +104,16 @@ class CalcScreen extends StatelessWidget {
                 children: [
                   // sku & barcode
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: 8),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(.04),
                             spreadRadius: 2,
                             blurRadius: 3,
-                            offset: Offset(0, 2),
+                            offset: Offset(0, 0),
                           ),
                         ],
                       ),
@@ -144,14 +144,14 @@ class CalcScreen extends StatelessWidget {
                               .bodySmall!
                               .copyWith(color: Colors.grey.shade500),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
                               width: 1,
                               color: Colors.transparent,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
                               width: 1,
                               color: Color.fromARGB(255, 227, 227, 227),
@@ -162,279 +162,272 @@ class CalcScreen extends StatelessWidget {
                     ),
                   ),
                   // mfg & exp
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      children: [
-                        // mfg
-                        Flexible(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(.04),
-                                  spreadRadius: 2,
-                                  blurRadius: 3,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              controller: calc.mfg,
-                              focusNode: calc.mfgFocus,
-                              readOnly: true,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .5,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(2),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Colors.grey.shade400,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Stack(
-                                              alignment: Alignment.center,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    IconButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context),
-                                                      icon: Icon(
-                                                          Icons.close_rounded),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'Ngày sản xuất',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              child: Localizations.override(
-                                                context: context,
-                                                locale: const Locale('vi'),
-                                                child: CupertinoDatePicker(
-                                                  initialDateTime: calc.mfgDate,
-                                                  dateOrder:
-                                                      DatePickerDateOrder.dmy,
-                                                  mode: CupertinoDatePickerMode
-                                                      .date,
-                                                  minimumYear: 2015,
-                                                  maximumYear: 2030,
-                                                  onDateTimeChanged: (date) {
-                                                    calc.changeMfg(date);
-                                                  },
-                                                ),
+                  Row(
+                    children: [
+                      // mfg
+                      Flexible(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(.04),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: calc.mfg,
+                            focusNode: calc.mfgFocus,
+                            readOnly: true,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    height:
+                                        MediaQuery.of(context).size.height * .5,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                width: 1,
+                                                color: Colors.grey.shade400,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                prefixIcon: SvgPicture.asset(
-                                  'asset/icons/mfg_icon.svg',
-                                  fit: BoxFit.scaleDown,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black.withOpacity(.8),
-                                    BlendMode.srcIn,
-                                  ),
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  IconButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    icon: Icon(
+                                                        Icons.close_rounded),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Ngày sản xuất',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: Localizations.override(
+                                              context: context,
+                                              locale: const Locale('vi'),
+                                              child: CupertinoDatePicker(
+                                                initialDateTime: calc.mfgDate,
+                                                dateOrder:
+                                                    DatePickerDateOrder.dmy,
+                                                mode: CupertinoDatePickerMode
+                                                    .date,
+                                                minimumYear: 2015,
+                                                maximumYear: 2030,
+                                                onDateTimeChanged: (date) {
+                                                  calc.changeMfg(date);
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              prefixIcon: SvgPicture.asset(
+                                'asset/icons/calendar_icon.svg',
+                                fit: BoxFit.scaleDown,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(.8),
+                                  BlendMode.srcIn,
                                 ),
-                                hintText: 'Ngày sản xuất',
-                                hintStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.grey.shade500),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Colors.transparent,
-                                  ),
+                              ),
+                              hintText: 'Ngày sản xuất',
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(color: Colors.grey.shade500),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.transparent,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color.fromARGB(255, 227, 227, 227),
-                                  ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(255, 227, 227, 227),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        Padding(padding: EdgeInsets.only(left: 12)),
-                        // exp
-                        Flexible(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(.04),
-                                  spreadRadius: 2,
-                                  blurRadius: 3,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              focusNode: calc.expFocus,
-                              controller: calc.exp,
-                              readOnly: true,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .5,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(2),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Colors.grey.shade400,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Stack(
-                                              alignment: Alignment.center,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    IconButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context),
-                                                      icon: Icon(
-                                                          Icons.close_rounded),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'Hạn sử dụng',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              child: Localizations.override(
-                                                context: context,
-                                                locale: const Locale('vi'),
-                                                child: CupertinoDatePicker(
-                                                  initialDateTime: calc.expDate,
-                                                  dateOrder:
-                                                      DatePickerDateOrder.dmy,
-                                                  mode: CupertinoDatePickerMode
-                                                      .date,
-                                                  minimumYear: 2015,
-                                                  maximumYear: 2030,
-                                                  onDateTimeChanged: (date) =>
-                                                      calc.changeExp(date),
-                                                ),
+                      ),
+                      Padding(padding: EdgeInsets.only(left: 12)),
+                      // exp
+                      Flexible(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(.04),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            focusNode: calc.expFocus,
+                            controller: calc.exp,
+                            readOnly: true,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    height:
+                                        MediaQuery.of(context).size.height * .5,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                width: 1,
+                                                color: Colors.grey.shade400,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                prefixIcon: SvgPicture.asset(
-                                  'asset/icons/exp_icon.svg',
-                                  fit: BoxFit.scaleDown,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black.withOpacity(.8),
-                                    BlendMode.srcIn,
-                                  ),
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  IconButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    icon: Icon(
+                                                        Icons.close_rounded),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Hạn sử dụng',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: Localizations.override(
+                                              context: context,
+                                              locale: const Locale('vi'),
+                                              child: CupertinoDatePicker(
+                                                initialDateTime: calc.expDate,
+                                                dateOrder:
+                                                    DatePickerDateOrder.dmy,
+                                                mode: CupertinoDatePickerMode
+                                                    .date,
+                                                minimumYear: 2015,
+                                                maximumYear: 2030,
+                                                onDateTimeChanged: (date) =>
+                                                    calc.changeExp(date),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              prefixIcon: SvgPicture.asset(
+                                'asset/icons/calendar_icon.svg',
+                                fit: BoxFit.scaleDown,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(.8),
+                                  BlendMode.srcIn,
                                 ),
-                                hintText: 'Hạn sử dụng',
-                                hintStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.grey.shade500),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Colors.transparent,
-                                  ),
+                              ),
+                              hintText: 'Hạn sử dụng',
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(color: Colors.grey.shade500),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Colors.transparent,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color.fromARGB(255, 227, 227, 227),
-                                  ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  width: 1,
+                                  color: Color.fromARGB(255, 227, 227, 227),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   // Button
                   Container(
+                    margin: EdgeInsets.symmetric(vertical: 16),
                     width: MediaQuery.of(context).size.width * .4,
-                    margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(.04),
@@ -450,7 +443,7 @@ class CalcScreen extends StatelessWidget {
                         shadowColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         backgroundColor: Color.fromARGB(255, 112, 82, 255),
                       ),
@@ -480,134 +473,26 @@ class CalcScreen extends StatelessWidget {
                               padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(.04),
                                     spreadRadius: 2,
                                     blurRadius: 3,
-                                    offset: Offset(0, 4),
+                                    offset: Offset(4, -4),
                                   ),
                                 ],
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Column(
-                                  children: [
-                                    FutureBuilder<List<Product>?>(
-                                      future: calc.productApi,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return ListTile(
-                                            dense: true,
-                                            visualDensity: VisualDensity(
-                                              horizontal: -4,
-                                              vertical: -2,
-                                            ),
-                                            contentPadding: EdgeInsets.all(0),
-                                            leading: Icon(
-                                              Icons.bookmark_rounded,
-                                              color: Colors.black12,
-                                            ),
-                                            title: Container(
-                                              height: 12,
-                                              color: Colors.black12,
-                                            ),
-                                            subtitle: Container(
-                                              height: 8,
-                                              color: Colors.black12
-                                                  .withOpacity(.06),
-                                            ),
-                                          );
-                                        } else if (snapshot.hasData &&
-                                            snapshot.data!.length == 1) {
-                                          var product = snapshot.data;
-                                          return ListTile(
-                                            dense: true,
-                                            visualDensity: VisualDensity(
-                                              horizontal: -4,
-                                              vertical: -2,
-                                            ),
-                                            contentPadding: EdgeInsets.all(0),
-                                            leading: InkWell(
-                                              onTap: () async {
-                                                calc.saveNewDate(
-                                                    product![0].sku.toString(),
-                                                    context);
-                                              },
-                                              child: calc.isSaved
-                                                  ? SvgPicture.asset(
-                                                      'asset/icons/bookmark_done_icon.svg',
-                                                      colorFilter:
-                                                          ColorFilter.mode(
-                                                        Color.fromARGB(
-                                                            255, 38, 58, 150),
-                                                        BlendMode.srcIn,
-                                                      ),
-                                                    )
-                                                  : SvgPicture.asset(
-                                                      'asset/icons/bookmark_icon.svg',
-                                                    ),
-                                            ),
-                                            title: Row(
-                                              children: [
-                                                Text(
-                                                  '${product![0].sku} ',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
-                                                ),
-                                                Text(
-                                                  '(${calc.firstProductDateLength})',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                        color: Colors.black
-                                                            .withOpacity(.8),
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                            subtitle: Text(
-                                              product[0].name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .copyWith(
-                                                      color: Colors.black54),
-                                            ),
-                                            trailing:
-                                                product[0].dates.length > 0
-                                                    ? InkWell(
-                                                        child: SvgPicture.asset(
-                                                          'asset/icons/arrow_right_icon.svg',
-                                                        ),
-                                                        onTap: () {
-                                                          Provider.of<ProductsController>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .searchWithFilter(
-                                                            0,
-                                                            product[0]
-                                                                .sku
-                                                                .toString(),
-                                                          );
-                                                          Navigator.push(
-                                                            context,
-                                                            PageTransition(
-                                                              child:
-                                                                  ProductsScreen(),
-                                                              type: PageTransitionType
-                                                                  .rightToLeft,
-                                                            ),
-                                                          );
-                                                        },
-                                                      )
-                                                    : null,
-                                          );
-                                        }
+                              child: Column(
+                                children: [
+                                  FutureBuilder<List<Product>?>(
+                                    future: calc.productApi,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
                                         return ListTile(
                                           dense: true,
                                           visualDensity: VisualDensity(
@@ -629,83 +514,187 @@ class CalcScreen extends StatelessWidget {
                                                 Colors.black12.withOpacity(.06),
                                           ),
                                         );
-                                      },
-                                    ),
-                                    // Date calced
-                                    Row(
-                                      children: [
-                                        IntrinsicWidth(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                      } else if (snapshot.hasData &&
+                                          snapshot.data!.length == 1) {
+                                        var product = snapshot.data;
+                                        return ListTile(
+                                          dense: true,
+                                          visualDensity: VisualDensity(
+                                            horizontal: -4,
+                                            vertical: -2,
+                                          ),
+                                          contentPadding: EdgeInsets.all(0),
+                                          leading: InkWell(
+                                            onTap: () async {
+                                              calc.saveNewDate(
+                                                  product![0].sku.toString(),
+                                                  context);
+                                            },
+                                            child: calc.isSaved
+                                                ? SvgPicture.asset(
+                                                    'asset/icons/bookmark_done_icon.svg',
+                                                    colorFilter:
+                                                        ColorFilter.mode(
+                                                      Color.fromARGB(
+                                                          255, 38, 58, 150),
+                                                      BlendMode.srcIn,
+                                                    ),
+                                                  )
+                                                : SvgPicture.asset(
+                                                    'asset/icons/bookmark_icon.svg',
+                                                  ),
+                                          ),
+                                          title: Row(
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 12),
-                                                child: Text(
-                                                    'NSX: ${calc.mfg.text}'),
-                                              ),
-                                              Divider(
-                                                color: Colors.grey.shade300,
-                                                height: 8,
-                                              ),
-                                              Text('HSD: ${calc.exp.text}'),
-                                              Divider(
-                                                color: Colors.grey.shade300,
-                                                height: 8,
+                                              Text(
+                                                '${product![0].sku} ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                               Text(
-                                                  '40%: ${calc.fourtyPercentLeft}'),
-                                              Divider(
-                                                color: Colors.grey.shade300,
-                                                height: 8,
+                                                '(${calc.firstProductDateLength})',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(
+                                                      color: Colors.black
+                                                          .withOpacity(.8),
+                                                    ),
                                               ),
-                                              Text(
-                                                  '30%: ${calc.thirtyPercentLeft}'),
-                                              Divider(
-                                                color: Colors.grey.shade300,
-                                                height: 8,
-                                              ),
-                                              Text(
-                                                  '20%: ${calc.twentyPercentLeft}'),
-                                              Divider(
-                                                color: Colors.grey.shade300,
-                                                height: 8,
-                                              ),
-                                              Text(
-                                                  'Còn: ${calc.allowedDay} ngày'),
                                             ],
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: CircularPercentIndicator(
-                                            radius: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .14,
-                                            animation: true,
-                                            animationDuration: 1000,
-                                            lineWidth: 10,
-                                            percent: calc.currentPercent / 100,
-                                            center: Text(
-                                              calc.currentPercent.toString() +
-                                                  '%',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge,
-                                            ),
-                                            circularStrokeCap:
-                                                CircularStrokeCap.round,
-                                            backgroundColor: Color.fromARGB(
-                                                255, 210, 225, 255),
-                                            progressColor: Color.fromARGB(
-                                                255, 112, 82, 255),
+                                          subtitle: Text(
+                                            product[0].name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                    color: Colors.black54),
                                           ),
+                                          trailing: product[0].dates.length > 0
+                                              ? InkWell(
+                                                  child: SvgPicture.asset(
+                                                    'asset/icons/arrow_right_icon.svg',
+                                                  ),
+                                                  onTap: () {
+                                                    Provider.of<ProductsController>(
+                                                            context,
+                                                            listen: false)
+                                                        .searchWithFilter(
+                                                      0,
+                                                      product[0].sku.toString(),
+                                                    );
+                                                    Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                        child: ProductsScreen(),
+                                                        type: PageTransitionType
+                                                            .rightToLeft,
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : null,
+                                        );
+                                      }
+                                      return ListTile(
+                                        dense: true,
+                                        visualDensity: VisualDensity(
+                                          horizontal: -4,
+                                          vertical: -2,
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                        contentPadding: EdgeInsets.all(0),
+                                        leading: Icon(
+                                          Icons.bookmark_rounded,
+                                          color: Colors.black12,
+                                        ),
+                                        title: Container(
+                                          height: 12,
+                                          color: Colors.black12,
+                                        ),
+                                        subtitle: Container(
+                                          height: 8,
+                                          color:
+                                              Colors.black12.withOpacity(.06),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  // Date calced
+                                  Row(
+                                    children: [
+                                      IntrinsicWidth(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 12),
+                                              child:
+                                                  Text('NSX: ${calc.mfg.text}'),
+                                            ),
+                                            Divider(
+                                              color: Colors.grey.shade300,
+                                              height: 8,
+                                            ),
+                                            Text('HSD: ${calc.exp.text}'),
+                                            Divider(
+                                              color: Colors.grey.shade300,
+                                              height: 8,
+                                            ),
+                                            Text(
+                                                '40%: ${calc.fourtyPercentLeft}'),
+                                            Divider(
+                                              color: Colors.grey.shade300,
+                                              height: 8,
+                                            ),
+                                            Text(
+                                                '30%: ${calc.thirtyPercentLeft}'),
+                                            Divider(
+                                              color: Colors.grey.shade300,
+                                              height: 8,
+                                            ),
+                                            Text(
+                                                '20%: ${calc.twentyPercentLeft}'),
+                                            Divider(
+                                              color: Colors.grey.shade300,
+                                              height: 8,
+                                            ),
+                                            Text(
+                                                'Còn: ${calc.allowedDay} ngày'),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: CircularPercentIndicator(
+                                          radius: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .14,
+                                          animation: true,
+                                          animationDuration: 1000,
+                                          lineWidth: 10,
+                                          percent: calc.currentPercent / 100,
+                                          center: Text(
+                                            calc.currentPercent.toString() +
+                                                '%',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                          circularStrokeCap:
+                                              CircularStrokeCap.round,
+                                          backgroundColor: Color.fromARGB(
+                                              255, 210, 225, 255),
+                                          progressColor:
+                                              Color.fromARGB(255, 112, 82, 255),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                             // result from API
@@ -728,20 +717,27 @@ class CalcScreen extends StatelessWidget {
                                       ?
                                       // Có nhiều hơn 1 sản phẩm hiển thị
                                       Container(
-                                          margin: EdgeInsets.only(top: 16),
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 20, vertical: 8),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
+                                            border: Border(
+                                              top: BorderSide(
+                                                color: Colors.grey.shade300,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(12),
+                                              bottomRight: Radius.circular(12),
+                                            ),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black
                                                     .withOpacity(.04),
                                                 spreadRadius: 2,
                                                 blurRadius: 3,
-                                                offset: Offset(0, 4),
+                                                offset: Offset(4, 2),
                                               ),
                                             ],
                                           ),
@@ -763,6 +759,12 @@ class CalcScreen extends StatelessWidget {
                                                   ),
                                                   contentPadding:
                                                       EdgeInsets.all(0),
+                                                  checkboxShape:
+                                                      RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                  ),
                                                   title: Text(
                                                     products[index]
                                                         .sku
@@ -790,22 +792,32 @@ class CalcScreen extends StatelessWidget {
                                         )
                                       :
                                       // Chỉ có 1 sản phẩm
-                                      products[0].dates.length > 0
+                                      products.length > 0 &&
+                                              products[0].dates.length > 0
                                           ? Container(
-                                              margin: EdgeInsets.only(top: 16),
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 20, vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(12),
+                                                  bottomRight:
+                                                      Radius.circular(12),
+                                                ),
+                                                border: Border(
+                                                  top: BorderSide(
+                                                    color: Colors.grey.shade300,
+                                                    width: 1,
+                                                  ),
+                                                ),
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Colors.black
                                                         .withOpacity(.04),
                                                     spreadRadius: 2,
                                                     blurRadius: 3,
-                                                    offset: Offset(0, 4),
+                                                    offset: Offset(4, 4),
                                                   ),
                                                 ],
                                               ),
@@ -822,21 +834,45 @@ class CalcScreen extends StatelessWidget {
                                                           MainAxisAlignment
                                                               .spaceBetween,
                                                       children: [
-                                                        Text('NSX',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall),
-                                                        Text('20%',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall),
-                                                        Text('HSD',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodySmall)
+                                                        Text(
+                                                          'NSX',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall!
+                                                                  .copyWith(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            .8),
+                                                                  ),
+                                                        ),
+                                                        Text(
+                                                          '20%',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall!
+                                                                  .copyWith(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            .8),
+                                                                  ),
+                                                        ),
+                                                        Text(
+                                                          'HSD',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall!
+                                                                  .copyWith(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            .8),
+                                                                  ),
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -923,28 +959,74 @@ class CalcScreen extends StatelessWidget {
                                                                     MainAxisAlignment
                                                                         .spaceBetween,
                                                                 children: [
-                                                                  Text(
-                                                                    dates[i]
-                                                                        .mfg,
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodySmall,
+                                                                  Column(
+                                                                    children: [
+                                                                      Text(
+                                                                        dates[i]
+                                                                            .mfg
+                                                                            .substring(
+                                                                              0,
+                                                                              5,
+                                                                            ),
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodySmall,
+                                                                      ),
+                                                                      Text(
+                                                                        dates[i]
+                                                                            .mfg
+                                                                            .substring(
+                                                                              6,
+                                                                              10,
+                                                                            ),
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodySmall,
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  Text(
-                                                                    '${calc.calcRemainingDays(dates[i].twentyPercent)} ngày',
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodySmall,
+                                                                  Column(
+                                                                    children: [
+                                                                      Text(
+                                                                        dates[i]
+                                                                            .twentyPercent,
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodySmall,
+                                                                      ),
+                                                                      Text(
+                                                                        '(${calc.calcRemainingDays(dates[i].twentyPercent)} ngày)',
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodySmall,
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  Text(
-                                                                    dates[i]
-                                                                        .exp,
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .bodySmall,
+                                                                  Column(
+                                                                    children: [
+                                                                      Text(
+                                                                        dates[i]
+                                                                            .exp
+                                                                            .substring(
+                                                                              0,
+                                                                              5,
+                                                                            ),
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodySmall,
+                                                                      ),
+                                                                      Text(
+                                                                        dates[i]
+                                                                            .exp
+                                                                            .substring(
+                                                                              6,
+                                                                              10,
+                                                                            ),
+                                                                        style: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodySmall,
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ],
                                                               ),

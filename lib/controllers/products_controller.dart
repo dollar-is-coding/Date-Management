@@ -34,6 +34,7 @@ class ProductsController extends ChangeNotifier {
 
   Future searchWithFilter(int optionIndex, String product) async {
     apiProducts!.then((value) => value!.clear());
+    changeFilterOption(optionIndex);
     searchController.text = product;
     apiProducts = DioClient().searchForDatedProductsWithFilter(
       product,
