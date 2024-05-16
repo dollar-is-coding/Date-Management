@@ -10,6 +10,7 @@ import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/screens/products_screen.dart';
+import 'package:sg_date/widgets/common_widgets.dart';
 
 class CalcScreen extends StatelessWidget {
   @override
@@ -585,6 +586,11 @@ class CalcScreen extends StatelessWidget {
                                                       0,
                                                       product[0].sku.toString(),
                                                     );
+                                                    Provider.of<ProductsController>(
+                                                            context,
+                                                            listen: false)
+                                                        .changeFilterShowed(
+                                                            false);
                                                     Navigator.push(
                                                       context,
                                                       PageTransition(
@@ -688,8 +694,8 @@ class CalcScreen extends StatelessWidget {
                                               CircularStrokeCap.round,
                                           backgroundColor: Color.fromARGB(
                                               255, 210, 225, 255),
-                                          progressColor:
-                                              Color.fromARGB(255, 112, 82, 255),
+                                          progressColor: colorStatus(
+                                              percentage: calc.currentPercent),
                                         ),
                                       ),
                                     ],

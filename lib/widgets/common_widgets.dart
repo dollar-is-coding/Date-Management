@@ -76,3 +76,11 @@ SnackBar snackBarWidget({
     ),
   );
 }
+
+Color colorStatus({required percentage}) {
+  if (percentage <= 20) return Color.fromARGB(255, 254, 1, 1);
+  if (percentage <= 30) return Color.fromARGB(255, 255, 148, 2);
+  if (percentage < 35) return Color.fromARGB(255, 253, 206, 8);
+  if (percentage <= 40) return Color.fromARGB(255, 0, 79, 124);
+  return Color.fromARGB(255, 112, 82, 255);
+}

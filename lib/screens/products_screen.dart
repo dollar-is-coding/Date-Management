@@ -7,6 +7,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
+import 'package:sg_date/widgets/common_widgets.dart';
 
 class ProductsScreen extends StatelessWidget {
   @override
@@ -116,7 +117,7 @@ class ProductsScreen extends StatelessWidget {
                     padding: EdgeInsets.only(left: 12),
                     constraints: BoxConstraints(),
                     highlightColor: Colors.transparent,
-                    onPressed: () => value.changeFilterShowed(),
+                    onPressed: () => value.changeFilterShowed(null),
                     style: ButtonStyle(
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -300,146 +301,157 @@ class ProductsScreen extends StatelessWidget {
                                                         !pro.dateShowed![index]
                                                                 [i]
                                                             ? Container()
-                                                            : Row(
-                                                                children: [
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Container(
-                                                                        padding:
-                                                                            EdgeInsets.only(top: 8),
-                                                                        child:
-                                                                            CircularPercentIndicator(
-                                                                          radius:
-                                                                              24.0,
-                                                                          animation:
-                                                                              true,
-                                                                          animationDuration:
-                                                                              1200,
-                                                                          lineWidth:
-                                                                              6.0,
-                                                                          percent:
-                                                                              pro.calcCurrentPercent(dates[i].mfg, dates[i].exp) / 100,
-                                                                          center:
-                                                                              Text(
-                                                                            pro.calcCurrentPercent(dates[i].mfg, dates[i].exp).toString() +
-                                                                                '%',
-                                                                            style:
-                                                                                Theme.of(context).textTheme.bodySmall,
-                                                                          ),
-                                                                          circularStrokeCap:
-                                                                              CircularStrokeCap.round,
-                                                                          backgroundColor: Color.fromARGB(
-                                                                              255,
-                                                                              210,
-                                                                              225,
-                                                                              255),
-                                                                          progressColor: Color.fromARGB(
-                                                                              255,
-                                                                              112,
-                                                                              82,
-                                                                              255),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Expanded(
-                                                                    child:
-                                                                        Stack(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .topRight,
+                                                            : Padding(
+                                                                padding: dates.length >
+                                                                            1 &&
+                                                                        i !=
+                                                                            dates.length -
+                                                                                1
+                                                                    ? EdgeInsets
+                                                                        .only(
+                                                                            bottom:
+                                                                                4)
+                                                                    : EdgeInsets
+                                                                        .all(0),
+                                                                child: Row(
+                                                                  children: [
+                                                                    // rounded percent chart
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         Container(
-                                                                          padding: EdgeInsets.fromLTRB(
-                                                                              14,
-                                                                              4,
-                                                                              0,
-                                                                              4),
-                                                                          margin: EdgeInsets.only(
-                                                                              top: 8,
-                                                                              left: 12,
-                                                                              right: 4,
-                                                                              bottom: i == dates.length - 1 ? 0 : 2),
+                                                                          margin:
+                                                                              EdgeInsets.only(top: 4),
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
                                                                                 Color.fromARGB(255, 112, 82, 255).withOpacity(.16),
                                                                             borderRadius:
-                                                                                BorderRadius.circular(6),
+                                                                                BorderRadius.only(
+                                                                              topLeft: Radius.circular(30),
+                                                                              bottomRight: Radius.circular(30),
+                                                                              bottomLeft: Radius.circular(30),
+                                                                            ),
                                                                           ),
-                                                                          child:
-                                                                              Row(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Column(
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    '${dates[i].mfg} - ${dates[i].exp}',
-                                                                                  ),
-                                                                                  Text(
-                                                                                    '40%: ${dates[i].fourtyPercent}',
-                                                                                  ),
-                                                                                  Text(
-                                                                                    '30%: ${dates[i].thirtyPerrcent}',
-                                                                                  ),
-                                                                                  Text(
-                                                                                    '20%: ${dates[i].twentyPercent}',
-                                                                                  ),
-                                                                                  Text(
-                                                                                    'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            pro.changeDateList(
-                                                                                dates[i].id!,
-                                                                                i,
-                                                                                index);
-                                                                          },
                                                                           child:
                                                                               Container(
-                                                                            margin:
-                                                                                EdgeInsets.only(top: 3),
+                                                                            padding:
+                                                                                EdgeInsets.all(6),
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              color: Color.fromARGB(255, 255, 121, 36),
-                                                                              borderRadius: BorderRadius.circular(4),
-                                                                              boxShadow: [
-                                                                                BoxShadow(
-                                                                                  color: Colors.black.withOpacity(.04),
-                                                                                  spreadRadius: 2,
-                                                                                  blurRadius: 3,
-                                                                                  offset: Offset(0, 0),
-                                                                                ),
-                                                                              ],
+                                                                              color: Colors.white,
+                                                                              borderRadius: BorderRadius.circular(30),
                                                                             ),
                                                                             child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.all(3),
-                                                                              child: Icon(
-                                                                                Icons.close,
-                                                                                size: 22,
-                                                                                color: Colors.white,
+                                                                                CircularPercentIndicator(
+                                                                              radius: 24.0,
+                                                                              animation: true,
+                                                                              animationDuration: 1200,
+                                                                              lineWidth: 6.0,
+                                                                              percent: pro.calcCurrentPercent(dates[i].mfg, dates[i].exp) / 100,
+                                                                              center: Text(
+                                                                                pro.calcCurrentPercent(dates[i].mfg, dates[i].exp).toString() + '%',
+                                                                                style: Theme.of(context).textTheme.bodySmall,
+                                                                              ),
+                                                                              circularStrokeCap: CircularStrokeCap.round,
+                                                                              backgroundColor: Color.fromARGB(255, 210, 225, 255),
+                                                                              progressColor: colorStatus(
+                                                                                percentage: pro.calcCurrentPercent(dates[i].mfg, dates[i].exp),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                    Expanded(
+                                                                      child:
+                                                                          Stack(
+                                                                        alignment:
+                                                                            Alignment.topRight,
+                                                                        children: [
+                                                                          Container(
+                                                                            padding: EdgeInsets.fromLTRB(
+                                                                                14,
+                                                                                4,
+                                                                                0,
+                                                                                4),
+                                                                            margin: EdgeInsets.only(
+                                                                                top: 4,
+                                                                                left: 0,
+                                                                                right: 4,
+                                                                                bottom: i == dates.length - 1 ? 0 : 2),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: Color.fromARGB(255, 112, 82, 255).withOpacity(.16),
+                                                                              borderRadius: BorderRadius.only(
+                                                                                bottomLeft: Radius.circular(12),
+                                                                                bottomRight: Radius.circular(12),
+                                                                              ),
+                                                                            ),
+                                                                            child:
+                                                                                Row(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      '${dates[i].mfg} - ${dates[i].exp}',
+                                                                                    ),
+                                                                                    Text(
+                                                                                      '40%: ${dates[i].fourtyPercent}',
+                                                                                    ),
+                                                                                    Text(
+                                                                                      '30%: ${dates[i].thirtyPerrcent}',
+                                                                                    ),
+                                                                                    Text(
+                                                                                      '20%: ${dates[i].twentyPercent}',
+                                                                                    ),
+                                                                                    Text(
+                                                                                      'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap:
+                                                                                () async {
+                                                                              pro.changeDateList(dates[i].id!, i, index);
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: Color.fromARGB(255, 255, 121, 36),
+                                                                                borderRadius: BorderRadius.circular(8),
+                                                                                boxShadow: [
+                                                                                  BoxShadow(
+                                                                                    color: Colors.black.withOpacity(.04),
+                                                                                    spreadRadius: 2,
+                                                                                    blurRadius: 3,
+                                                                                    offset: Offset(0, 0),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.all(3),
+                                                                                child: Icon(
+                                                                                  Icons.close,
+                                                                                  size: 22,
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
                                                   ),
                                                 );

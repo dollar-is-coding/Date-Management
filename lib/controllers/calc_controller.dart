@@ -118,8 +118,8 @@ class CalcController extends ChangeNotifier {
     productApi!.then((value) {
       dataLength = value!.length;
       checkboxes = List.filled(dataLength, false);
+      if (dataLength == 1) firstProductDateLength = value[0].dates.length;
     });
-
     notifyListeners();
   }
 
@@ -138,13 +138,13 @@ class CalcController extends ChangeNotifier {
           var numberExp = int.parse(splittedExp.join(''));
           if (numberMfg == numberNewMfg && numberExp == numberNewExp) {
             isExistedDate = true;
-            print(isExistedDate);
             break;
           }
         }
         if (isExistedDate == false) {
           isSaved = true;
           isExistedDate = true;
+          firstProductDateLength = products[0].dates.length;
           firstProductDateLength += 1;
           DioClient().addNewDateToSheet(
             sku,
@@ -183,7 +183,6 @@ class CalcController extends ChangeNotifier {
       tempItem = value![index];
       value.clear();
       value.add(tempItem);
-      firstProductDateLength = value[0].dates.length;
     });
     checkboxes.fillRange(0, dataLength, false);
     checkboxes[index] = true;

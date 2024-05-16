@@ -137,8 +137,8 @@ class ProductsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeFilterShowed() {
-    filterShowed = !filterShowed;
+  changeFilterShowed(bool? value) {
+    filterShowed =value==null? !filterShowed:value;
     notifyListeners();
   }
 }
