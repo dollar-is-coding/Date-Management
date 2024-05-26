@@ -4,24 +4,31 @@ import 'package:sg_date/services/dio_client.dart';
 
 class ProductsController extends ChangeNotifier {
   Future<List<Product>?>? apiProducts;
+  int displayDataLength = 0;
   int dataLength = 0;
 
   final searchController = TextEditingController();
   final scrollController = ScrollController();
 
-  bool filterShowed = true;
+  bool isCountResult = false;
   List<List<bool>>? dateShowed = [];
   List<bool>? proShowed = [];
-  List<bool> chosenOptions = [true, false, false, false];
-  List<String> textOptions = ['100%', '40%', '30%', '20%'];
-  List<int> realOptions = [100, 40, 30, 20];
+  int selectedSort = 1;
+  int selectedSortIndex = 0;
+  List<int> sortOptions = [1, 2];
+  List<String> sortDisplayOptions = ['Mã sku', 'Tên sản phẩm'];
+  int selectedFilter = 100;
+  int selectedFilterIndex = 0;
+  List<int> filterOptions = [100, 40, 35, 30, 20];
+  List<String> filterDisplayOptions = ['100%', '40%', '35%', '30%', '20%'];
 
   ProductsController() {
-    apiProducts = DioClient().searchForDatedProductsWithFilter('', 100);
+    apiProducts = DioClient().searchForDatedProductsWithFilter('', 100, 1);
     addDisplayDataLength();
     apiProducts!.then(
       (proList) {
-        proShowed = List.filled(proList!.length, true);
+        dataLength = proList!.length;
+        proShowed = List.filled(proList.length, true);
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
@@ -34,25 +41,27 @@ class ProductsController extends ChangeNotifier {
 
   Future searchWithFilter(int optionIndex, String product) async {
     apiProducts!.then((value) => value!.clear());
-    changeFilterOption(optionIndex);
     searchController.text = product;
     apiProducts = DioClient().searchForDatedProductsWithFilter(
       product,
-      realOptions[optionIndex],
+      filterOptions[optionIndex],
+      selectedSort,
     );
+    displayDataLength = 0;
     dataLength = 0;
     proShowed = [];
     dateShowed = [];
     addDisplayDataLength();
     apiProducts!.then(
       (proList) {
-        proShowed = List.filled(proList!.length, true);
+        dataLength = proList!.length;
+        proShowed = List.filled(proList.length, true);
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);
         }
-        print(dateShowed);
+        notifyListeners();
       },
     );
     notifyListeners();
@@ -62,19 +71,19 @@ class ProductsController extends ChangeNotifier {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
       addDisplayDataLength();
+      print('scroll to end');
       notifyListeners();
     } else
       print('scroll');
   }
 
   addDisplayDataLength() {
-    dataLength += 20;
+    displayDataLength += 20;
     apiProducts!.then(
       (value) {
-        if (value != null && value.length < dataLength) {
-          dataLength = value.length;
+        if (value != null && value.length < displayDataLength) {
+          displayDataLength = value.length;
         }
-        print('new length : ${value!.length}');
       },
     );
     notifyListeners();
@@ -131,14 +140,20 @@ class ProductsController extends ChangeNotifier {
     await DioClient().removeDateFromSheet(id.toString());
   }
 
-  changeFilterOption(index) {
-    chosenOptions.fillRange(0, 4, false);
-    chosenOptions[index] = true;
+  changeSelectedSort(displayValue) {
+    selectedSortIndex = sortOptions.indexOf(displayValue);
+    selectedSort = sortOptions[selectedSortIndex];
     notifyListeners();
   }
 
-  changeFilterShowed(bool? value) {
-    filterShowed =value==null? !filterShowed:value;
+  changeSelectedFilter(displayValue) {
+    selectedFilterIndex = filterOptions.indexOf(displayValue);
+    selectedFilter = filterOptions[selectedFilterIndex];
+    notifyListeners();
+  }
+
+  showCountedResult() {
+    isCountResult = true;
     notifyListeners();
   }
 }

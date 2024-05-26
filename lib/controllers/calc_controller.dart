@@ -5,6 +5,7 @@ import 'package:sg_date/services/dio_client.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
 class CalcController extends ChangeNotifier {
+  GlobalKey key = GlobalKey();
   var snackBar;
   final mfg = TextEditingController();
   final exp = TextEditingController();
@@ -14,6 +15,8 @@ class CalcController extends ChangeNotifier {
   final skuFocus = FocusNode();
   Future<List<Product>?>? productApi;
   int totalDay = 0;
+  double xPosition = 0;
+  double yPosition = 0;
   int currentPercent = 0;
   int allowedDay = 0;
   int dataLength = 0;
@@ -21,7 +24,10 @@ class CalcController extends ChangeNotifier {
   bool isShowResult = false;
   bool isExistedDate = false;
   bool isResultFound = false;
+  bool isAreaShowed = false;
   int firstProductDateLength = 0;
+  String mfgIcon = 'asset/icons/calendar_icon.svg';
+  String expIcon = 'asset/icons/calendar_icon.svg';
   List<bool> checkboxes = [];
   late String twentyPercentLeft = '';
   late String thirtyPercentLeft = '';
@@ -45,22 +51,55 @@ class CalcController extends ChangeNotifier {
       DateTime.now().month,
       DateTime.now().day,
     );
-    if (expDate == now && mfgDate == now) {
+    if (mfg.text.isEmpty || exp.text.isEmpty) {
       snackBar = snackBarWidget(
         context: context,
-        text: 'Chọn ngày sản xuất và hạn sử dụng',
+        text: 'Không được để trống NSX và HSD',
         icon: 'asset/icons/warning_icon.svg',
         color: Color.fromARGB(255, 255, 121, 36),
         textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else if (expDate.isBefore(mfgDate) ||
-        expDate.difference(mfgDate).inDays < 10) {
+    } else if (mfgDate.isAfter(expDate)) {
       snackBar = snackBarWidget(
         context: context,
-        text: expDate.isBefore(mfgDate)
-            ? 'Hạn sử dụng nhỏ hơn ngày sản xuất'
-            : 'Hạn sử dụng nhỏ hơn 10 ngày',
+        text: 'NSX không được lớn hơn HSD',
+        icon: 'asset/icons/warning_icon.svg',
+        color: Color.fromARGB(255, 255, 121, 36),
+        textColor: Colors.white,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (mfgDate.isAfter(now)) {
+      snackBar = snackBarWidget(
+        context: context,
+        text: 'NSX không được lớn hơn ngày hiện tại',
+        icon: 'asset/icons/warning_icon.svg',
+        color: Color.fromARGB(255, 255, 121, 36),
+        textColor: Colors.white,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (expDate.isBefore(now)) {
+      snackBar = snackBarWidget(
+        context: context,
+        text: 'HSD không được nhỏ hơn ngày hiện tại',
+        icon: 'asset/icons/warning_icon.svg',
+        color: Color.fromARGB(255, 255, 121, 36),
+        textColor: Colors.white,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (expDate == now && mfgDate == now) {
+      snackBar = snackBarWidget(
+        context: context,
+        text: 'NSX và HSD không được bằng nhau',
+        icon: 'asset/icons/warning_icon.svg',
+        color: Color.fromARGB(255, 255, 121, 36),
+        textColor: Colors.white,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else if (expDate.difference(mfgDate).inDays < 10) {
+      snackBar = snackBarWidget(
+        context: context,
+        text: 'Thời hạn sử dụng không được nhỏ hơn 10 ngày',
         icon: 'asset/icons/warning_icon.svg',
         color: Color.fromARGB(255, 255, 121, 36),
         textColor: Colors.white,
@@ -204,6 +243,7 @@ class CalcController extends ChangeNotifier {
       DateTime.now().month,
       DateTime.now().day,
     );
+    mfgIcon = expIcon = 'asset/icons/calendar_icon.svg';
     notifyListeners();
   }
 
@@ -247,14 +287,48 @@ class CalcController extends ChangeNotifier {
   }
 
   changeMfg(DateTime date) {
+    DateTime now = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
     mfgDate = date;
     mfg.text = DateFormat('dd/MM/yyyy').format(mfgDate);
+    mfgDate.isAfter(now)
+        ? mfgIcon = 'asset/icons/calendar_unaccepted_icon.svg'
+        : mfgIcon = 'asset/icons/calendar_accepted_icon.svg';
     notifyListeners();
   }
 
   changeExp(DateTime date) {
+    DateTime now = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
     expDate = date;
     exp.text = DateFormat('dd/MM/yyyy').format(expDate);
+    expDate.isBefore(now)
+        ? expIcon = 'asset/icons/calendar_unaccepted_icon.svg'
+        : expIcon = 'asset/icons/calendar_accepted_icon.svg';
+    notifyListeners();
+  }
+
+  selectAllText() {
+    sku.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: sku.text.length,
+    );
+    notifyListeners();
+  }
+
+  getPosition() {
+    RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero);
+    isAreaShowed = true;
+    xPosition = position.dx - 20;
+    yPosition = position.dy + 30;
+    print('x: ${position.dx}');
     notifyListeners();
   }
 }

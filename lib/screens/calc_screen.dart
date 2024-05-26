@@ -121,12 +121,8 @@ class CalcScreen extends StatelessWidget {
                       child: TextField(
                         focusNode: calc.skuFocus,
                         controller: calc.sku,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        keyboardType: TextInputType.number,
-                        maxLength: 13,
                         style: Theme.of(context).textTheme.bodyMedium,
+                        onTap: () => calc.selectAllText(),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
@@ -263,7 +259,7 @@ class CalcScreen extends StatelessWidget {
                               filled: true,
                               fillColor: Colors.white,
                               prefixIcon: SvgPicture.asset(
-                                'asset/icons/calendar_icon.svg',
+                                calc.mfgIcon,
                                 fit: BoxFit.scaleDown,
                                 colorFilter: ColorFilter.mode(
                                   Colors.black.withOpacity(.8),
@@ -391,7 +387,7 @@ class CalcScreen extends StatelessWidget {
                               filled: true,
                               fillColor: Colors.white,
                               prefixIcon: SvgPicture.asset(
-                                'asset/icons/calendar_icon.svg',
+                                calc.expIcon,
                                 fit: BoxFit.scaleDown,
                                 colorFilter: ColorFilter.mode(
                                   Colors.black.withOpacity(.8),
@@ -468,32 +464,365 @@ class CalcScreen extends StatelessWidget {
                   // result
                   !calc.isShowResult
                       ? Container()
-                      : Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  topRight: Radius.circular(12),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(.04),
-                                    spreadRadius: 2,
-                                    blurRadius: 3,
-                                    offset: Offset(4, -4),
-                                  ),
-                                ],
+                      : Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(.04),
+                                blurRadius: 4,
+                                spreadRadius: 2,
+                                offset: Offset(0, 0),
                               ),
-                              child: Column(
-                                children: [
-                                  FutureBuilder<List<Product>?>(
-                                    future: calc.productApi,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
+                                child: Column(
+                                  children: [
+                                    FutureBuilder<List<Product>?>(
+                                      future: calc.productApi,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return ListTile(
+                                            dense: true,
+                                            visualDensity: VisualDensity(
+                                              horizontal: -4,
+                                              vertical: -2,
+                                            ),
+                                            contentPadding: EdgeInsets.all(0),
+                                            leading: Icon(
+                                              Icons.bookmark_rounded,
+                                              color: Colors.black12,
+                                            ),
+                                            title: Container(
+                                              height: 12,
+                                              color: Colors.black12,
+                                            ),
+                                            subtitle: Container(
+                                              height: 8,
+                                              color: Colors.black12
+                                                  .withOpacity(.06),
+                                            ),
+                                          );
+                                        } else if (snapshot.hasData &&
+                                            snapshot.data!.length == 1) {
+                                          var product = snapshot.data;
+                                          return ListTile(
+                                            dense: true,
+                                            visualDensity: VisualDensity(
+                                              horizontal: -4,
+                                              vertical: -2,
+                                            ),
+                                            contentPadding: EdgeInsets.all(0),
+                                            leading: InkWell(
+                                              onTap: () async {
+                                                calc.saveNewDate(
+                                                    product![0].sku.toString(),
+                                                    context);
+                                              },
+                                              child: calc.isSaved
+                                                  ? SvgPicture.asset(
+                                                      'asset/icons/bookmark_done_icon.svg',
+                                                      colorFilter:
+                                                          ColorFilter.mode(
+                                                        Color.fromARGB(
+                                                            255, 38, 58, 150),
+                                                        BlendMode.srcIn,
+                                                      ),
+                                                    )
+                                                  : SvgPicture.asset(
+                                                      'asset/icons/bookmark_icon.svg',
+                                                    ),
+                                            ),
+                                            title: InkWell(
+                                              onTap: () {
+                                                if (product[0].dates.length >
+                                                    0) {
+                                                  Provider.of<ProductsController>(
+                                                          context,
+                                                          listen: false)
+                                                      .searchWithFilter(
+                                                    0,
+                                                    product[0].sku.toString(),
+                                                  );
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      child: ProductsScreen(),
+                                                      type: PageTransitionType
+                                                          .rightToLeft,
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    '${product![0].sku} ',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium,
+                                                  ),
+                                                  Text(
+                                                    '(${calc.firstProductDateLength})',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                          color: Colors.black
+                                                              .withOpacity(.8),
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            subtitle: InkWell(
+                                              onTap: () {
+                                                if (product[0].dates.length >
+                                                    0) {
+                                                  Provider.of<ProductsController>(
+                                                          context,
+                                                          listen: false)
+                                                      .searchWithFilter(
+                                                    0,
+                                                    product[0].sku.toString(),
+                                                  );
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      child: ProductsScreen(),
+                                                      type: PageTransitionType
+                                                          .rightToLeft,
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: Text(
+                                                product[0].name,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(
+                                                        color: Colors.black54),
+                                              ),
+                                            ),
+                                            trailing: InkWell(
+                                              key: calc.key,
+                                              child: SvgPicture.asset(
+                                                'asset/icons/locate_icon.svg',
+                                              ),
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  useSafeArea: true,
+                                                  isScrollControlled: true,
+                                                  isDismissible: true,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  builder: (context) {
+                                                    return DraggableScrollableSheet(
+                                                      builder: (context,
+                                                          scrollController) {
+                                                        return Container(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              .4,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .vertical(
+                                                              top: Radius
+                                                                  .circular(16),
+                                                            ),
+                                                          ),
+                                                          child: Stack(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            children: [
+                                                              Column(
+                                                                children: [
+                                                                  Container(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            2),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      border:
+                                                                          Border(
+                                                                        bottom:
+                                                                            BorderSide(
+                                                                          width:
+                                                                              1,
+                                                                          color: Colors
+                                                                              .grey
+                                                                              .shade400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    child:
+                                                                        Stack(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      children: [
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.end,
+                                                                          children: [
+                                                                            IconButton(
+                                                                              onPressed: () => Navigator.pop(context),
+                                                                              icon: Icon(Icons.close_rounded),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            Text(
+                                                                              'Khu vực quầy kệ',
+                                                                              style: Theme.of(context).textTheme.bodyMedium,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child:
+                                                                        ListView(
+                                                                      controller:
+                                                                          scrollController,
+                                                                      children:
+                                                                          List.generate(
+                                                                        10,
+                                                                        (index) {
+                                                                          return Column(
+                                                                            children: [
+                                                                              ListTile(
+                                                                                dense: true,
+                                                                                leading: Checkbox(
+                                                                                  shape: RoundedRectangleBorder(
+                                                                                    borderRadius: BorderRadius.circular(6),
+                                                                                  ),
+                                                                                  value: false,
+                                                                                  onChanged: (val) {},
+                                                                                ),
+                                                                                title: Text(
+                                                                                  'Quầy 1',
+                                                                                  style: Theme.of(context).textTheme.bodyMedium,
+                                                                                ),
+                                                                              ),
+                                                                              Divider(
+                                                                                height: 0,
+                                                                                indent: 70,
+                                                                                endIndent: 20,
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Positioned(
+                                                                bottom: 0,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          .36,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        style: ElevatedButton
+                                                                            .styleFrom(
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(20),
+                                                                            side:
+                                                                                BorderSide(
+                                                                              width: 1,
+                                                                              color: Color.fromARGB(255, 112, 82, 255),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        onPressed:
+                                                                            () {},
+                                                                        child:
+                                                                            Text(
+                                                                          'Hủy',
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodyMedium!
+                                                                              .copyWith(
+                                                                                color: Color.fromARGB(255, 112, 82, 255),
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          .08,
+                                                                    ),
+                                                                    Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          .36,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        style: ElevatedButton
+                                                                            .styleFrom(
+                                                                          backgroundColor: Color.fromARGB(
+                                                                              255,
+                                                                              112,
+                                                                              82,
+                                                                              255),
+                                                                        ),
+                                                                        onPressed:
+                                                                            () {},
+                                                                        child:
+                                                                            Text(
+                                                                          'Xác nhận',
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodyMedium!
+                                                                              .copyWith(
+                                                                                color: Colors.white,
+                                                                              ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        }
                                         return ListTile(
                                           dense: true,
                                           visualDensity: VisualDensity(
@@ -515,542 +844,429 @@ class CalcScreen extends StatelessWidget {
                                                 Colors.black12.withOpacity(.06),
                                           ),
                                         );
-                                      } else if (snapshot.hasData &&
-                                          snapshot.data!.length == 1) {
-                                        var product = snapshot.data;
-                                        return ListTile(
-                                          dense: true,
-                                          visualDensity: VisualDensity(
-                                            horizontal: -4,
-                                            vertical: -2,
-                                          ),
-                                          contentPadding: EdgeInsets.all(0),
-                                          leading: InkWell(
-                                            onTap: () async {
-                                              calc.saveNewDate(
-                                                  product![0].sku.toString(),
-                                                  context);
-                                            },
-                                            child: calc.isSaved
-                                                ? SvgPicture.asset(
-                                                    'asset/icons/bookmark_done_icon.svg',
-                                                    colorFilter:
-                                                        ColorFilter.mode(
-                                                      Color.fromARGB(
-                                                          255, 38, 58, 150),
-                                                      BlendMode.srcIn,
-                                                    ),
-                                                  )
-                                                : SvgPicture.asset(
-                                                    'asset/icons/bookmark_icon.svg',
-                                                  ),
-                                          ),
-                                          title: Row(
-                                            children: [
-                                              Text(
-                                                '${product![0].sku} ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                              Text(
-                                                '(${calc.firstProductDateLength})',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(
-                                                      color: Colors.black
-                                                          .withOpacity(.8),
-                                                    ),
-                                              ),
-                                            ],
-                                          ),
-                                          subtitle: Text(
-                                            product[0].name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall!
-                                                .copyWith(
-                                                    color: Colors.black54),
-                                          ),
-                                          trailing: product[0].dates.length > 0
-                                              ? InkWell(
-                                                  child: SvgPicture.asset(
-                                                    'asset/icons/arrow_right_icon.svg',
-                                                  ),
-                                                  onTap: () {
-                                                    Provider.of<ProductsController>(
-                                                            context,
-                                                            listen: false)
-                                                        .searchWithFilter(
-                                                      0,
-                                                      product[0].sku.toString(),
-                                                    );
-                                                    Provider.of<ProductsController>(
-                                                            context,
-                                                            listen: false)
-                                                        .changeFilterShowed(
-                                                            false);
-                                                    Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                        child: ProductsScreen(),
-                                                        type: PageTransitionType
-                                                            .rightToLeft,
-                                                      ),
-                                                    );
-                                                  },
-                                                )
-                                              : null,
-                                        );
-                                      }
-                                      return ListTile(
-                                        dense: true,
-                                        visualDensity: VisualDensity(
-                                          horizontal: -4,
-                                          vertical: -2,
-                                        ),
-                                        contentPadding: EdgeInsets.all(0),
-                                        leading: Icon(
-                                          Icons.bookmark_rounded,
-                                          color: Colors.black12,
-                                        ),
-                                        title: Container(
-                                          height: 12,
-                                          color: Colors.black12,
-                                        ),
-                                        subtitle: Container(
-                                          height: 8,
-                                          color:
-                                              Colors.black12.withOpacity(.06),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  // Date calced
-                                  Row(
-                                    children: [
-                                      IntrinsicWidth(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 12),
-                                              child:
-                                                  Text('NSX: ${calc.mfg.text}'),
-                                            ),
-                                            Divider(
-                                              color: Colors.grey.shade300,
-                                              height: 8,
-                                            ),
-                                            Text('HSD: ${calc.exp.text}'),
-                                            Divider(
-                                              color: Colors.grey.shade300,
-                                              height: 8,
-                                            ),
-                                            Text(
-                                                '40%: ${calc.fourtyPercentLeft}'),
-                                            Divider(
-                                              color: Colors.grey.shade300,
-                                              height: 8,
-                                            ),
-                                            Text(
-                                                '30%: ${calc.thirtyPercentLeft}'),
-                                            Divider(
-                                              color: Colors.grey.shade300,
-                                              height: 8,
-                                            ),
-                                            Text(
-                                                '20%: ${calc.twentyPercentLeft}'),
-                                            Divider(
-                                              color: Colors.grey.shade300,
-                                              height: 8,
-                                            ),
-                                            Text(
-                                                'Còn: ${calc.allowedDay} ngày'),
-                                          ],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: CircularPercentIndicator(
-                                          radius: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .14,
-                                          animation: true,
-                                          animationDuration: 1000,
-                                          lineWidth: 10,
-                                          percent: calc.currentPercent / 100,
-                                          center: Text(
-                                            calc.currentPercent.toString() +
-                                                '%',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          ),
-                                          circularStrokeCap:
-                                              CircularStrokeCap.round,
-                                          backgroundColor: Color.fromARGB(
-                                              255, 210, 225, 255),
-                                          progressColor: colorStatus(
-                                              percentage: calc.currentPercent),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // result from API
-                            FutureBuilder<List<Product>?>(
-                              future: calc.productApi,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Container(
-                                    padding: EdgeInsets.only(top: 24),
-                                    child: LoadingAnimationWidget
-                                        .staggeredDotsWave(
-                                      color: Color.fromARGB(255, 112, 82, 255),
-                                      size: 30,
+                                      },
                                     ),
-                                  );
-                                } else if (snapshot.hasData) {
-                                  var products = snapshot.data;
-                                  return products!.length > 1
-                                      ?
-                                      // Có nhiều hơn 1 sản phẩm hiển thị
-                                      Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border(
-                                              top: BorderSide(
+                                    // Date calced
+                                    Row(
+                                      children: [
+                                        IntrinsicWidth(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 12),
+                                                child: Text(
+                                                    'NSX: ${calc.mfg.text}'),
+                                              ),
+                                              Divider(
                                                 color: Colors.grey.shade300,
-                                                width: 1,
+                                                height: 8,
                                               ),
-                                            ),
-                                            borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(12),
-                                              bottomRight: Radius.circular(12),
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(.04),
-                                                spreadRadius: 2,
-                                                blurRadius: 3,
-                                                offset: Offset(4, 2),
+                                              Text('HSD: ${calc.exp.text}'),
+                                              Divider(
+                                                color: Colors.grey.shade300,
+                                                height: 8,
                                               ),
+                                              Text(
+                                                  '40%: ${calc.fourtyPercentLeft}'),
+                                              Divider(
+                                                color: Colors.grey.shade300,
+                                                height: 8,
+                                              ),
+                                              Text(
+                                                  '30%: ${calc.thirtyPercentLeft}'),
+                                              Divider(
+                                                color: Colors.grey.shade300,
+                                                height: 8,
+                                              ),
+                                              Text(
+                                                  '20%: ${calc.twentyPercentLeft}'),
+                                              Divider(
+                                                color: Colors.grey.shade300,
+                                                height: 8,
+                                              ),
+                                              Text(
+                                                  'Còn: ${calc.allowedDay} ngày'),
                                             ],
                                           ),
-                                          child: Column(
-                                            children: List.generate(
-                                              products.length,
-                                              (index) {
-                                                return CheckboxListTile(
-                                                  value: calc.checkboxes[index],
-                                                  onChanged: (value) =>
-                                                      calc.chooseDisplayProduct(
-                                                          index),
-                                                  dense: true,
-                                                  activeColor: Color.fromARGB(
-                                                      255, 112, 82, 255),
-                                                  visualDensity: VisualDensity(
-                                                    horizontal: -4,
-                                                    vertical: -2,
-                                                  ),
-                                                  contentPadding:
-                                                      EdgeInsets.all(0),
-                                                  checkboxShape:
-                                                      RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                  ),
-                                                  title: Text(
-                                                    products[index]
-                                                        .sku
-                                                        .toString(),
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
-                                                  ),
-                                                  subtitle: Text(
-                                                    products[index].name,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                            color:
-                                                                Colors.black54),
-                                                  ),
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-                                                );
-                                              },
+                                        ),
+                                        Expanded(
+                                          child: CircularPercentIndicator(
+                                            radius: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .14,
+                                            animation: true,
+                                            animationDuration: 1000,
+                                            lineWidth: 10,
+                                            percent:
+                                                calc.currentPercent / 100 > 0
+                                                    ? calc.currentPercent / 100
+                                                    : 0,
+                                            center: Text(
+                                              calc.currentPercent.toString() +
+                                                  '%',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge,
                                             ),
+                                            circularStrokeCap:
+                                                CircularStrokeCap.round,
+                                            backgroundColor:
+                                                backgroundProgressColor(
+                                                    percentage:
+                                                        calc.currentPercent),
+                                            progressColor: progressColor(
+                                                percentage:
+                                                    calc.currentPercent),
                                           ),
-                                        )
-                                      :
-                                      // Chỉ có 1 sản phẩm
-                                      products.length > 0 &&
-                                              products[0].dates.length > 0
-                                          ? Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 20, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(12),
-                                                  bottomRight:
-                                                      Radius.circular(12),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // result from API
+                              FutureBuilder<List<Product>?>(
+                                future: calc.productApi,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Container(
+                                      padding: EdgeInsets.only(top: 24),
+                                      child: LoadingAnimationWidget
+                                          .staggeredDotsWave(
+                                        color:
+                                            Color.fromARGB(255, 112, 82, 255),
+                                        size: 30,
+                                      ),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    var products = snapshot.data;
+                                    return products!.length > 1
+                                        ?
+                                        // Có nhiều hơn 1 sản phẩm hiển thị
+                                        Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1,
                                                 ),
-                                                border: Border(
-                                                  top: BorderSide(
-                                                    color: Colors.grey.shade300,
-                                                    width: 1,
-                                                  ),
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withOpacity(.04),
-                                                    spreadRadius: 2,
-                                                    blurRadius: 3,
-                                                    offset: Offset(4, 4),
-                                                  ),
-                                                ],
                                               ),
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4,
+                                            ),
+                                            child: Column(
+                                              children: List.generate(
+                                                products.length,
+                                                (index) {
+                                                  return CheckboxListTile(
+                                                    value:
+                                                        calc.checkboxes[index],
+                                                    onChanged: (value) => calc
+                                                        .chooseDisplayProduct(
+                                                            index),
+                                                    dense: true,
+                                                    activeColor: Color.fromARGB(
+                                                        255, 112, 82, 255),
+                                                    visualDensity:
+                                                        VisualDensity(
+                                                      horizontal: -4,
+                                                      vertical: -2,
                                                     ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          'NSX',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodySmall!
-                                                                  .copyWith(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            .8),
-                                                                  ),
-                                                        ),
-                                                        Text(
-                                                          '20%',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodySmall!
-                                                                  .copyWith(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            .8),
-                                                                  ),
-                                                        ),
-                                                        Text(
-                                                          'HSD',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodySmall!
-                                                                  .copyWith(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            .8),
-                                                                  ),
-                                                        ),
-                                                      ],
+                                                    contentPadding:
+                                                        EdgeInsets.all(0),
+                                                    checkboxShape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                    ),
+                                                    title: Text(
+                                                      products[index]
+                                                          .sku
+                                                          .toString(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                    subtitle: Text(
+                                                      products[index].name,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall!
+                                                          .copyWith(
+                                                              color: Colors
+                                                                  .black54),
+                                                    ),
+                                                    controlAffinity:
+                                                        ListTileControlAffinity
+                                                            .leading,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        :
+                                        // Chỉ có 1 sản phẩm
+                                        products.length > 0 &&
+                                                products[0].dates.length > 0
+                                            ? Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 8),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(12),
+                                                    bottomRight:
+                                                        Radius.circular(12),
+                                                  ),
+                                                  border: Border(
+                                                    top: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      width: 1,
                                                     ),
                                                   ),
-                                                  Column(
-                                                    children: List.generate(
-                                                      products[0].dates.length,
-                                                      (i) {
-                                                        var dates =
-                                                            products[0].dates;
-                                                        return Column(
-                                                          children: [
-                                                            Stack(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              children: [
-                                                                Stack(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(.04),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 3,
+                                                      offset: Offset(4, 4),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            'NSX',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall!
+                                                                .copyWith(
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          .8),
+                                                                ),
+                                                          ),
+                                                          Text(
+                                                            '20%',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall!
+                                                                .copyWith(
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          .8),
+                                                                ),
+                                                          ),
+                                                          Text(
+                                                            'HSD',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall!
+                                                                .copyWith(
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                          .8),
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Column(
+                                                      children: List.generate(
+                                                        products[0]
+                                                            .dates
+                                                            .length,
+                                                        (i) {
+                                                          var dates =
+                                                              products[0].dates;
+                                                          return Column(
+                                                            children: [
+                                                              Stack(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                children: [
+                                                                  Stack(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                    children: [
+                                                                      Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height:
+                                                                            16,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color: Color.fromARGB(
+                                                                              255,
+                                                                              210,
+                                                                              225,
+                                                                              255),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(20),
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        width: MediaQuery.of(context).size.width /
+                                                                            100 *
+                                                                            calc.calcCurrentPercent(dates[i].mfg,
+                                                                                dates[i].exp),
+                                                                        height:
+                                                                            16,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color: Color.fromARGB(
+                                                                              255,
+                                                                              112,
+                                                                              82,
+                                                                              255),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(20),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Text(
+                                                                    '${calc.calcCurrentPercent(dates[i].mfg, dates[i].exp)}%',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .bodySmall!
+                                                                        .copyWith(
+                                                                            color:
+                                                                                Colors.white),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        top: 4,
+                                                                        bottom:
+                                                                            10),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
-                                                                    Container(
-                                                                      width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width,
-                                                                      height:
-                                                                          16,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color.fromARGB(
-                                                                            255,
-                                                                            210,
-                                                                            225,
-                                                                            255),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                      ),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          dates[i]
+                                                                              .mfg
+                                                                              .substring(
+                                                                                0,
+                                                                                5,
+                                                                              ),
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                        Text(
+                                                                          dates[i]
+                                                                              .mfg
+                                                                              .substring(
+                                                                                6,
+                                                                                10,
+                                                                              ),
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          100 *
-                                                                          calc.calcCurrentPercent(
-                                                                              dates[i].mfg,
-                                                                              dates[i].exp),
-                                                                      height:
-                                                                          16,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Color.fromARGB(
-                                                                            255,
-                                                                            112,
-                                                                            82,
-                                                                            255),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                      ),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          dates[i]
+                                                                              .twentyPercent,
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                        Text(
+                                                                          '(${calc.calcRemainingDays(dates[i].twentyPercent)} ngày)',
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          dates[i]
+                                                                              .exp
+                                                                              .substring(
+                                                                                0,
+                                                                                5,
+                                                                              ),
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                        Text(
+                                                                          dates[i]
+                                                                              .exp
+                                                                              .substring(
+                                                                                6,
+                                                                                10,
+                                                                              ),
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodySmall,
+                                                                        ),
+                                                                      ],
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                Text(
-                                                                  '${calc.calcCurrentPercent(dates[i].mfg, dates[i].exp)}%',
-                                                                  style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .bodySmall!
-                                                                      .copyWith(
-                                                                          color:
-                                                                              Colors.white),
-                                                                )
-                                                              ],
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      top: 4,
-                                                                      bottom:
-                                                                          10),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Column(
-                                                                    children: [
-                                                                      Text(
-                                                                        dates[i]
-                                                                            .mfg
-                                                                            .substring(
-                                                                              0,
-                                                                              5,
-                                                                            ),
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                      Text(
-                                                                        dates[i]
-                                                                            .mfg
-                                                                            .substring(
-                                                                              6,
-                                                                              10,
-                                                                            ),
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Column(
-                                                                    children: [
-                                                                      Text(
-                                                                        dates[i]
-                                                                            .twentyPercent,
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                      Text(
-                                                                        '(${calc.calcRemainingDays(dates[i].twentyPercent)} ngày)',
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Column(
-                                                                    children: [
-                                                                      Text(
-                                                                        dates[i]
-                                                                            .exp
-                                                                            .substring(
-                                                                              0,
-                                                                              5,
-                                                                            ),
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                      Text(
-                                                                        dates[i]
-                                                                            .exp
-                                                                            .substring(
-                                                                              6,
-                                                                              10,
-                                                                            ),
-                                                                        style: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodySmall,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
                                                               ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          : Container();
-                                }
-                                return Container();
-                              },
-                            ),
-                          ],
+                                                  ],
+                                                ),
+                                              )
+                                            : Container();
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                 ],
               ),

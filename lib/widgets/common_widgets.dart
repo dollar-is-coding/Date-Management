@@ -43,7 +43,6 @@ SnackBar snackBarWidget({
     content: Row(
       children: [
         SvgPicture.asset(
-          // 'asset/icons/warning_icon.svg',
           icon,
           fit: BoxFit.scaleDown,
           width: 16,
@@ -77,10 +76,44 @@ SnackBar snackBarWidget({
   );
 }
 
-Color colorStatus({required percentage}) {
-  if (percentage <= 20) return Color.fromARGB(255, 254, 1, 1);
-  if (percentage <= 30) return Color.fromARGB(255, 255, 148, 2);
-  if (percentage < 35) return Color.fromARGB(255, 253, 206, 8);
+Color progressColor({required percentage}) {
+  if (percentage <= 20) return Color.fromARGB(255, 245, 34, 45);
+  if (percentage <= 30) return Color.fromARGB(255, 250, 141, 24);
+  if (percentage < 35) return Color.fromARGB(255, 255, 204, 0);
   if (percentage <= 40) return Color.fromARGB(255, 0, 79, 124);
   return Color.fromARGB(255, 112, 82, 255);
+}
+
+Color backgroundProgressColor({required percentage}) {
+  if (percentage <= 20) return Color.fromARGB(255, 255, 235, 233);
+  if (percentage <= 30) return Color.fromARGB(255, 255, 239, 221);
+  if (percentage < 35) return Color.fromARGB(255, 255, 249, 226);
+  return Color.fromARGB(255, 210, 225, 255);
+}
+
+Widget radioListileCustom({
+  required val,
+  required groupVal,
+  required function,
+  required text,
+}) {
+  return IntrinsicWidth(
+    child: Container(
+      child: Row(
+        children: [
+          Radio(
+            value: val,
+            groupValue: groupVal,
+            onChanged: function,
+            autofocus: val == 1 ? true : false,
+            visualDensity: const VisualDensity(
+                horizontal: VisualDensity.minimumDensity,
+                vertical: VisualDensity.minimumDensity),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          Text(text),
+        ],
+      ),
+    ),
+  );
 }

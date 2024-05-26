@@ -4,7 +4,7 @@ import 'package:sg_date/models/product.dart';
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbxmAZ50IO9PpuNEEvWMbspZoCH3cUarckgwaYkZG0_EhLcOFHUemN44FGnqxL8k1RTPJQ/exec';
+      'https://script.google.com/macros/s/AKfycbxTThW6ogwOnBItw-X-tBDDAcYfIDWbQTsmMWwOBIPpoTGmclMzI1umoUEY5oZ0pa6nEg/exec';
 
   Future<List<Product>?> getAnyProducts(String product) async {
     var response = await _dio.get(_urlBase + '?search=' + product);
@@ -31,9 +31,11 @@ class DioClient {
   }
 
   Future<List<Product>?> searchForDatedProductsWithFilter(
-      String product, int filter) async {
+      String product, int filter, int sortKey) async {
+    String sortName = sortKey == 1 ? 'number' : 'alpha';
     var response = await _dio.get(
-      _urlBase + '?search=${product}&isDate=true&percent=${filter}',
+      _urlBase +
+          '?search=${product}&isDate=true&percent=${filter}&sort=${sortName}',
     );
     List<Product>? products;
     try {
