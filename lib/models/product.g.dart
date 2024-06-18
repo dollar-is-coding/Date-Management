@@ -14,6 +14,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       dates: (json['dates'] as List<dynamic>)
           .map((e) => Date.fromJson(e as Map<String, dynamic>))
           .toList(),
+      tag: Tag.fromJson(json['tag'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'sku': instance.sku,
       'name': instance.name,
       'dates': instance.dates,
+      'tag': instance.tag,
     };

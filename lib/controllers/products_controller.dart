@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sg_date/models/product.dart';
+import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
 
 class ProductsController extends ChangeNotifier {
   Future<List<Product>?>? apiProducts;
+  Future<List<Tag>?>? apiTags;
   int displayDataLength = 0;
   int dataLength = 0;
 
@@ -21,9 +24,14 @@ class ProductsController extends ChangeNotifier {
   int selectedFilterIndex = 0;
   List<int> filterOptions = [100, 40, 35, 30, 20];
   List<String> filterDisplayOptions = ['100%', '40%', '35%', '30%', '20%'];
+  int selectedTagIndex = 0;
+  int selectedTag = 0;
+  List<int> tagOptions = [0];
+  List<String> tagDisplayOptions = ['Tất cả'];
 
   ProductsController() {
     apiProducts = DioClient().searchForDatedProductsWithFilter('', 100, 1);
+    getTags();
     addDisplayDataLength();
     apiProducts!.then(
       (proList) {
@@ -39,8 +47,22 @@ class ProductsController extends ChangeNotifier {
     scrollController.addListener(scrollListener);
   }
 
+  getTags() async {
+    apiTags = DioClient().getAllTags();
+    await apiTags!.then(
+      (value) {
+        selectedTag = 0;
+        for (var i = 0; i < value!.length; i++) {
+          tagDisplayOptions.add(value[i].name);
+          tagOptions.add(value[i].id!);
+        }
+      },
+    );
+    notifyListeners();
+  }
+
   Future searchWithFilter(int optionIndex, String product) async {
-    apiProducts!.then((value) => value!.clear());
+    await apiProducts!.then((value) => value!.clear());
     searchController.text = product;
     apiProducts = DioClient().searchForDatedProductsWithFilter(
       product,
@@ -52,7 +74,7 @@ class ProductsController extends ChangeNotifier {
     proShowed = [];
     dateShowed = [];
     addDisplayDataLength();
-    apiProducts!.then(
+    await apiProducts!.then(
       (proList) {
         dataLength = proList!.length;
         proShowed = List.filled(proList.length, true);
@@ -61,7 +83,6 @@ class ProductsController extends ChangeNotifier {
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);
         }
-        notifyListeners();
       },
     );
     notifyListeners();
@@ -149,6 +170,13 @@ class ProductsController extends ChangeNotifier {
   changeSelectedFilter(displayValue) {
     selectedFilterIndex = filterOptions.indexOf(displayValue);
     selectedFilter = filterOptions[selectedFilterIndex];
+    notifyListeners();
+  }
+
+  changeSelectedTag(value) {
+    selectedTagIndex = tagOptions.indexOf(value);
+    selectedTag = tagOptions[selectedTagIndex];
+    print(value);
     notifyListeners();
   }
 

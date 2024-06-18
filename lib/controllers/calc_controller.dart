@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sg_date/models/product.dart';
+import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
@@ -10,10 +12,15 @@ class CalcController extends ChangeNotifier {
   final mfg = TextEditingController();
   final exp = TextEditingController();
   final sku = TextEditingController();
+  final tagName = TextEditingController();
   final mfgFocus = FocusNode();
   final expFocus = FocusNode();
   final skuFocus = FocusNode();
   Future<List<Product>?>? productApi;
+  Future<List<Tag>?>? tagApi;
+  // Future<List<Tag>?>? reversedList;
+  List<bool> tagList = [];
+  // List<bool> tagShowedList = [];
   int totalDay = 0;
   double xPosition = 0;
   double yPosition = 0;
@@ -26,6 +33,8 @@ class CalcController extends ChangeNotifier {
   bool isResultFound = false;
   bool isAreaShowed = false;
   int firstProductDateLength = 0;
+  int? selectedProductId = 0;
+  int? selectedTagId = 0;
   String mfgIcon = 'asset/icons/calendar_icon.svg';
   String expIcon = 'asset/icons/calendar_icon.svg';
   List<bool> checkboxes = [];
@@ -42,10 +51,18 @@ class CalcController extends ChangeNotifier {
     DateTime.now().month,
     DateTime.now().day,
   );
+  String tempMfg = '';
+  String tempExp = '';
+
+  setSku(String sku) {
+    this.sku.text = sku;
+  }
 
   showResult(context) async {
     isSaved = false;
     isExistedDate = false;
+    tempExp = exp.text;
+    tempMfg = mfg.text;
     DateTime now = DateTime(
       DateTime.now().year,
       DateTime.now().month,
@@ -152,23 +169,41 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  getProducts() {
+  getProducts() async {
+    firstProductDateLength = 0;
     productApi = DioClient().getAnyProducts(sku.text);
-    productApi!.then((value) {
+    tagApi = DioClient().getAllTags();
+    await productApi!.then((value) async {
       dataLength = value!.length;
       checkboxes = List.filled(dataLength, false);
-      if (dataLength == 1) firstProductDateLength = value[0].dates.length;
+      if (dataLength == 1) {
+        Product tempItem;
+        firstProductDateLength = value[0].dates.length;
+        tempItem = value[0];
+        selectedProductId = tempItem.id;
+        await tagApi!.then(
+          (tags) {
+            tagList = List.filled(tags!.length, false);
+            for (var i = 0; i < tags.length; i++) {
+              if (tags[i].id == value[0].tag.id) {
+                tagList[i] = true;
+                break;
+              }
+            }
+          },
+        );
+      }
     });
     notifyListeners();
   }
 
   saveNewDate(String sku, context) async {
     int numberNewMfg = 0, numberNewExp = 0;
-    var splittedNewMfg = mfg.text.split('/');
-    var splittedNewExp = exp.text.split('/');
+    var splittedNewMfg = tempMfg.split('/');
+    var splittedNewExp = tempExp.split('/');
     numberNewMfg = int.parse(splittedNewMfg.join(''));
     numberNewExp = int.parse(splittedNewExp.join(''));
-    productApi!.then(
+    await productApi!.then(
       (products) {
         for (var i = 0; i < products![0].dates.length; i++) {
           var splittedMfg = products[0].dates[i].mfg.split('/');
@@ -187,8 +222,8 @@ class CalcController extends ChangeNotifier {
           firstProductDateLength += 1;
           DioClient().addNewDateToSheet(
             sku,
-            mfg.text,
-            exp.text,
+            tempMfg,
+            tempExp,
             twentyPercentLeft,
             thirtyPercentLeft,
             fourtyPercentLeft,
@@ -216,12 +251,27 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  chooseDisplayProduct(int index) {
-    var tempItem;
-    productApi!.then((value) {
+  chooseDisplayProduct(int index) async {
+    Product tempItem;
+    await productApi!.then((value) async {
       tempItem = value![index];
       value.clear();
       value.add(tempItem);
+      firstProductDateLength = value[0].dates.length;
+      tempItem = value[0];
+      selectedProductId = tempItem.id;
+      print(selectedProductId);
+      await tagApi!.then(
+        (tags) {
+          tagList = List.filled(tags!.length, false);
+          for (var i = 0; i < tags.length; i++) {
+            if (tags[i].id == value[0].tag.id) {
+              tagList[i] = true;
+              break;
+            }
+          }
+        },
+      );
     });
     checkboxes.fillRange(0, dataLength, false);
     checkboxes[index] = true;
@@ -329,6 +379,86 @@ class CalcController extends ChangeNotifier {
     xPosition = position.dx - 20;
     yPosition = position.dy + 30;
     print('x: ${position.dx}');
+    notifyListeners();
+  }
+
+  checkTag(int index) {
+    int currentCheckedIndex = tagList.indexOf(true);
+    tagList = List.filled(tagList.length, false);
+    if (currentCheckedIndex == index) {
+      tagList[0] = true;
+    } else
+      tagList[index] = true;
+    notifyListeners();
+  }
+
+  chooseTagForProduct() async {
+    await productApi!.then(
+      (products) async {
+        await tagApi!.then(
+          (tags) {
+            if (products![0].tag.id == tags![tagList.indexOf(true)].id) {
+              print('same tag');
+            } else {
+              print('diff tag');
+              products[0].tag.id = tags[tagList.indexOf(true)].id;
+              products[0].tag.name = tags[tagList.indexOf(true)].name;
+              DioClient().replaceTagToProduct(
+                products[0].id.toString(),
+                products[0].tag.id.toString(),
+              );
+            }
+          },
+        );
+      },
+    );
+    notifyListeners();
+  }
+
+  addNewTag() async {
+    String newTag = tagName.text.trim();
+    DioClient().addTagToSheet(tagName.text.trim());
+    tagApi = DioClient().getAllTags();
+    await tagApi!.then((tags) async {
+      tagList = List.filled(tags!.length, false);
+      for (var i = 0; i < tags.length; i++) {
+        if (tags[i].name == newTag) {
+          tagList[i] = true;
+          break;
+        }
+      }
+    });
+    notifyListeners();
+  }
+
+  // removeTag(String id) async {
+  //   int index = 0;
+  //   await reversedList!.then((value) =>
+  //       index = value!.indexWhere((element) => element.id.toString() == id));
+  //   tagShowedList[index] = false;
+  //   notifyListeners();
+  //   DioClient().removeTagFromSheet(id);
+  // }
+
+  replaceTag(int id) async {
+    String newTag = tagName.text.trim();
+    print(newTag);
+    DioClient().replaceTagFromSheet(id.toString(), tagName.text.trim());
+    await productApi!.then(
+      (value) {
+        if (value![0].tag.id == id) value[0].tag.name = newTag;
+      },
+    );
+    tagApi = DioClient().getAllTags();
+    await tagApi!.then((tags) {
+      tagList = List.filled(tags!.length, false);
+      for (var i = 0; i < tags.length; i++) {
+        if (tags[i].name == newTag) {
+          tagList[i] = true;
+          break;
+        }
+      }
+    });
     notifyListeners();
   }
 }

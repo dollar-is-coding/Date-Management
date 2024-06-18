@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
+import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/screens/products_screen.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
@@ -512,6 +513,7 @@ class CalcScreen extends StatelessWidget {
                                         } else if (snapshot.hasData &&
                                             snapshot.data!.length == 1) {
                                           var product = snapshot.data;
+                                          // có data
                                           return ListTile(
                                             dense: true,
                                             visualDensity: VisualDensity(
@@ -568,16 +570,57 @@ class CalcScreen extends StatelessWidget {
                                                         .textTheme
                                                         .bodyMedium,
                                                   ),
-                                                  Text(
-                                                    '(${calc.firstProductDateLength})',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall!
-                                                        .copyWith(
-                                                          color: Colors.black
-                                                              .withOpacity(.8),
-                                                        ),
-                                                  ),
+                                                  product[0].tag.id == 1
+                                                      ? Container()
+                                                      : Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 2,
+                                                          ),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    80,
+                                                                    210,
+                                                                    225,
+                                                                    255),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons
+                                                                    .label_rounded,
+                                                                size: 16,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        112,
+                                                                        82,
+                                                                        255),
+                                                              ),
+                                                              Text(
+                                                                ' ${product[0].tag.name}',
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall!
+                                                                    .copyWith(
+                                                                      color: Color.fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          79,
+                                                                          124),
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
                                                 ],
                                               ),
                                             ),
@@ -602,13 +645,27 @@ class CalcScreen extends StatelessWidget {
                                                   );
                                                 }
                                               },
-                                              child: Text(
-                                                product[0].name,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall!
-                                                    .copyWith(
-                                                        color: Colors.black54),
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    product[0].name,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            color:
+                                                                Colors.black54),
+                                                  ),
+                                                  Text(
+                                                    ' (${calc.firstProductDateLength})',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall!
+                                                        .copyWith(
+                                                            color:
+                                                                Colors.black54),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                             trailing: InkWell(
@@ -617,212 +674,12 @@ class CalcScreen extends StatelessWidget {
                                                 'asset/icons/locate_icon.svg',
                                               ),
                                               onTap: () {
-                                                showModalBottomSheet(
-                                                  context: context,
-                                                  useSafeArea: true,
-                                                  isScrollControlled: true,
-                                                  isDismissible: true,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  builder: (context) {
-                                                    return DraggableScrollableSheet(
-                                                      builder: (context,
-                                                          scrollController) {
-                                                        return Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              .4,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .vertical(
-                                                              top: Radius
-                                                                  .circular(16),
-                                                            ),
-                                                          ),
-                                                          child: Stack(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            children: [
-                                                              Column(
-                                                                children: [
-                                                                  Container(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            2),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      border:
-                                                                          Border(
-                                                                        bottom:
-                                                                            BorderSide(
-                                                                          width:
-                                                                              1,
-                                                                          color: Colors
-                                                                              .grey
-                                                                              .shade400,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    child:
-                                                                        Stack(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center,
-                                                                      children: [
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.end,
-                                                                          children: [
-                                                                            IconButton(
-                                                                              onPressed: () => Navigator.pop(context),
-                                                                              icon: Icon(Icons.close_rounded),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          children: [
-                                                                            Text(
-                                                                              'Khu vực quầy kệ',
-                                                                              style: Theme.of(context).textTheme.bodyMedium,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child:
-                                                                        ListView(
-                                                                      controller:
-                                                                          scrollController,
-                                                                      children:
-                                                                          List.generate(
-                                                                        10,
-                                                                        (index) {
-                                                                          return Column(
-                                                                            children: [
-                                                                              ListTile(
-                                                                                dense: true,
-                                                                                leading: Checkbox(
-                                                                                  shape: RoundedRectangleBorder(
-                                                                                    borderRadius: BorderRadius.circular(6),
-                                                                                  ),
-                                                                                  value: false,
-                                                                                  onChanged: (val) {},
-                                                                                ),
-                                                                                title: Text(
-                                                                                  'Quầy 1',
-                                                                                  style: Theme.of(context).textTheme.bodyMedium,
-                                                                                ),
-                                                                              ),
-                                                                              Divider(
-                                                                                height: 0,
-                                                                                indent: 70,
-                                                                                endIndent: 20,
-                                                                              ),
-                                                                            ],
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Positioned(
-                                                                bottom: 0,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          .36,
-                                                                      child:
-                                                                          ElevatedButton(
-                                                                        style: ElevatedButton
-                                                                            .styleFrom(
-                                                                          shape:
-                                                                              RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20),
-                                                                            side:
-                                                                                BorderSide(
-                                                                              width: 1,
-                                                                              color: Color.fromARGB(255, 112, 82, 255),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        onPressed:
-                                                                            () {},
-                                                                        child:
-                                                                            Text(
-                                                                          'Hủy',
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .bodyMedium!
-                                                                              .copyWith(
-                                                                                color: Color.fromARGB(255, 112, 82, 255),
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          .08,
-                                                                    ),
-                                                                    Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          .36,
-                                                                      child:
-                                                                          ElevatedButton(
-                                                                        style: ElevatedButton
-                                                                            .styleFrom(
-                                                                          backgroundColor: Color.fromARGB(
-                                                                              255,
-                                                                              112,
-                                                                              82,
-                                                                              255),
-                                                                        ),
-                                                                        onPressed:
-                                                                            () {},
-                                                                        child:
-                                                                            Text(
-                                                                          'Xác nhận',
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .bodyMedium!
-                                                                              .copyWith(
-                                                                                color: Colors.white,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                );
+                                                tagModalBottomSheet(context);
                                               },
                                             ),
                                           );
                                         }
+                                        // không data
                                         return ListTile(
                                           dense: true,
                                           visualDensity: VisualDensity(
@@ -858,13 +715,13 @@ class CalcScreen extends StatelessWidget {
                                                 padding: const EdgeInsets.only(
                                                     right: 12),
                                                 child: Text(
-                                                    'NSX: ${calc.mfg.text}'),
+                                                    'NSX: ${calc.tempMfg}'),
                                               ),
                                               Divider(
                                                 color: Colors.grey.shade300,
                                                 height: 8,
                                               ),
-                                              Text('HSD: ${calc.exp.text}'),
+                                              Text('HSD: ${calc.tempExp}'),
                                               Divider(
                                                 color: Colors.grey.shade300,
                                                 height: 8,
@@ -966,9 +823,10 @@ class CalcScreen extends StatelessWidget {
                                                   return CheckboxListTile(
                                                     value:
                                                         calc.checkboxes[index],
-                                                    onChanged: (value) => calc
-                                                        .chooseDisplayProduct(
-                                                            index),
+                                                    onChanged: (value) async {
+                                                      calc.chooseDisplayProduct(
+                                                          index);
+                                                    },
                                                     dense: true,
                                                     activeColor: Color.fromARGB(
                                                         255, 112, 82, 255),
@@ -1127,11 +985,11 @@ class CalcScreen extends StatelessWidget {
                                                                             16,
                                                                         decoration:
                                                                             BoxDecoration(
-                                                                          color: Color.fromARGB(
-                                                                              255,
-                                                                              210,
-                                                                              225,
-                                                                              255),
+                                                                          color:
+                                                                              backgroundProgressColor(
+                                                                            percentage:
+                                                                                calc.calcCurrentPercent(dates[i].mfg, dates[i].exp),
+                                                                          ),
                                                                           borderRadius:
                                                                               BorderRadius.circular(20),
                                                                         ),
@@ -1145,11 +1003,11 @@ class CalcScreen extends StatelessWidget {
                                                                             16,
                                                                         decoration:
                                                                             BoxDecoration(
-                                                                          color: Color.fromARGB(
-                                                                              255,
-                                                                              112,
-                                                                              82,
-                                                                              255),
+                                                                          color:
+                                                                              progressColor(
+                                                                            percentage:
+                                                                                calc.calcCurrentPercent(dates[i].mfg, dates[i].exp),
+                                                                          ),
                                                                           borderRadius:
                                                                               BorderRadius.circular(20),
                                                                         ),
@@ -1274,6 +1132,597 @@ class CalcScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  void tagModalBottomSheet(context) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          builder: (context, scrollController) {
+            return Consumer<CalcController>(
+              builder: (context, calc, child) {
+                return Container(
+                  height: MediaQuery.of(context).size.height * .4,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      icon: Icon(Icons.close_rounded),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Thẻ',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: FutureBuilder<List<Tag>?>(
+                              future: calc.tagApi,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return LoadingAnimationWidget
+                                      .staggeredDotsWave(
+                                    color: Color.fromARGB(255, 112, 82, 255),
+                                    size: 30,
+                                  );
+                                }
+                                if (snapshot.hasData) {
+                                  var tagList = snapshot.data;
+                                  return ListView(
+                                    controller: scrollController,
+                                    children: List.generate(
+                                      tagList!.length,
+                                      (index) {
+                                        return Column(
+                                          children: [
+                                            index == 0
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      addTagDialog(context);
+                                                    },
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      leading: SvgPicture.asset(
+                                                        'asset/icons/bookmark_icon.svg',
+                                                        colorFilter:
+                                                            ColorFilter.mode(
+                                                          Colors.black54,
+                                                          BlendMode.srcIn,
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        'Thêm thẻ',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium!
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .black54),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            index == 0
+                                                ? Divider(
+                                                    height: 0,
+                                                    indent: 55,
+                                                    endIndent: 20,
+                                                  )
+                                                : Container(),
+                                            InkWell(
+                                              onTap: () {
+                                                calc.checkTag(index);
+                                              },
+                                              onDoubleTap: () {
+                                                Navigator.pop(context);
+                                                replaceTagDialog(context,
+                                                    tagList[index].id!);
+                                                calc.tagName.text =
+                                                    tagList[index].name;
+                                              },
+                                              child: tagList[index].id != 1
+                                                  ? ListTile(
+                                                      dense: true,
+                                                      leading: SizedBox(
+                                                        width: 24,
+                                                        height: 24,
+                                                        child: Checkbox(
+                                                          activeColor:
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  112,
+                                                                  82,
+                                                                  255),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                          ),
+                                                          value: calc
+                                                              .tagList[index],
+                                                          onChanged: (val) {
+                                                            calc.checkTag(
+                                                                index);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        '${tagList[index].name}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium,
+                                                      ),
+                                                      // trailing: index ==
+                                                      //         tagList.length - 1
+                                                      //     ? null
+                                                      //     : InkWell(
+                                                      //         child: SvgPicture.asset(
+                                                      //           'asset/icons/trash_icon.svg',
+                                                      //         ),
+                                                      //         onTap: () {},
+                                                      //       ),
+                                                    )
+                                                  : Container(),
+                                            ),
+                                            Divider(
+                                              height: 0,
+                                              indent: 55,
+                                              endIndent: 20,
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }
+                                return Container(
+                                  child: Text('No data'),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * .46,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(
+                                      width: 1,
+                                      color: Color.fromARGB(255, 112, 82, 255),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Hủy',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        color:
+                                            Color.fromARGB(255, 112, 82, 255),
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .46,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 112, 82, 255),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  calc.chooseTagForProduct();
+                                },
+                                child: Text(
+                                  'Xác nhận',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        color: Colors.white,
+                                      ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void addTagDialog(context) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.24),
+      barrierDismissible: true,
+      barrierLabel: 'Don\'t tap outside',
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0, end: 1).animate(animation1),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Consumer<CalcController>(
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * .86,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                            child: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'Thêm thẻ',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    tagModalBottomSheet(context);
+                                  },
+                                  child: Icon(Icons.close),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            thickness: .6,
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: TextField(
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              controller: value.tagName,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                counterText: '',
+                                prefixIcon: SvgPicture.asset(
+                                  'asset/icons/locate_icon.svg',
+                                  fit: BoxFit.scaleDown,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.8),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                hintText: 'Tên thẻ',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.grey.shade500),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12, top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                          width: 1,
+                                          color:
+                                              Color.fromARGB(255, 112, 82, 255),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      tagModalBottomSheet(context);
+                                    },
+                                    child: Text(
+                                      'Hủy',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Color.fromARGB(
+                                                255, 112, 82, 255),
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 112, 82, 255),
+                                    ),
+                                    onPressed: () async {
+                                      value.addNewTag();
+                                      Navigator.of(context).pop();
+                                      tagModalBottomSheet(context);
+                                    },
+                                    child: Text(
+                                      'Xác nhận',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void replaceTagDialog(context, int id) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.24),
+      barrierDismissible: true,
+      barrierLabel: 'Don\'t tap outside',
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0, end: 1).animate(animation1),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Consumer<CalcController>(
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * .86,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                            child: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'Sửa thẻ',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    tagModalBottomSheet(context);
+                                    value.tagName.clear();
+                                  },
+                                  child: Icon(Icons.close),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            thickness: .6,
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: TextField(
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              controller: value.tagName,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                counterText: '',
+                                prefixIcon: SvgPicture.asset(
+                                  'asset/icons/locate_icon.svg',
+                                  fit: BoxFit.scaleDown,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.8),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                hintText: 'Tên thẻ',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.grey.shade500),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12, top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                          width: 1,
+                                          color:
+                                              Color.fromARGB(255, 112, 82, 255),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      tagModalBottomSheet(context);
+                                      value.tagName.clear();
+                                    },
+                                    child: Text(
+                                      'Hủy',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Color.fromARGB(
+                                                255, 112, 82, 255),
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 112, 82, 255),
+                                    ),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      value.replaceTag(id);
+                                      value.tagName.clear();
+                                      tagModalBottomSheet(context);
+                                    },
+                                    child: Text(
+                                      'Xác nhận',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

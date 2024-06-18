@@ -99,6 +99,8 @@ flutter:
     - asset/icons/calendar_unaccepted_icon.svg
     - asset/icons/calendar_accepted_icon.svg
     - asset/icons/locate_icon.svg
+    - asset/icons/trash_icon.svg
+    - asset/icons/label_icon.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
