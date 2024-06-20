@@ -18,9 +18,7 @@ class CalcController extends ChangeNotifier {
   final skuFocus = FocusNode();
   Future<List<Product>?>? productApi;
   Future<List<Tag>?>? tagApi;
-  // Future<List<Tag>?>? reversedList;
   List<bool> tagList = [];
-  // List<bool> tagShowedList = [];
   int totalDay = 0;
   double xPosition = 0;
   double yPosition = 0;
@@ -32,6 +30,7 @@ class CalcController extends ChangeNotifier {
   bool isExistedDate = false;
   bool isResultFound = false;
   bool isAreaShowed = false;
+  bool canDeleteTag = true;
   int firstProductDateLength = 0;
   int? selectedProductId = 0;
   int? selectedTagId = 0;
@@ -392,7 +391,7 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  chooseTagForProduct() async {
+  chooseTagForProduct(context) async {
     await productApi!.then(
       (products) async {
         await tagApi!.then(
@@ -407,6 +406,14 @@ class CalcController extends ChangeNotifier {
                 products[0].id.toString(),
                 products[0].tag.id.toString(),
               );
+              snackBar = snackBarWidget(
+                context: context,
+                text: 'Thêm thẻ cho sản phẩm thành công',
+                icon: 'asset/icons/info_icon.svg',
+                color: Color.fromARGB(255, 94, 18, 99),
+                textColor: Colors.white,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
           },
         );
@@ -430,15 +437,6 @@ class CalcController extends ChangeNotifier {
     });
     notifyListeners();
   }
-
-  // removeTag(String id) async {
-  //   int index = 0;
-  //   await reversedList!.then((value) =>
-  //       index = value!.indexWhere((element) => element.id.toString() == id));
-  //   tagShowedList[index] = false;
-  //   notifyListeners();
-  //   DioClient().removeTagFromSheet(id);
-  // }
 
   replaceTag(int id) async {
     String newTag = tagName.text.trim();

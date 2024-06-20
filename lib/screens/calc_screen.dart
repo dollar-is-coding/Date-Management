@@ -570,43 +570,58 @@ class CalcScreen extends StatelessWidget {
                                                         .textTheme
                                                         .bodyMedium,
                                                   ),
-                                                  product[0].tag.id == 1
-                                                      ? Container()
-                                                      : Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 12,
-                                                            vertical: 2,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    80,
-                                                                    210,
-                                                                    225,
-                                                                    255),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                          ),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .label_rounded,
-                                                                size: 16,
-                                                                color: Color
+                                                  InkWell(
+                                                    onTap: () {
+                                                      tagModalBottomSheet(
+                                                          context);
+                                                    },
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: product[0]
+                                                                    .tag
+                                                                    .id ==
+                                                                1
+                                                            ? Color.fromARGB(80,
+                                                                216, 216, 216)
+                                                            : Color.fromARGB(80,
+                                                                210, 225, 255),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.label_rounded,
+                                                            size: 16,
+                                                            color: product[0]
+                                                                        .tag
+                                                                        .id ==
+                                                                    1
+                                                                ? Color
+                                                                    .fromARGB(
+                                                                        160,
+                                                                        75,
+                                                                        124,
+                                                                        139)
+                                                                : Color
                                                                     .fromARGB(
                                                                         255,
                                                                         112,
                                                                         82,
                                                                         255),
-                                                              ),
-                                                              Text(
-                                                                ' ${product[0].tag.name}',
-                                                                style: Theme.of(
+                                                          ),
+                                                          Text(
+                                                            product[0].tag.id ==
+                                                                    1
+                                                                ? ' +'
+                                                                : ' ${product[0].tag.name}',
+                                                            style:
+                                                                Theme.of(
                                                                         context)
                                                                     .textTheme
                                                                     .bodySmall!
@@ -617,10 +632,11 @@ class CalcScreen extends StatelessWidget {
                                                                           79,
                                                                           124),
                                                                     ),
-                                                              ),
-                                                            ],
                                                           ),
-                                                        )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
                                                 ],
                                               ),
                                             ),
@@ -668,15 +684,13 @@ class CalcScreen extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            trailing: InkWell(
-                                              key: calc.key,
-                                              child: SvgPicture.asset(
-                                                'asset/icons/locate_icon.svg',
-                                              ),
-                                              onTap: () {
-                                                tagModalBottomSheet(context);
-                                              },
-                                            ),
+                                            // trailing: InkWell(
+                                            //   key: calc.key,
+                                            //   child: SvgPicture.asset(
+                                            //     'asset/icons/locate_icon.svg',
+                                            //   ),
+                                            //   onTap: () {},
+                                            // ),
                                           );
                                         }
                                         // không data
@@ -1370,7 +1384,7 @@ class CalcScreen extends StatelessWidget {
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  calc.chooseTagForProduct();
+                                  calc.chooseTagForProduct(context);
                                 },
                                 child: Text(
                                   'Xác nhận',

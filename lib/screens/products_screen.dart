@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
+import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
 class ProductsScreen extends StatelessWidget {
@@ -18,6 +19,8 @@ class ProductsScreen extends StatelessWidget {
         return PopScope(
           onPopInvoked: (didPop) {
             parentValue.searchWithFilter(0, '');
+            parentValue.changeSelectedFilter(100);
+            parentValue.changeSelectedSort(1);
           },
           child: Scaffold(
             appBar: AppBar(
@@ -754,57 +757,87 @@ class ProductsScreen extends StatelessWidget {
                                                             .bodyMedium,
                                                       ),
                                                     ),
-                                                    products[index].tag.id == 1
-                                                        ? Container()
-                                                        : Container(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 2,
-                                                            ),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      80,
-                                                                      210,
-                                                                      225,
-                                                                      255),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                            ),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .label_rounded,
-                                                                  size: 16,
-                                                                  color: Color
+                                                    InkWell(
+                                                      onTap: () {
+                                                        pro.determineCheckedTag(
+                                                            products[index]);
+                                                        tagModalBottomSheet(
+                                                            context,
+                                                            products[index],
+                                                            index);
+                                                      },
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 8,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: products[index]
+                                                                      .tag
+                                                                      .id ==
+                                                                  1
+                                                              ? Color.fromARGB(
+                                                                  80,
+                                                                  216,
+                                                                  216,
+                                                                  216)
+                                                              : Color.fromARGB(
+                                                                  80,
+                                                                  210,
+                                                                  225,
+                                                                  255),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons
+                                                                  .label_rounded,
+                                                              size: 16,
+                                                              color: products[index]
+                                                                          .tag
+                                                                          .id ==
+                                                                      1
+                                                                  ? Color
+                                                                      .fromARGB(
+                                                                          160,
+                                                                          75,
+                                                                          124,
+                                                                          139)
+                                                                  : Color
                                                                       .fromARGB(
                                                                           255,
                                                                           112,
                                                                           82,
                                                                           255),
-                                                                ),
-                                                                Text(
-                                                                  ' ${products[index].tag.name}',
-                                                                  style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .bodySmall!
-                                                                      .copyWith(
-                                                                        color: Color.fromARGB(
+                                                            ),
+                                                            Text(
+                                                              products[index]
+                                                                          .tag
+                                                                          .id ==
+                                                                      1
+                                                                  ? ' +'
+                                                                  : ' ${products[index].tag.name}',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodySmall!
+                                                                  .copyWith(
+                                                                    color: Color
+                                                                        .fromARGB(
                                                                             255,
                                                                             0,
                                                                             79,
                                                                             124),
-                                                                      ),
-                                                                ),
-                                                              ],
+                                                                  ),
                                                             ),
-                                                          ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                                 subtitle: Row(
@@ -1033,6 +1066,625 @@ class ProductsScreen extends StatelessWidget {
                       },
                     ),
                   ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void tagModalBottomSheet(context, product, productIndex) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          builder: (context, scrollController) {
+            return Consumer<ProductsController>(
+              builder: (context, pros, child) {
+                return Container(
+                  height: MediaQuery.of(context).size.height * .4,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  width: 1,
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      icon: Icon(Icons.close_rounded),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Thẻ',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: FutureBuilder<List<Tag>?>(
+                              future: pros.apiTags,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return LoadingAnimationWidget
+                                      .staggeredDotsWave(
+                                    color: Color.fromARGB(255, 112, 82, 255),
+                                    size: 30,
+                                  );
+                                }
+                                if (snapshot.hasData) {
+                                  var tagList = snapshot.data;
+                                  return ListView(
+                                    controller: scrollController,
+                                    children: List.generate(
+                                      tagList!.length,
+                                      (index) {
+                                        return Column(
+                                          children: [
+                                            index == 0
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      addTagDialog(
+                                                          context,
+                                                          product,
+                                                          productIndex);
+                                                    },
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      leading: SvgPicture.asset(
+                                                        'asset/icons/bookmark_icon.svg',
+                                                        colorFilter:
+                                                            ColorFilter.mode(
+                                                          Colors.black54,
+                                                          BlendMode.srcIn,
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        'Thêm thẻ',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium!
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .black54),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            index == 0
+                                                ? Divider(
+                                                    height: 0,
+                                                    indent: 55,
+                                                    endIndent: 20,
+                                                  )
+                                                : Container(),
+                                            InkWell(
+                                              onTap: () {
+                                                pros.changeCheckedTag(index);
+                                              },
+                                              onDoubleTap: () {
+                                                Navigator.pop(context);
+                                                // ed(context,
+                                                //     tagList[index].id!);
+                                                // calc.tagName.text =
+                                                //     tagList[index].name;
+                                                editTagDialog(
+                                                    context,
+                                                    product,
+                                                    productIndex,
+                                                    tagList[index].id);
+                                                pros.tagController.text =
+                                                    tagList[index].name;
+                                              },
+                                              child: tagList[index].id != 1
+                                                  ? ListTile(
+                                                      dense: true,
+                                                      leading: SizedBox(
+                                                        width: 24,
+                                                        height: 24,
+                                                        child: Checkbox(
+                                                          activeColor:
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  112,
+                                                                  82,
+                                                                  255),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                          ),
+                                                          value:
+                                                              pros.checkedTags[
+                                                                  index],
+                                                          onChanged: (val) {
+                                                            pros.changeCheckedTag(
+                                                                index);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      title: Text(
+                                                        '${tagList[index].name}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium,
+                                                      ),
+                                                      // trailing: index ==
+                                                      //         tagList.length - 1
+                                                      //     ? null
+                                                      //     : InkWell(
+                                                      //         child: SvgPicture.asset(
+                                                      //           'asset/icons/trash_icon.svg',
+                                                      //         ),
+                                                      //         onTap: () {},
+                                                      //       ),
+                                                    )
+                                                  : Container(),
+                                            ),
+                                            Divider(
+                                              height: 0,
+                                              indent: 55,
+                                              endIndent: 20,
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }
+                                return Container(
+                                  child: Text('No data'),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * .46,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(
+                                      width: 1,
+                                      color: Color.fromARGB(255, 112, 82, 255),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Hủy',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        color:
+                                            Color.fromARGB(255, 112, 82, 255),
+                                      ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .46,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 112, 82, 255),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  pros.chooseTagForProduct(
+                                      product, productIndex,context);
+                                },
+                                child: Text(
+                                  'Xác nhận',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                        color: Colors.white,
+                                      ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void addTagDialog(context, product, productIndex) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.24),
+      barrierDismissible: true,
+      barrierLabel: 'Don\'t tap outside',
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0, end: 1).animate(animation1),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Consumer<ProductsController>(
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * .86,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                            child: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'Thêm thẻ',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    value.tagController.clear();
+                                    tagModalBottomSheet(
+                                        context, product, productIndex);
+                                  },
+                                  child: Icon(Icons.close),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            thickness: .6,
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: TextField(
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              controller: value.tagController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                counterText: '',
+                                prefixIcon: SvgPicture.asset(
+                                  'asset/icons/locate_icon.svg',
+                                  fit: BoxFit.scaleDown,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.8),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                hintText: 'Tên thẻ',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.grey.shade500),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12, top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                          width: 1,
+                                          color:
+                                              Color.fromARGB(255, 112, 82, 255),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      value.tagController.clear();
+                                      tagModalBottomSheet(
+                                          context, product, productIndex);
+                                    },
+                                    child: Text(
+                                      'Hủy',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Color.fromARGB(
+                                                255, 112, 82, 255),
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 112, 82, 255),
+                                    ),
+                                    onPressed: () async {
+                                      if (value.tagController.text
+                                          .trim()
+                                          .isNotEmpty) {
+                                        value.createNewTag();
+                                        Navigator.of(context).pop();
+                                        tagModalBottomSheet(
+                                            context, product, productIndex);
+                                      }
+                                    },
+                                    child: Text(
+                                      'Xác nhận',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void editTagDialog(context, product, productIndex, tagId) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.24),
+      barrierDismissible: true,
+      barrierLabel: 'Don\'t tap outside',
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0, end: 1).animate(animation1),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Consumer<ProductsController>(
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * .86,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                            child: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'Sửa thẻ',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    tagModalBottomSheet(
+                                        context, product, productIndex);
+                                    value.tagController.clear();
+                                  },
+                                  child: Icon(Icons.close),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            thickness: .6,
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: TextField(
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              controller: value.tagController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                counterText: '',
+                                prefixIcon: SvgPicture.asset(
+                                  'asset/icons/locate_icon.svg',
+                                  fit: BoxFit.scaleDown,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.8),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                hintText: 'Tên thẻ',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.grey.shade500),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    color: Color.fromARGB(255, 227, 227, 227),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12, top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                          width: 1,
+                                          color:
+                                              Color.fromARGB(255, 112, 82, 255),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      tagModalBottomSheet(
+                                          context, product, productIndex);
+                                      value.tagController.clear();
+                                    },
+                                    child: Text(
+                                      'Hủy',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Color.fromARGB(
+                                                255, 112, 82, 255),
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 112, 82, 255),
+                                    ),
+                                    onPressed: () async {
+                                      if (value.tagController.text
+                                          .trim()
+                                          .isNotEmpty) {
+                                        Navigator.of(context).pop();
+                                        value.editTag(tagId);
+                                        value.tagController.clear();
+                                        tagModalBottomSheet(
+                                            context, product, productIndex);
+                                      }
+                                    },
+                                    child: Text(
+                                      'Xác nhận',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               },
             ),

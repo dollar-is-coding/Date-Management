@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
+import 'package:sg_date/widgets/common_widgets.dart';
 
 class ProductsController extends ChangeNotifier {
   Future<List<Product>?>? apiProducts;
@@ -12,13 +13,17 @@ class ProductsController extends ChangeNotifier {
 
   final searchController = TextEditingController();
   final scrollController = ScrollController();
+  final tagController = TextEditingController();
 
   bool isCountResult = false;
   List<List<bool>>? dateShowed = [];
+  // 0: remove - 1: add - 2:change
+  int changeTagState = -1;
   List<bool>? proShowed = [];
   int selectedSort = 1;
   int selectedSortIndex = 0;
   List<int> sortOptions = [1, 2];
+  List<bool> checkedTags = [];
   List<String> sortDisplayOptions = ['Mã sku', 'Tên sản phẩm'];
   int selectedFilter = 100;
   int selectedFilterIndex = 0;
@@ -30,8 +35,9 @@ class ProductsController extends ChangeNotifier {
   List<String> tagDisplayOptions = ['Tất cả'];
 
   ProductsController() {
-    apiProducts = DioClient().searchForDatedProductsWithFilter('', 100, 1);
-    getTags();
+    apiProducts = DioClient().getAnyProductsWithDate('', 100, 0, 1);
+    apiTags = DioClient().getAllTags();
+    getTagsForFilter();
     addDisplayDataLength();
     apiProducts!.then(
       (proList) {
@@ -47,8 +53,7 @@ class ProductsController extends ChangeNotifier {
     scrollController.addListener(scrollListener);
   }
 
-  getTags() async {
-    apiTags = DioClient().getAllTags();
+  getTagsForFilter() async {
     await apiTags!.then(
       (value) {
         selectedTag = 0;
@@ -61,12 +66,28 @@ class ProductsController extends ChangeNotifier {
     notifyListeners();
   }
 
+  determineCheckedTag(Product p) async {
+    await apiTags!.then(
+      (tags) {
+        checkedTags = List.filled(tags!.length, false);
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].id == p.tag.id) {
+            checkedTags[i] = true;
+            break;
+          }
+        }
+      },
+    );
+    notifyListeners();
+  }
+
   Future searchWithFilter(int optionIndex, String product) async {
     await apiProducts!.then((value) => value!.clear());
     searchController.text = product;
-    apiProducts = DioClient().searchForDatedProductsWithFilter(
+    apiProducts = DioClient().getAnyProductsWithDate(
       product,
       filterOptions[optionIndex],
+      0,
       selectedSort,
     );
     displayDataLength = 0;
@@ -182,6 +203,98 @@ class ProductsController extends ChangeNotifier {
 
   showCountedResult() {
     isCountResult = true;
+    notifyListeners();
+  }
+
+  changeCheckedTag(int index) {
+    int currentCheckedIndex = checkedTags.indexOf(true);
+    checkedTags = List.filled(checkedTags.length, false);
+    if (currentCheckedIndex == index) {
+      checkedTags[0] = true;
+    } else {
+      checkedTags[index] = true;
+    }
+    notifyListeners();
+  }
+
+  chooseTagForProduct(Product p, int productIndex, context) async {
+    String textInfo = '';
+    await apiTags!.then(
+      (tags) async {
+        if (p.tag.id != tags![checkedTags.indexOf(true)].id) {
+          if (p.tag.id == 1 && tags[checkedTags.indexOf(true)].id != 1)
+            textInfo = 'Đã thêm thẻ vào sản phẩm';
+          else if (p.tag.id != 1 && tags[checkedTags.indexOf(true)].id != 1)
+            textInfo = 'Đã chỉnh sửa thẻ của sản phẩm';
+          else if (p.tag.id != 1 && tags[checkedTags.indexOf(true)].id == 1)
+            textInfo = 'Đã xóa thẻ khỏi sản phẩm';
+          await apiProducts!.then(
+            (pros) {
+              pros![productIndex].tag.id = tags[checkedTags.indexOf(true)].id;
+              pros[productIndex].tag.name =
+                  tags[checkedTags.indexOf(true)].name;
+              DioClient().replaceTagToProduct(
+                p.id.toString(),
+                tags[checkedTags.indexOf(true)].id.toString(),
+              );
+              SnackBar snackBar = snackBarWidget(
+                context: context,
+                text: textInfo,
+                icon: 'asset/icons/info_icon.svg',
+                color: Color.fromARGB(255, 94, 18, 99),
+                textColor: Colors.white,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            },
+          );
+        }
+      },
+    );
+    notifyListeners();
+  }
+
+  createNewTag() async {
+    String newTag = tagController.text.trim();
+    DioClient().addTagToSheet(newTag);
+    apiTags = DioClient().getAllTags();
+    await apiTags!.then(
+      (tags) {
+        checkedTags = List.filled(tags!.length, false);
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].name == newTag) {
+            checkedTags[i] = true;
+          }
+        }
+      },
+    );
+    tagController.clear();
+    notifyListeners();
+  }
+
+  editTag(int tagId) async {
+    String newTag = tagController.text.trim();
+    DioClient().replaceTagFromSheet(tagId.toString(), newTag);
+    apiTags = DioClient().getAllTags();
+    await apiProducts!.then(
+      (pros) {
+        for (var i = 0; i < pros!.length; i++) {
+          if (pros[i].tag.id == tagId) {
+            pros[i].tag.name = newTag;
+          }
+        }
+      },
+    );
+    await apiTags!.then(
+      (tags) {
+        checkedTags = List.filled(tags!.length, false);
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].id == tagId) {
+            checkedTags[i] = true;
+            break;
+          }
+        }
+      },
+    );
     notifyListeners();
   }
 }

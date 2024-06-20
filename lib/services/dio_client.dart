@@ -7,10 +7,11 @@ import 'package:sg_date/models/tag.dart';
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbzePd3TlyKmAqxWFjsIwR3aAeZvpbsLkDjfoUEdoK7LUPo0KAfCYPHiPPpua2JVq01sVA/exec';
+      'https://script.google.com/macros/s/AKfycbwQwGpXIvL-v7o5rSgAlnkltxFcw4mQLB3NMHDJxsEx9hYcjNjQ7av3Y_3k8ZGQyHRoKg/exec';
 
   Future<List<Product>?> getAnyProducts(String product) async {
-    var response = await _dio.get(_urlBase + '?search=' + product);
+    var response =
+        await _dio.get(_urlBase + '?action=easySearch&product=' + product);
     List<Product>? products;
     try {
       if (response.statusCode == 200) {
@@ -33,12 +34,13 @@ class DioClient {
     return products;
   }
 
-  Future<List<Product>?> searchForDatedProductsWithFilter(
-      String product, int filter, int sortKey) async {
-    String sortName = sortKey == 1 ? 'number' : 'alpha';
+  Future<List<Product>?> getAnyProductsWithDate(
+      String product, int pct, int tag, int sortKey) async {
+    String sortType = sortKey == 1 ? 'number' : 'alpha';
+    String query =
+        '?action=searchWithDate&product=${product}&pct=${pct}&tag_id=${tag}&sort=${sortType}';
     var response = await _dio.get(
-      _urlBase +
-          '?search=${product}&isDate=true&percent=${filter}&sort=${sortName}',
+      _urlBase + query,
     );
     List<Product>? products;
     try {
@@ -58,6 +60,21 @@ class DioClient {
       print(e);
     }
     return products;
+  }
+
+  Future<List<Tag>?> getAllTags() async {
+    var response = await _dio.get(_urlBase + '?action=getAllTags');
+    List<Tag>? tags;
+    try {
+      if (response.statusCode == 200) {
+        var getTags = response.data as List;
+        tags = getTags.map((e) => Tag.fromJson(e)).toList();
+      } else
+        print('Status code is ' + response.statusCode.toString());
+    } catch (e) {
+      print(e);
+    }
+    return tags;
   }
 
   Future<void> addNewDateToSheet(
@@ -155,21 +172,6 @@ class DioClient {
     } catch (e) {
       print(e);
     }
-  }
-
-  Future<List<Tag>?> getAllTags() async {
-    var response = await _dio.get(_urlBase + '?tag=true');
-    List<Tag>? tags;
-    try {
-      if (response.statusCode == 200) {
-        var getTags = response.data as List;
-        tags = getTags.map((e) => Tag.fromJson(e)).toList();
-      } else
-        print('Status code is ' + response.statusCode.toString());
-    } catch (e) {
-      print(e);
-    }
-    return tags;
   }
 
   int calcCurrentPercent(String mfg, exp) {
