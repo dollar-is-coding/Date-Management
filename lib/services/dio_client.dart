@@ -7,11 +7,11 @@ import 'package:sg_date/models/tag.dart';
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbwQwGpXIvL-v7o5rSgAlnkltxFcw4mQLB3NMHDJxsEx9hYcjNjQ7av3Y_3k8ZGQyHRoKg/exec';
+      'https://script.google.com/macros/s/AKfycbxTv6uZfBr3SmkfFVsIW2Th6vU8nOk80Yejs769BTQdVOuM6Jc1W9-4-RvGwaEvr18bKw/exec';
 
-  Future<List<Product>?> getAnyProducts(String product) async {
-    var response =
-        await _dio.get(_urlBase + '?action=easySearch&product=' + product);
+  Future<List<Product>?> getAnyProducts(String product, int tag_id) async {
+    var response = await _dio.get(
+        _urlBase + '?action=easySearch&product=${product}&tag_id=${tag_id}');
     List<Product>? products;
     try {
       if (response.statusCode == 200) {
@@ -35,13 +35,12 @@ class DioClient {
   }
 
   Future<List<Product>?> getAnyProductsWithDate(
-      String product, int pct, int tag, int sortKey) async {
+      String product, int pct, int tag, int sortKey, bool favorite) async {
+    int favoriteType = favorite ? 1 : 0;
     String sortType = sortKey == 1 ? 'number' : 'alpha';
     String query =
-        '?action=searchWithDate&product=${product}&pct=${pct}&tag_id=${tag}&sort=${sortType}';
-    var response = await _dio.get(
-      _urlBase + query,
-    );
+        '?action=searchWithDate&product=${product}&pct=${pct}&tag_id=${tag}&sort=${sortType}&favorite=${favoriteType}';
+    var response = await _dio.get(_urlBase + query);
     List<Product>? products;
     try {
       if (response.statusCode == 200) {
@@ -193,5 +192,19 @@ class DioClient {
     int fullRangeTime = end.difference(start).inDays;
     int leftRangeTime = end.difference(now).inDays;
     return (leftRangeTime / fullRangeTime * 100).round().toInt();
+  }
+
+  Future<void> changeFavorite(Product p, int state) async {
+    try {
+      var response = await _dio.post(_urlBase + '?action=replaceFavorite',
+          data: {'id': p.id, 'favorite': state});
+      if (response.statusCode == 200) {
+        print(response.data);
+      } else
+        print('It fails ${response.statusCode}');
+      print('right url ${response.headers['location']}');
+    } catch (e) {
+      print(e);
+    }
   }
 }

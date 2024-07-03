@@ -8,6 +8,9 @@ import 'package:sg_date/widgets/common_widgets.dart';
 class ProductsController extends ChangeNotifier {
   Future<List<Product>?>? apiProducts;
   Future<List<Tag>?>? apiTags;
+  Future<List<Product>?>? apiProductsForTags;
+  Future<bool>? tagExisted;
+  GlobalKey positionedKey = GlobalKey();
   int displayDataLength = 0;
   int dataLength = 0;
 
@@ -16,7 +19,10 @@ class ProductsController extends ChangeNotifier {
   final tagController = TextEditingController();
 
   bool isCountResult = false;
+  var xPosition;
+  var yPosition;
   List<List<bool>>? dateShowed = [];
+  bool isFavoriteSort = false;
   // 0: remove - 1: add - 2:change
   int changeTagState = -1;
   List<bool>? proShowed = [];
@@ -35,7 +41,8 @@ class ProductsController extends ChangeNotifier {
   List<String> tagDisplayOptions = ['Tất cả'];
 
   ProductsController() {
-    apiProducts = DioClient().getAnyProductsWithDate('', 100, 0, 1);
+    apiProducts =
+        DioClient().getAnyProductsWithDate('', 100, 0, 1, isFavoriteSort);
     apiTags = DioClient().getAllTags();
     getTagsForFilter();
     addDisplayDataLength();
@@ -53,10 +60,23 @@ class ProductsController extends ChangeNotifier {
     scrollController.addListener(scrollListener);
   }
 
+  getPosition() {
+    RenderBox box =
+        positionedKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = box.localToGlobal(Offset.zero);
+    xPosition = position.dx;
+    yPosition = position.dy;
+    print('x: ${xPosition} - y: ${yPosition}');
+  }
+
   getTagsForFilter() async {
+    tagOptions.clear();
+    tagDisplayOptions.clear();
     await apiTags!.then(
       (value) {
-        selectedTag = 0;
+        selectedTagIndex = selectedTag = 0;
+        tagOptions.add(0);
+        tagDisplayOptions.add('Tất cả');
         for (var i = 0; i < value!.length; i++) {
           tagDisplayOptions.add(value[i].name);
           tagOptions.add(value[i].id!);
@@ -81,15 +101,18 @@ class ProductsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future searchWithFilter(int optionIndex, String product) async {
+  Future searchWithFilter(
+      int optionIndex, String product, int tagId, bool favoriteVal) async {
     await apiProducts!.then((value) => value!.clear());
     searchController.text = product;
     apiProducts = DioClient().getAnyProductsWithDate(
       product,
       filterOptions[optionIndex],
-      0,
+      tagId,
       selectedSort,
+      favoriteVal,
     );
+
     displayDataLength = 0;
     dataLength = 0;
     proShowed = [];
@@ -257,6 +280,7 @@ class ProductsController extends ChangeNotifier {
     String newTag = tagController.text.trim();
     DioClient().addTagToSheet(newTag);
     apiTags = DioClient().getAllTags();
+    getTagsForFilter();
     await apiTags!.then(
       (tags) {
         checkedTags = List.filled(tags!.length, false);
@@ -275,6 +299,7 @@ class ProductsController extends ChangeNotifier {
     String newTag = tagController.text.trim();
     DioClient().replaceTagFromSheet(tagId.toString(), newTag);
     apiTags = DioClient().getAllTags();
+    getTagsForFilter();
     await apiProducts!.then(
       (pros) {
         for (var i = 0; i < pros!.length; i++) {
@@ -296,5 +321,62 @@ class ProductsController extends ChangeNotifier {
       },
     );
     notifyListeners();
+  }
+
+  changeFavorite(Product p, int productIndex) async {
+    int stateChange = p.favorite == 1 ? 0 : 1;
+    DioClient().changeFavorite(p, stateChange);
+    await apiProducts!.then(
+      (pros) {
+        pros![productIndex].favorite = stateChange;
+      },
+    );
+    notifyListeners();
+  }
+
+  setFavorite(bool value) {
+    isFavoriteSort = value;
+    notifyListeners();
+  }
+
+  changeIconState() {
+    isFavoriteSort = !isFavoriteSort;
+    notifyListeners();
+  }
+
+  Future<bool> getTagExist(int tagId, Product p) async {
+    print('yes ${tagId}');
+    tagExisted = Future.value(false);
+    bool tempExist = false;
+    apiProductsForTags = DioClient().getAnyProducts('', tagId);
+    await apiProductsForTags!.then(
+      (pros) {
+        for (var i = 0; i < pros!.length; i++) {
+          if (pros[i].tag.id == tagId) {
+            tagExisted = Future.value(true);
+            break;
+          }
+        }
+      },
+    );
+    await tagExisted!.then(
+      (value) async {
+        tempExist = value;
+        if (!tempExist) {
+          DioClient().removeTagFromSheet(tagId.toString());
+          apiTags = DioClient().getAllTags();
+          await apiTags!.then((tags) {
+            checkedTags = List.filled(tags!.length, false);
+            for (var i = 0; i < tags.length; i++) {
+              if (tags[i].id == p.tag.id) {
+                checkedTags[i] = true;
+                break;
+              }
+            }
+          });
+        }
+      },
+    );
+    return tagExisted!;
   }
 }

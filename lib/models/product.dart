@@ -11,6 +11,7 @@ class Product {
   String name;
   List<Date> dates;
   Tag tag;
+  int favorite;
   Product({
     this.id,
     required this.barcode,
@@ -18,6 +19,7 @@ class Product {
     required this.name,
     required this.dates,
     required this.tag,
+    required this.favorite,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) =>

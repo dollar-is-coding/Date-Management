@@ -50,6 +50,7 @@ dependencies:
   liquid_pull_to_refresh: ^3.0.1
   loading_animation_widget: ^1.2.1
   curved_progress_bar: ^1.0.2
+  simple_barcode_scanner: ^0.1.1
 
 dev_dependencies:
   flutter_test:
@@ -98,6 +99,7 @@ flutter:
     - asset/icons/calendar_icon.svg
     - asset/icons/calendar_unaccepted_icon.svg
     - asset/icons/calendar_accepted_icon.svg
+    - asset/icons/barcode_scanner_icon.svg
     - asset/icons/locate_icon.svg
     - asset/icons/trash_icon.svg
     - asset/icons/label_icon.svg

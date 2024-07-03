@@ -7,7 +7,7 @@ import 'package:sg_date/services/dio_client.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
 class CalcController extends ChangeNotifier {
-  GlobalKey key = GlobalKey();
+  GlobalKey positionedKey = GlobalKey();
   var snackBar;
   final mfg = TextEditingController();
   final exp = TextEditingController();
@@ -17,11 +17,13 @@ class CalcController extends ChangeNotifier {
   final expFocus = FocusNode();
   final skuFocus = FocusNode();
   Future<List<Product>?>? productApi;
+  Future<List<Product>?>? productApiForTag;
   Future<List<Tag>?>? tagApi;
   List<bool> tagList = [];
+  Future<bool>? tagExisted;
+  var xPosition;
+  var yPosition;
   int totalDay = 0;
-  double xPosition = 0;
-  double yPosition = 0;
   int currentPercent = 0;
   int allowedDay = 0;
   int dataLength = 0;
@@ -29,8 +31,7 @@ class CalcController extends ChangeNotifier {
   bool isShowResult = false;
   bool isExistedDate = false;
   bool isResultFound = false;
-  bool isAreaShowed = false;
-  bool canDeleteTag = true;
+  int focusCounted = 0;
   int firstProductDateLength = 0;
   int? selectedProductId = 0;
   int? selectedTagId = 0;
@@ -52,6 +53,26 @@ class CalcController extends ChangeNotifier {
   );
   String tempMfg = '';
   String tempExp = '';
+
+  CalcController() {
+    skuFocus.addListener(() {
+      if (skuFocus.hasFocus && focusCounted == 0) {
+        sku.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: sku.text.length,
+        );
+      } else if (skuFocus.hasFocus && focusCounted > 1) {
+        sku.selection = TextSelection.collapsed(offset: sku.text.length);
+      } else {
+        focusCounted = 0;
+      }
+      print(focusCounted);
+    });
+  }
+
+  countFocus() {
+    focusCounted++;
+  }
 
   setSku(String sku) {
     this.sku.text = sku;
@@ -170,7 +191,7 @@ class CalcController extends ChangeNotifier {
 
   getProducts() async {
     firstProductDateLength = 0;
-    productApi = DioClient().getAnyProducts(sku.text);
+    productApi = DioClient().getAnyProducts(sku.text, 0);
     tagApi = DioClient().getAllTags();
     await productApi!.then((value) async {
       dataLength = value!.length;
@@ -363,22 +384,13 @@ class CalcController extends ChangeNotifier {
     notifyListeners();
   }
 
-  selectAllText() {
-    sku.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: sku.text.length,
-    );
-    notifyListeners();
-  }
-
   getPosition() {
-    RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
+    RenderBox box =
+        positionedKey.currentContext!.findRenderObject() as RenderBox;
     Offset position = box.localToGlobal(Offset.zero);
-    isAreaShowed = true;
-    xPosition = position.dx - 20;
-    yPosition = position.dy + 30;
-    print('x: ${position.dx}');
-    notifyListeners();
+    xPosition = position.dx;
+    yPosition = position.dy;
+    print('x: ${xPosition} - y: ${yPosition}');
   }
 
   checkTag(int index) {
@@ -458,5 +470,41 @@ class CalcController extends ChangeNotifier {
       }
     });
     notifyListeners();
+  }
+
+  Future<bool> getTagExist(int tagId, Product p) async {
+    print(tagId);
+    tagExisted = Future.value(false);
+    bool tempExist = false;
+    productApiForTag = DioClient().getAnyProducts('', tagId);
+    await productApiForTag!.then(
+      (pros) {
+        for (var i = 0; i < pros!.length; i++) {
+          if (pros[i].tag.id == tagId) {
+            tagExisted = Future.value(true);
+            break;
+          }
+        }
+      },
+    );
+    await tagExisted!.then(
+      (value) async {
+        tempExist = value;
+        if (!tempExist) {
+          DioClient().removeTagFromSheet(tagId.toString());
+          tagApi = DioClient().getAllTags();
+          await tagApi!.then((tags) {
+            tagList = List.filled(tags!.length, false);
+            for (var i = 0; i < tags.length; i++) {
+              if (tags[i].id == p.tag.id) {
+                tagList[i] = true;
+                break;
+              }
+            }
+          });
+        }
+      },
+    );
+    return tagExisted!;
   }
 }

@@ -109,7 +109,7 @@ class CalcScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(.04),
@@ -119,40 +119,53 @@ class CalcScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: TextField(
-                        focusNode: calc.skuFocus,
-                        controller: calc.sku,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        onTap: () => calc.selectAllText(),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          counterText: '',
-                          prefixIcon: SvgPicture.asset(
-                            'asset/icons/sku_icon.svg',
-                            fit: BoxFit.scaleDown,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(.8),
-                              BlendMode.srcIn,
+                      child: GestureDetector(
+                        onTap: () => calc.countFocus(),
+                        child: TextField(
+                          focusNode: calc.skuFocus,
+                          controller: calc.sku,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            counterText: '',
+                            prefixIcon: SvgPicture.asset(
+                              'asset/icons/sku_icon.svg',
+                              fit: BoxFit.scaleDown,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(.8),
+                                BlendMode.srcIn,
+                              ),
                             ),
-                          ),
-                          hintText: 'Sku hoặc barcode',
-                          hintStyle: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Colors.grey.shade500),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              width: 1,
-                              color: Colors.transparent,
+                            suffixIcon: InkWell(
+                              onTap: () async {},
+                              child: SvgPicture.asset(
+                                'asset/icons/barcode_scanner_icon.svg',
+                                fit: BoxFit.scaleDown,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(.8),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              width: 1,
-                              color: Color.fromARGB(255, 227, 227, 227),
+                            hintText: 'Sku hoặc barcode',
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: Colors.grey.shade500),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: Color.fromARGB(255, 227, 227, 227),
+                              ),
                             ),
                           ),
                         ),
@@ -166,7 +179,7 @@ class CalcScreen extends StatelessWidget {
                       Flexible(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(.04),
@@ -273,14 +286,14 @@ class CalcScreen extends StatelessWidget {
                                   .bodySmall!
                                   .copyWith(color: Colors.grey.shade500),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 borderSide: BorderSide(
                                   width: 1,
                                   color: Colors.transparent,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 borderSide: BorderSide(
                                   width: 1,
                                   color: Color.fromARGB(255, 227, 227, 227),
@@ -290,12 +303,12 @@ class CalcScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Padding(padding: EdgeInsets.only(left: 12)),
+                      SizedBox(width: 12),
                       // exp
                       Flexible(
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(.04),
@@ -401,14 +414,14 @@ class CalcScreen extends StatelessWidget {
                                   .bodySmall!
                                   .copyWith(color: Colors.grey.shade500),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 borderSide: BorderSide(
                                   width: 1,
                                   color: Colors.transparent,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                                 borderSide: BorderSide(
                                   width: 1,
                                   color: Color.fromARGB(255, 227, 227, 227),
@@ -467,7 +480,7 @@ class CalcScreen extends StatelessWidget {
                       ? Container()
                       : Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                             color: Colors.white,
                             boxShadow: [
                               BoxShadow(
@@ -541,104 +554,83 @@ class CalcScreen extends StatelessWidget {
                                                       'asset/icons/bookmark_icon.svg',
                                                     ),
                                             ),
-                                            title: InkWell(
-                                              onTap: () {
-                                                if (product[0].dates.length >
-                                                    0) {
-                                                  Provider.of<ProductsController>(
-                                                          context,
-                                                          listen: false)
-                                                      .searchWithFilter(
-                                                    0,
-                                                    product[0].sku.toString(),
-                                                  );
-                                                  Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                      child: ProductsScreen(),
-                                                      type: PageTransitionType
-                                                          .rightToLeft,
+                                            title: Row(
+                                              children: [
+                                                Text(
+                                                  '${product![0].sku} ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    tagModalBottomSheet(
+                                                        context, product[0]);
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 8,
                                                     ),
-                                                  );
-                                                }
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    '${product![0].sku} ',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          product[0].tag.id == 1
+                                                              ? Color.fromARGB(
+                                                                  80,
+                                                                  216,
+                                                                  216,
+                                                                  216)
+                                                              : Color.fromARGB(
+                                                                  80,
+                                                                  210,
+                                                                  225,
+                                                                  255),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.label_rounded,
+                                                          size: 16,
+                                                          color: product[0]
+                                                                      .tag
+                                                                      .id ==
+                                                                  1
+                                                              ? Color.fromARGB(
+                                                                  160,
+                                                                  75,
+                                                                  124,
+                                                                  139)
+                                                              : Color.fromARGB(
+                                                                  255,
+                                                                  112,
+                                                                  82,
+                                                                  255),
+                                                        ),
+                                                        Text(
+                                                          product[0].tag.id == 1
+                                                              ? ' +'
+                                                              : ' ${product[0].tag.name}',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall!
+                                                                  .copyWith(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            0,
+                                                                            79,
+                                                                            124),
+                                                                  ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      tagModalBottomSheet(
-                                                          context);
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        color: product[0]
-                                                                    .tag
-                                                                    .id ==
-                                                                1
-                                                            ? Color.fromARGB(80,
-                                                                216, 216, 216)
-                                                            : Color.fromARGB(80,
-                                                                210, 225, 255),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.label_rounded,
-                                                            size: 16,
-                                                            color: product[0]
-                                                                        .tag
-                                                                        .id ==
-                                                                    1
-                                                                ? Color
-                                                                    .fromARGB(
-                                                                        160,
-                                                                        75,
-                                                                        124,
-                                                                        139)
-                                                                : Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        112,
-                                                                        82,
-                                                                        255),
-                                                          ),
-                                                          Text(
-                                                            product[0].tag.id ==
-                                                                    1
-                                                                ? ' +'
-                                                                : ' ${product[0].tag.name}',
-                                                            style:
-                                                                Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodySmall!
-                                                                    .copyWith(
-                                                                      color: Color.fromARGB(
-                                                                          255,
-                                                                          0,
-                                                                          79,
-                                                                          124),
-                                                                    ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
+                                                )
+                                              ],
                                             ),
                                             subtitle: InkWell(
                                               onTap: () {
@@ -648,9 +640,12 @@ class CalcScreen extends StatelessWidget {
                                                           context,
                                                           listen: false)
                                                       .searchWithFilter(
-                                                    0,
-                                                    product[0].sku.toString(),
-                                                  );
+                                                          0,
+                                                          product[0]
+                                                              .sku
+                                                              .toString(),
+                                                          0,
+                                                          false);
                                                   Navigator.push(
                                                     context,
                                                     PageTransition(
@@ -684,13 +679,32 @@ class CalcScreen extends StatelessWidget {
                                                 ],
                                               ),
                                             ),
-                                            // trailing: InkWell(
-                                            //   key: calc.key,
-                                            //   child: SvgPicture.asset(
-                                            //     'asset/icons/locate_icon.svg',
-                                            //   ),
-                                            //   onTap: () {},
-                                            // ),
+                                            trailing: InkWell(
+                                              onTap: () {
+                                                if (product[0].dates.length >
+                                                    0) {
+                                                  Provider.of<ProductsController>(
+                                                          context,
+                                                          listen: false)
+                                                      .searchWithFilter(
+                                                    0,
+                                                    product[0].sku.toString(),
+                                                    0,
+                                                    false,
+                                                  );
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      child: ProductsScreen(),
+                                                      type: PageTransitionType
+                                                          .rightToLeft,
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: Icon(
+                                                  Icons.arrow_forward_rounded),
+                                            ),
                                           );
                                         }
                                         // không data
@@ -806,7 +820,7 @@ class CalcScreen extends StatelessWidget {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
                                     return Container(
-                                      padding: EdgeInsets.only(top: 24),
+                                      padding: EdgeInsets.only(bottom: 20),
                                       child: LoadingAnimationWidget
                                           .staggeredDotsWave(
                                         color:
@@ -895,9 +909,9 @@ class CalcScreen extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.only(
                                                     bottomLeft:
-                                                        Radius.circular(12),
+                                                        Radius.circular(20),
                                                     bottomRight:
-                                                        Radius.circular(12),
+                                                        Radius.circular(20),
                                                   ),
                                                   border: Border(
                                                     top: BorderSide(
@@ -1149,7 +1163,7 @@ class CalcScreen extends StatelessWidget {
     );
   }
 
-  void tagModalBottomSheet(context) {
+  void tagModalBottomSheet(context, Product p) {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
@@ -1224,6 +1238,7 @@ class CalcScreen extends StatelessWidget {
                                 }
                                 if (snapshot.hasData) {
                                   var tagList = snapshot.data;
+                                  calc.getPosition();
                                   return ListView(
                                     controller: scrollController,
                                     children: List.generate(
@@ -1235,7 +1250,7 @@ class CalcScreen extends StatelessWidget {
                                                 ? InkWell(
                                                     onTap: () {
                                                       Navigator.pop(context);
-                                                      addTagDialog(context);
+                                                      addTagDialog(context, p);
                                                     },
                                                     child: ListTile(
                                                       dense: true,
@@ -1273,7 +1288,7 @@ class CalcScreen extends StatelessWidget {
                                               onDoubleTap: () {
                                                 Navigator.pop(context);
                                                 replaceTagDialog(context,
-                                                    tagList[index].id!);
+                                                    tagList[index].id!, p);
                                                 calc.tagName.text =
                                                     tagList[index].name;
                                               },
@@ -1311,22 +1326,34 @@ class CalcScreen extends StatelessWidget {
                                                             .textTheme
                                                             .bodyMedium,
                                                       ),
-                                                      // trailing: index ==
-                                                      //         tagList.length - 1
-                                                      //     ? null
-                                                      //     : InkWell(
-                                                      //         child: SvgPicture.asset(
-                                                      //           'asset/icons/trash_icon.svg',
-                                                      //         ),
-                                                      //         onTap: () {},
-                                                      //       ),
+                                                      trailing: InkWell(
+                                                        child: SvgPicture.asset(
+                                                          'asset/icons/trash_icon.svg',
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          deleteTag(
+                                                              context,
+                                                              tagList[index],
+                                                              p);
+                                                        },
+                                                      ),
                                                     )
                                                   : Container(),
                                             ),
-                                            Divider(
-                                              height: 0,
-                                              indent: 55,
-                                              endIndent: 20,
+                                            Container(
+                                              margin: index ==
+                                                      tagList.length - 1
+                                                  ? EdgeInsets.only(
+                                                      bottom:
+                                                          calc.xPosition + 20)
+                                                  : null,
+                                              child: Divider(
+                                                height: 0,
+                                                indent: 55,
+                                                endIndent: 20,
+                                              ),
                                             ),
                                           ],
                                         );
@@ -1349,6 +1376,7 @@ class CalcScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Container(
+                              key: calc.positionedKey,
                               width: MediaQuery.of(context).size.width * .46,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -1411,7 +1439,7 @@ class CalcScreen extends StatelessWidget {
     );
   }
 
-  void addTagDialog(context) {
+  void addTagDialog(context, Product p) {
     showGeneralDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(.24),
@@ -1449,7 +1477,7 @@ class CalcScreen extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
                                     Navigator.of(context).pop();
-                                    tagModalBottomSheet(context);
+                                    tagModalBottomSheet(context, p);
                                   },
                                   child: Icon(Icons.close),
                                 ),
@@ -1520,7 +1548,7 @@ class CalcScreen extends StatelessWidget {
                                     ),
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      tagModalBottomSheet(context);
+                                      tagModalBottomSheet(context, p);
                                     },
                                     child: Text(
                                       'Hủy',
@@ -1545,7 +1573,7 @@ class CalcScreen extends StatelessWidget {
                                     onPressed: () async {
                                       value.addNewTag();
                                       Navigator.of(context).pop();
-                                      tagModalBottomSheet(context);
+                                      tagModalBottomSheet(context, p);
                                     },
                                     child: Text(
                                       'Xác nhận',
@@ -1574,7 +1602,7 @@ class CalcScreen extends StatelessWidget {
     );
   }
 
-  void replaceTagDialog(context, int id) {
+  void replaceTagDialog(context, int id, Product p) {
     showGeneralDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(.24),
@@ -1612,7 +1640,7 @@ class CalcScreen extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
                                     Navigator.of(context).pop();
-                                    tagModalBottomSheet(context);
+                                    tagModalBottomSheet(context, p);
                                     value.tagName.clear();
                                   },
                                   child: Icon(Icons.close),
@@ -1684,7 +1712,7 @@ class CalcScreen extends StatelessWidget {
                                     ),
                                     onPressed: () {
                                       Navigator.of(context).pop();
-                                      tagModalBottomSheet(context);
+                                      tagModalBottomSheet(context, p);
                                       value.tagName.clear();
                                     },
                                     child: Text(
@@ -1711,7 +1739,7 @@ class CalcScreen extends StatelessWidget {
                                       Navigator.of(context).pop();
                                       value.replaceTag(id);
                                       value.tagName.clear();
-                                      tagModalBottomSheet(context);
+                                      tagModalBottomSheet(context, p);
                                     },
                                     child: Text(
                                       'Xác nhận',
@@ -1728,6 +1756,277 @@ class CalcScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void deleteTag(context, Tag tag, Product p) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.24),
+      barrierDismissible: true,
+      barrierLabel: 'Don\'t tap outside',
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0, end: 1).animate(animation1),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Consumer<CalcController>(
+              builder: (context, calc, child) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * .86,
+                      child: FutureBuilder<bool>(
+                        future: calc.getTagExist(tag.id!, p),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .2,
+                              child: Center(
+                                child: LoadingAnimationWidget.fourRotatingDots(
+                                  color: Color.fromARGB(255, 112, 82, 255),
+                                  size: 30,
+                                ),
+                              ),
+                            );
+                          } else if (snapshot.hasData) {
+                            var dataExisted = snapshot.data;
+                            print('existed = ${dataExisted}');
+                            return dataExisted!
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.fromLTRB(
+                                              12, 10, 12, 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(40),
+                                            color: Color.fromARGB(
+                                                255, 255, 239, 221),
+                                          ),
+                                          child: Icon(
+                                            Icons.warning_amber_rounded,
+                                            color: Color.fromARGB(
+                                                255, 250, 141, 24),
+                                            size: 40,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            'Không thể xóa',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 4, bottom: 12),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            'Thẻ không thẻ bị xóa do vẫn có sản phẩm đang dùng thẻ này!',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                    color: Colors.black54),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .32,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    side: BorderSide(
+                                                      width: 1,
+                                                      color: Color.fromARGB(
+                                                          255, 112, 82, 255),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  tagModalBottomSheet(
+                                                      context, p);
+                                                },
+                                                child: Text(
+                                                  'Hủy',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                        color: Color.fromARGB(
+                                                            255, 112, 82, 255),
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .32,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 112, 82, 255),
+                                                ),
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  Provider.of<ProductsController>(
+                                                          context,
+                                                          listen: false)
+                                                      .searchWithFilter(
+                                                    0,
+                                                    '',
+                                                    tag.id!,
+                                                    false,
+                                                  );
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      child: ProductsScreen(),
+                                                      type: PageTransitionType
+                                                          .rightToLeft,
+                                                    ),
+                                                  );
+                                                },
+                                                child: Text(
+                                                  'Chi tiết',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                        color: Colors.white,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(40),
+                                            color: Color.fromARGB(
+                                                255, 210, 225, 255),
+                                          ),
+                                          child: Icon(
+                                            Icons.priority_high_rounded,
+                                            color:
+                                                Color.fromARGB(255, 0, 79, 124),
+                                            size: 40,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            'Đã xóa',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 4, bottom: 12),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            'Thẻ ${tag.name} đã được xóa thành công!',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                    color: Colors.black54),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .32,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 112, 82, 255),
+                                                ),
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  tagModalBottomSheet(
+                                                      context, p);
+                                                },
+                                                child: Text(
+                                                  'OK',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                        color: Colors.white,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                          }
+                          return Container(
+                            child: Text('Không tìm thấy'),
+                          );
+                        },
                       ),
                     ),
                   ],

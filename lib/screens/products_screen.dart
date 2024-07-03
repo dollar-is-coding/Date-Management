@@ -17,8 +17,10 @@ class ProductsScreen extends StatelessWidget {
     return Consumer<ProductsController>(
       builder: (context, parentValue, child) {
         return PopScope(
-          onPopInvoked: (didPop) {
-            parentValue.searchWithFilter(0, '');
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            parentValue.setFavorite(false);
+            parentValue.searchWithFilter(0, '', 0, false);
             parentValue.changeSelectedFilter(100);
             parentValue.changeSelectedSort(1);
           },
@@ -34,23 +36,20 @@ class ProductsScreen extends StatelessWidget {
               title: Row(
                 children: [
                   // back screen
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
-                      highlightColor: Colors.transparent,
-                      onPressed: () => Navigator.pop(context),
-                      style: ButtonStyle(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      icon: SvgPicture.asset(
-                        'asset/icons/arrow_left_icon.svg',
-                        fit: BoxFit.scaleDown,
-                        colorFilter: ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    highlightColor: Colors.transparent,
+                    onPressed: () => Navigator.pop(context),
+                    style: ButtonStyle(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: SvgPicture.asset(
+                      'asset/icons/arrow_left_icon.svg',
+                      fit: BoxFit.scaleDown,
+                      colorFilter: ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
@@ -59,6 +58,7 @@ class ProductsScreen extends StatelessWidget {
                     child: Consumer<ProductsController>(
                       builder: (context, pro, child) {
                         return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
                           padding: EdgeInsets.all(9),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(.8),
@@ -105,9 +105,11 @@ class ProductsScreen extends StatelessWidget {
                                   onSubmitted: (value) async {
                                     if (value.isNotEmpty) {
                                       if (value == 'all')
-                                        pro.searchWithFilter(0, '');
+                                        pro.searchWithFilter(
+                                            0, '', 0, pro.isFavoriteSort);
                                       else
-                                        pro.searchWithFilter(0, value);
+                                        pro.searchWithFilter(
+                                            0, value, 0, pro.isFavoriteSort);
                                       pro.changeSelectedFilter(100);
                                       pro.changeSelectedSort(1);
                                       pro.showCountedResult();
@@ -121,6 +123,25 @@ class ProductsScreen extends StatelessWidget {
                       },
                     ),
                   ),
+                  // loved sort
+                  InkWell(
+                    onTap: () {
+                      parentValue.changeIconState();
+                      parentValue.searchWithFilter(
+                          parentValue.filterOptions
+                              .indexOf(parentValue.selectedFilter),
+                          parentValue.searchController.text,
+                          parentValue.selectedTag,
+                          parentValue.isFavoriteSort);
+                      parentValue.showCountedResult();
+                    },
+                    child: Icon(
+                      !parentValue.isFavoriteSort
+                          ? Icons.favorite_outline_outlined
+                          : Icons.favorite_rounded,
+                      color: Colors.white,
+                    ),
+                  ), // filter
                   // filter
                   Consumer<ProductsController>(
                     builder: (context, pro, child) {
@@ -566,12 +587,13 @@ class ProductsScreen extends StatelessWidget {
                                                                 onPressed:
                                                                     () async {
                                                                   pro.searchWithFilter(
-                                                                    pro.filterOptions
-                                                                        .indexOf(
-                                                                            pro.selectedFilter),
-                                                                    pro.searchController
-                                                                        .text,
-                                                                  );
+                                                                      pro.filterOptions
+                                                                          .indexOf(pro
+                                                                              .selectedFilter),
+                                                                      pro.searchController
+                                                                          .text,
+                                                                      pro.selectedTag,
+                                                                      pro.isFavoriteSort);
                                                                   pro.showCountedResult();
                                                                   Navigator.pop(
                                                                       context);
@@ -651,9 +673,10 @@ class ProductsScreen extends StatelessWidget {
                   backgroundColor: Colors.white.withOpacity(.9),
                   onRefresh: () async {
                     pro.searchWithFilter(
-                      pro.selectedFilterIndex,
-                      pro.searchController.text,
-                    );
+                        pro.selectedFilterIndex,
+                        pro.searchController.text,
+                        pro.selectedTag,
+                        pro.isFavoriteSort);
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -689,7 +712,7 @@ class ProductsScreen extends StatelessWidget {
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(12),
+                                                  BorderRadius.circular(24),
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.black
@@ -751,10 +774,43 @@ class ProductsScreen extends StatelessWidget {
                                                                 .toString());
                                                       },
                                                       child: Text(
-                                                        '${products[index].sku} ',
+                                                        '${products[index].sku}',
                                                         style: Theme.of(context)
                                                             .textTheme
                                                             .bodyMedium,
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        pro.changeFavorite(
+                                                            products[index],
+                                                            index);
+                                                      },
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 4),
+                                                        child: products[index]
+                                                                    .favorite ==
+                                                                0
+                                                            ? Icon(
+                                                                Icons
+                                                                    .favorite_outline_rounded,
+                                                                size: 16,
+                                                                color: Colors
+                                                                    .black54,
+                                                              )
+                                                            : Icon(
+                                                                Icons
+                                                                    .favorite_rounded,
+                                                                size: 16,
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        246,
+                                                                        14,
+                                                                        33),
+                                                              ),
                                                       ),
                                                     ),
                                                     InkWell(
@@ -945,8 +1001,8 @@ class ProductsScreen extends StatelessWidget {
                                                                                 decoration: BoxDecoration(
                                                                                   color: Color.fromARGB(255, 112, 82, 255).withOpacity(.16),
                                                                                   borderRadius: BorderRadius.only(
-                                                                                    bottomLeft: Radius.circular(12),
-                                                                                    bottomRight: Radius.circular(12),
+                                                                                    bottomLeft: Radius.circular(20),
+                                                                                    bottomRight: Radius.circular(20),
                                                                                   ),
                                                                                 ),
                                                                                 child: Row(
@@ -983,7 +1039,7 @@ class ProductsScreen extends StatelessWidget {
                                                                                 child: Container(
                                                                                   decoration: BoxDecoration(
                                                                                     color: Color.fromARGB(255, 255, 121, 36),
-                                                                                    borderRadius: BorderRadius.circular(8),
+                                                                                    borderRadius: BorderRadius.circular(10),
                                                                                     boxShadow: [
                                                                                       BoxShadow(
                                                                                         color: Colors.black.withOpacity(.04),
@@ -1150,6 +1206,7 @@ class ProductsScreen extends StatelessWidget {
                                 }
                                 if (snapshot.hasData) {
                                   var tagList = snapshot.data;
+                                  pros.getPosition();
                                   return ListView(
                                     controller: scrollController,
                                     children: List.generate(
@@ -1201,10 +1258,6 @@ class ProductsScreen extends StatelessWidget {
                                               },
                                               onDoubleTap: () {
                                                 Navigator.pop(context);
-                                                // ed(context,
-                                                //     tagList[index].id!);
-                                                // calc.tagName.text =
-                                                //     tagList[index].name;
                                                 editTagDialog(
                                                     context,
                                                     product,
@@ -1248,22 +1301,35 @@ class ProductsScreen extends StatelessWidget {
                                                             .textTheme
                                                             .bodyMedium,
                                                       ),
-                                                      // trailing: index ==
-                                                      //         tagList.length - 1
-                                                      //     ? null
-                                                      //     : InkWell(
-                                                      //         child: SvgPicture.asset(
-                                                      //           'asset/icons/trash_icon.svg',
-                                                      //         ),
-                                                      //         onTap: () {},
-                                                      //       ),
+                                                      trailing: InkWell(
+                                                        child: SvgPicture.asset(
+                                                          'asset/icons/trash_icon.svg',
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          deleteTag(
+                                                            context,
+                                                            tagList[index],
+                                                            product,
+                                                            productIndex,
+                                                          );
+                                                        },
+                                                      ),
                                                     )
                                                   : Container(),
                                             ),
-                                            Divider(
-                                              height: 0,
-                                              indent: 55,
-                                              endIndent: 20,
+                                            Container(
+                                              margin: index ==
+                                                      tagList.length - 1
+                                                  ? EdgeInsets.only(
+                                                      bottom: pros.xPosition)
+                                                  : null,
+                                              child: Divider(
+                                                height: 0,
+                                                indent: 55,
+                                                endIndent: 20,
+                                              ),
                                             ),
                                           ],
                                         );
@@ -1286,6 +1352,7 @@ class ProductsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Container(
+                              key: pros.positionedKey,
                               width: MediaQuery.of(context).size.width * .46,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -1322,7 +1389,7 @@ class ProductsScreen extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.pop(context);
                                   pros.chooseTagForProduct(
-                                      product, productIndex,context);
+                                      product, productIndex, context);
                                 },
                                 child: Text(
                                   'Xác nhận',
@@ -1682,6 +1749,262 @@ class ProductsScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void deleteTag(context, Tag tag, Product p, productIndex) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(.24),
+      barrierDismissible: true,
+      barrierLabel: 'Don\'t tap outside',
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0, end: 1).animate(animation1),
+          child: AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: Consumer<ProductsController>(
+              builder: (context, pro, child) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * .86,
+                      child: FutureBuilder<bool>(
+                        future: pro.getTagExist(tag.id!, p),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .2,
+                              child: Center(
+                                child: LoadingAnimationWidget.fourRotatingDots(
+                                  color: Color.fromARGB(255, 112, 82, 255),
+                                  size: 30,
+                                ),
+                              ),
+                            );
+                          } else if (snapshot.hasData) {
+                            var dataExisted = snapshot.data;
+                            print('existed = ${dataExisted}');
+                            return dataExisted!
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.fromLTRB(
+                                              12, 10, 12, 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(40),
+                                            color: Color.fromARGB(
+                                                255, 255, 239, 221),
+                                          ),
+                                          child: Icon(
+                                            Icons.warning_amber_rounded,
+                                            color: Color.fromARGB(
+                                                255, 250, 141, 24),
+                                            size: 40,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            'Không thể xóa',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 4, bottom: 12),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            'Thẻ không thẻ bị xóa do vẫn có sản phẩm đang dùng thẻ này!',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                    color: Colors.black54),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .32,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    side: BorderSide(
+                                                      width: 1,
+                                                      color: Color.fromARGB(
+                                                          255, 112, 82, 255),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  tagModalBottomSheet(
+                                                      context, p, productIndex);
+                                                },
+                                                child: Text(
+                                                  'Hủy',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                        color: Color.fromARGB(
+                                                            255, 112, 82, 255),
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .32,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 112, 82, 255),
+                                                ),
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  pro.searchWithFilter(
+                                                      0, '', tag.id!, false);
+                                                },
+                                                child: Text(
+                                                  'Chi tiết',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                        color: Colors.white,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(40),
+                                            color: Color.fromARGB(
+                                                255, 210, 225, 255),
+                                          ),
+                                          child: Icon(
+                                            Icons.priority_high_rounded,
+                                            color:
+                                                Color.fromARGB(255, 0, 79, 124),
+                                            size: 40,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            'Đã xóa',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 4, bottom: 12),
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            'Thẻ ${tag.name} đã được xóa thành công!',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                    color: Colors.black54),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .32,
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          255, 112, 82, 255),
+                                                ),
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  tagModalBottomSheet(
+                                                      context, p, productIndex);
+                                                },
+                                                child: Text(
+                                                  'OK',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .copyWith(
+                                                        color: Colors.white,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                          }
+                          return Container(
+                            child: Text('Không tìm thấy'),
+                          );
+                        },
                       ),
                     ),
                   ],
