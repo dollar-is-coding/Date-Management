@@ -155,6 +155,13 @@ class CalcController extends ChangeNotifier {
   }
 
   calcThingsAboutDate() {
+    productApi!.then(
+      (value) {
+        if (value!.length > 0) {
+          value.clear();
+        }
+      },
+    );
     int twentyPercent = 0, thirtyPercent = 0, fourtyPercent = 0;
     totalDay = expDate.difference(mfgDate).inDays;
     currentPercent = (expDate

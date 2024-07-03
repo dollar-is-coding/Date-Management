@@ -1077,8 +1077,8 @@ class ProductsScreen extends StatelessWidget {
                                             pro.displayDataLength % 20 != 0)
                                         ? Container()
                                         : Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 40),
+                                            padding: const EdgeInsets.only(
+                                                bottom: 30),
                                             child: Center(
                                               child: LoadingAnimationWidget
                                                   .staggeredDotsWave(

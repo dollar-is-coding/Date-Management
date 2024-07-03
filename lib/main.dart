@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
+import 'package:sg_date/controllers/camera_controller.dart';
 import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/screens/calc_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,6 +17,7 @@ class SGDate extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => CalcController()),
         ChangeNotifierProvider(create: (_) => ProductsController()),
+         ChangeNotifierProvider(create: (_) => CameraController()),
       ],
       child: MaterialApp(
         localizationsDelegates: [

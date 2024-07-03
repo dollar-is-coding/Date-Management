@@ -10,6 +10,7 @@ import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/controllers/products_controller.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
+import 'package:sg_date/screens/camera_screen.dart';
 import 'package:sg_date/screens/products_screen.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
@@ -138,7 +139,15 @@ class CalcScreen extends StatelessWidget {
                               ),
                             ),
                             suffixIcon: InkWell(
-                              onTap: () async {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    child: CameraScreen(),
+                                    type: PageTransitionType.rightToLeft,
+                                  ),
+                                );
+                              },
                               child: SvgPicture.asset(
                                 'asset/icons/barcode_scanner_icon.svg',
                                 fit: BoxFit.scaleDown,
