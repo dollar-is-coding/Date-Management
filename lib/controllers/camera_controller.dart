@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:sg_date/models/product.dart';
-import 'package:sg_date/services/dio_client.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class CameraController extends ChangeNotifier {
-  Future<List<Product>?>? products;
-  String? name;
+  late MobileScannerController controller;
 
-  Future<bool> findProduct(String barcodeCapture) async {
-    name = '';
-    products = DioClient().getAnyProducts(barcodeCapture, 0);
-    await products!.then(
-      (pros) {
-        if (pros!.length > 0) {
-          name = pros[0].name;
-          return true;
-        }
-      },
-    );
-    return false;
+  CameraController() {
+    controller = MobileScannerController(detectionSpeed: DetectionSpeed.normal);
   }
+
+  @override
+  void dispose() {
+    controller.stop();
+    super.dispose();
+  }
+
+  // findProduct(String barcodeCapture, BuildContext context) {
+  //   name = '';
+  //   products = DioClient().getAnyProducts(barcodeCapture, 0);
+  //   products!.then(
+  //     (pros) {
+  //       if (pros!.length > 0) {
+  //         name = pros[0].name;
+  //         exist = true;
+  //       } else {
+  //         exist = false;
+  //       }
+  //     },
+  //   );
+  //   Navigator.pop(context);
+  //   Navigator.pop(context);
+  //   Provider.of<CalcController>(context, listen: false).clearScreen();
+  //   Provider.of<CalcController>(context, listen: false).setSku(name!);
+  //   notifyListeners();
+  // }
 }

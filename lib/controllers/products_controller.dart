@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:diacritic/diacritic.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
+import 'package:sg_date/widgets/common_functions.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
 class ProductsController extends ChangeNotifier {
@@ -17,12 +20,18 @@ class ProductsController extends ChangeNotifier {
   final searchController = TextEditingController();
   final scrollController = ScrollController();
   final tagController = TextEditingController();
+  final tagSearchFocus = FocusNode();
+  final searchFocus = FocusNode();
+  final tagSearch = TextEditingController();
 
   bool isCountResult = false;
+  int focusTagCounted = 0;
+  int focusSearchCounted = 0;
   var xPosition;
   var yPosition;
   List<List<bool>>? dateShowed = [];
   bool isFavoriteSort = false;
+  Color color = Colors.black.withOpacity(.4);
   // 0: remove - 1: add - 2:change
   int changeTagState = -1;
   List<bool>? proShowed = [];
@@ -41,6 +50,8 @@ class ProductsController extends ChangeNotifier {
   List<String> tagDisplayOptions = ['Tất cả'];
 
   ProductsController() {
+    onclickTextField(tagSearchFocus, tagSearch, focusTagCounted);
+    onclickTextField(searchFocus, searchController, focusSearchCounted);
     apiProducts =
         DioClient().getAnyProductsWithDate('', 100, 0, 1, isFavoriteSort);
     apiTags = DioClient().getAllTags();
@@ -54,6 +65,15 @@ class ProductsController extends ChangeNotifier {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);
+        }
+      },
+    );
+    tagSearchFocus.addListener(
+      () {
+        if (tagSearchFocus.hasFocus) {
+          color = Color.fromARGB(255, 112, 82, 255);
+        } else {
+          color = Colors.black.withOpacity(.4);
         }
       },
     );
@@ -172,7 +192,9 @@ class ProductsController extends ChangeNotifier {
     );
     int fullRangeTime = end.difference(start).inDays;
     int leftRangeTime = end.difference(now).inDays;
-    return (leftRangeTime / fullRangeTime * 100).round().toInt();
+    return (leftRangeTime / fullRangeTime * 100).round().toInt() < 0
+        ? 0
+        : (leftRangeTime / fullRangeTime * 100).round().toInt();
   }
 
   int calcDayLefts(String twenty_pct) {
@@ -378,5 +400,40 @@ class ProductsController extends ChangeNotifier {
       },
     );
     return tagExisted!;
+  }
+
+  searchTags(int tagId) {
+    String search = tagSearch.text.trim();
+    apiTags = DioClient().getAllTags();
+    apiTags!.then(
+      (tags) {
+        checkedTags = List.filled(tags!.length, false);
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].id == tagId) {
+            checkedTags[i] = true;
+            break;
+          }
+        }
+      },
+    );
+    if (search != 'all') {
+      apiTags!.then(
+        (tags) {
+          tags!.removeWhere(
+            (element) => !removeDiacritics(element.name).toLowerCase().contains(
+                  removeDiacritics(search).toLowerCase(),
+                ),
+          );
+          checkedTags = List.filled(tags.length, false);
+          for (var i = 0; i < tags.length; i++) {
+            if (tags[i].id == tagId) {
+              checkedTags[i] = true;
+              break;
+            }
+          }
+        },
+      );
+    }
+    notifyListeners();
   }
 }

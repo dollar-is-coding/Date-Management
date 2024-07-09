@@ -23,6 +23,7 @@ class ProductsScreen extends StatelessWidget {
             parentValue.searchWithFilter(0, '', 0, false);
             parentValue.changeSelectedFilter(100);
             parentValue.changeSelectedSort(1);
+            parentValue.getTagsForFilter();
           },
           child: Scaffold(
             appBar: AppBar(
@@ -82,6 +83,7 @@ class ProductsScreen extends StatelessWidget {
                               Expanded(
                                 child: TextField(
                                   controller: pro.searchController,
+                                  focusNode: pro.searchFocus,
                                   textAlignVertical: TextAlignVertical.center,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   decoration: InputDecoration(
@@ -113,6 +115,7 @@ class ProductsScreen extends StatelessWidget {
                                       pro.changeSelectedFilter(100);
                                       pro.changeSelectedSort(1);
                                       pro.showCountedResult();
+                                      pro.getTagsForFilter();
                                     }
                                   },
                                 ),
@@ -744,15 +747,14 @@ class ProductsScreen extends StatelessWidget {
                                                 leading: CircleAvatar(
                                                   backgroundColor:
                                                       Color.fromARGB(
-                                                          255, 210, 225, 255),
+                                                          160, 210, 225, 255),
                                                   child: Text(
                                                     '${index + 1}',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall!
                                                         .copyWith(
-                                                          color: Color.fromARGB(
-                                                              255, 0, 79, 124),
+                                                          color: Colors.black54,
                                                         ),
                                                   ),
                                                 ),
@@ -1131,7 +1133,8 @@ class ProductsScreen extends StatelessWidget {
     );
   }
 
-  void tagModalBottomSheet(context, product, productIndex) {
+  void tagModalBottomSheet(
+      BuildContext context, Product product, int productIndex) {
     showModalBottomSheet(
       context: context,
       useSafeArea: true,
@@ -1170,8 +1173,26 @@ class ProductsScreen extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        addTagDialog(
+                                          context,
+                                          product,
+                                          productIndex,
+                                        );
+                                      },
+                                      icon: SvgPicture.asset(
+                                        'asset/icons/bookmark_icon.svg',
+                                        colorFilter: ColorFilter.mode(
+                                          Colors.black.withOpacity(.7),
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    ),
                                     IconButton(
                                       onPressed: () => Navigator.pop(context),
                                       icon: Icon(Icons.close_rounded),
@@ -1188,6 +1209,64 @@ class ProductsScreen extends StatelessWidget {
                                           .bodyMedium,
                                     ),
                                   ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 8),
+                            padding: EdgeInsets.all(9),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 239, 249, 255),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: pros.color,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'asset/icons/search2_icon.svg',
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    pros.color,
+                                    BlendMode.srcIn,
+                                  ),
+                                  fit: BoxFit.scaleDown,
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                    controller: pros.tagSearch,
+                                    focusNode: pros.tagSearchFocus,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      counterText: '',
+                                      contentPadding: EdgeInsets.only(left: 6),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      hintText: 'Tìm thẻ',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: Colors.black54),
+                                    ),
+                                    onSubmitted: (value) {
+                                      if (value.isNotEmpty) {
+                                        pros.searchTags(product.tag.id!);
+                                      }
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
@@ -1214,44 +1293,6 @@ class ProductsScreen extends StatelessWidget {
                                       (index) {
                                         return Column(
                                           children: [
-                                            index == 0
-                                                ? InkWell(
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                      addTagDialog(
-                                                          context,
-                                                          product,
-                                                          productIndex);
-                                                    },
-                                                    child: ListTile(
-                                                      dense: true,
-                                                      leading: SvgPicture.asset(
-                                                        'asset/icons/bookmark_icon.svg',
-                                                        colorFilter:
-                                                            ColorFilter.mode(
-                                                          Colors.black54,
-                                                          BlendMode.srcIn,
-                                                        ),
-                                                      ),
-                                                      title: Text(
-                                                        'Thêm thẻ',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium!
-                                                            .copyWith(
-                                                                color: Colors
-                                                                    .black54),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(),
-                                            index == 0
-                                                ? Divider(
-                                                    height: 0,
-                                                    indent: 55,
-                                                    endIndent: 20,
-                                                  )
-                                                : Container(),
                                             InkWell(
                                               onTap: () {
                                                 pros.changeCheckedTag(index);
@@ -1470,6 +1511,7 @@ class ProductsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: TextField(
+                              autofocus: true,
                               style: Theme.of(context).textTheme.bodyMedium,
                               controller: value.tagController,
                               decoration: InputDecoration(
@@ -1642,6 +1684,7 @@ class ProductsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: TextField(
+                              autofocus: true,
                               style: Theme.of(context).textTheme.bodyMedium,
                               controller: value.tagController,
                               decoration: InputDecoration(

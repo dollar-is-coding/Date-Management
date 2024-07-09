@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
+import 'package:sg_date/widgets/common_functions.dart';
 import 'package:sg_date/widgets/common_widgets.dart';
 
 class CalcController extends ChangeNotifier {
@@ -12,10 +14,12 @@ class CalcController extends ChangeNotifier {
   final mfg = TextEditingController();
   final exp = TextEditingController();
   final sku = TextEditingController();
+  final tagSearch = TextEditingController();
   final tagName = TextEditingController();
   final mfgFocus = FocusNode();
   final expFocus = FocusNode();
   final skuFocus = FocusNode();
+  final tagSearchFocus = FocusNode();
   Future<List<Product>?>? productApi;
   Future<List<Product>?>? productApiForTag;
   Future<List<Tag>?>? tagApi;
@@ -27,10 +31,12 @@ class CalcController extends ChangeNotifier {
   int currentPercent = 0;
   int allowedDay = 0;
   int dataLength = 0;
+  int focusTagCounted = 0;
   bool isSaved = false;
   bool isShowResult = false;
   bool isExistedDate = false;
   bool isResultFound = false;
+  Color color = Colors.black.withOpacity(.4);
   int focusCounted = 0;
   int firstProductDateLength = 0;
   int? selectedProductId = 0;
@@ -55,19 +61,17 @@ class CalcController extends ChangeNotifier {
   String tempExp = '';
 
   CalcController() {
-    skuFocus.addListener(() {
-      if (skuFocus.hasFocus && focusCounted == 0) {
-        sku.selection = TextSelection(
-          baseOffset: 0,
-          extentOffset: sku.text.length,
-        );
-      } else if (skuFocus.hasFocus && focusCounted > 1) {
-        sku.selection = TextSelection.collapsed(offset: sku.text.length);
-      } else {
-        focusCounted = 0;
-      }
-      print(focusCounted);
-    });
+    onclickTextField(skuFocus, sku, focusCounted);
+    onclickTextField(tagSearchFocus, tagSearch, focusTagCounted);
+    tagSearchFocus.addListener(
+      () {
+        if (tagSearchFocus.hasFocus) {
+          color = Color.fromARGB(255, 112, 82, 255);
+        } else {
+          color = Colors.black.withOpacity(.4);
+        }
+      },
+    );
   }
 
   countFocus() {
@@ -155,13 +159,7 @@ class CalcController extends ChangeNotifier {
   }
 
   calcThingsAboutDate() {
-    productApi!.then(
-      (value) {
-        if (value!.length > 0) {
-          value.clear();
-        }
-      },
-    );
+    productApi = Future.value([]);
     int twentyPercent = 0, thirtyPercent = 0, fourtyPercent = 0;
     totalDay = expDate.difference(mfgDate).inDays;
     currentPercent = (expDate
@@ -208,6 +206,14 @@ class CalcController extends ChangeNotifier {
         firstProductDateLength = value[0].dates.length;
         tempItem = value[0];
         selectedProductId = tempItem.id;
+        for (var i = 0; i < tempItem.dates.length; i++) {
+          var item = tempItem.dates[i];
+          if (turnDateIntoInt(item.mfg) == turnDateIntoInt(tempMfg) &&
+              turnDateIntoInt(item.exp) == turnDateIntoInt(tempExp)) {
+            isSaved = true;
+            break;
+          }
+        }
         await tagApi!.then(
           (tags) {
             tagList = List.filled(tags!.length, false);
@@ -222,6 +228,10 @@ class CalcController extends ChangeNotifier {
       }
     });
     notifyListeners();
+  }
+
+  int turnDateIntoInt(String date) {
+    return int.parse(date.split("/").join(''));
   }
 
   saveNewDate(String sku, context) async {
@@ -284,6 +294,14 @@ class CalcController extends ChangeNotifier {
       tempItem = value![index];
       value.clear();
       value.add(tempItem);
+      for (var i = 0; i < value[0].dates.length; i++) {
+        var date = value[0].dates[i];
+        if (turnDateIntoInt(date.mfg) == turnDateIntoInt(tempMfg) &&
+            turnDateIntoInt(date.exp) == turnDateIntoInt(tempExp)) {
+          isSaved = true;
+          break;
+        }
+      }
       firstProductDateLength = value[0].dates.length;
       tempItem = value[0];
       selectedProductId = tempItem.id;
@@ -342,7 +360,9 @@ class CalcController extends ChangeNotifier {
     );
     int fullRangeTime = end.difference(start).inDays;
     int leftRangeTime = end.difference(now).inDays;
-    return (leftRangeTime / fullRangeTime * 100).round().toInt();
+    return (leftRangeTime / fullRangeTime * 100).round().toInt() > 0
+        ? (leftRangeTime / fullRangeTime * 100).round().toInt()
+        : 0;
   }
 
   int calcRemainingDays(String twenty_pct) {
@@ -513,5 +533,40 @@ class CalcController extends ChangeNotifier {
       },
     );
     return tagExisted!;
+  }
+
+  searchTags(int tagId) {
+    String search = tagSearch.text.trim();
+    tagApi = DioClient().getAllTags();
+    tagApi!.then(
+      (tags) {
+        tagList = List.filled(tags!.length, false);
+        for (var i = 0; i < tags.length; i++) {
+          if (tags[i].id == tagId) {
+            tagList[i] = true;
+            break;
+          }
+        }
+      },
+    );
+    if (search != 'all') {
+      tagApi!.then(
+        (tags) {
+          tags!.removeWhere(
+            (element) => !removeDiacritics(element.name).toLowerCase().contains(
+                  removeDiacritics(search).toLowerCase(),
+                ),
+          );
+          tagList = List.filled(tags.length, false);
+          for (var i = 0; i < tags.length; i++) {
+            if (tags[i].id == tagId) {
+              tagList[i] = true;
+              break;
+            }
+          }
+        },
+      );
+    }
+    notifyListeners();
   }
 }

@@ -17,7 +17,7 @@ class SGDate extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => CalcController()),
         ChangeNotifierProvider(create: (_) => ProductsController()),
-         ChangeNotifierProvider(create: (_) => CameraController()),
+        ChangeNotifierProvider(create: (_) => CameraController()),
       ],
       child: MaterialApp(
         localizationsDelegates: [
