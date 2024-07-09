@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:diacritic/diacritic.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
