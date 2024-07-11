@@ -1218,10 +1218,10 @@ class ProductsScreen extends StatelessWidget {
                                 horizontal: 8, vertical: 8),
                             padding: EdgeInsets.all(9),
                             decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 239, 249, 255),
+                              color: Color.fromARGB(255, 246, 247, 249),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: pros.color,
+                                color: Colors.black26,
                               ),
                             ),
                             child: Row(
@@ -1231,7 +1231,7 @@ class ProductsScreen extends StatelessWidget {
                                   width: 20,
                                   height: 20,
                                   colorFilter: ColorFilter.mode(
-                                    pros.color,
+                                    Colors.black.withOpacity(.6),
                                     BlendMode.srcIn,
                                   ),
                                   fit: BoxFit.scaleDown,
@@ -1239,7 +1239,6 @@ class ProductsScreen extends StatelessWidget {
                                 Expanded(
                                   child: TextField(
                                     controller: pros.tagSearch,
-                                    focusNode: pros.tagSearchFocus,
                                     textAlignVertical: TextAlignVertical.center,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
@@ -1508,44 +1507,57 @@ class ProductsScreen extends StatelessWidget {
                             thickness: .6,
                             height: 20,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: TextField(
-                              autofocus: true,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              controller: value.tagController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                counterText: '',
-                                prefixIcon: SvgPicture.asset(
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 24),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 246, 247, 249),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.black26,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
                                   'asset/icons/locate_icon.svg',
-                                  fit: BoxFit.scaleDown,
+                                  width: 20,
+                                  height: 20,
                                   colorFilter: ColorFilter.mode(
-                                    Colors.black.withOpacity(.8),
+                                    Colors.black.withOpacity(.6),
                                     BlendMode.srcIn,
                                   ),
+                                  fit: BoxFit.scaleDown,
                                 ),
-                                hintText: 'Tên thẻ',
-                                hintStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.grey.shade500),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color.fromARGB(255, 227, 227, 227),
+                                Expanded(
+                                  child: TextField(
+                                    controller: value.tagController,
+                                    autofocus: true,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      counterText: '',
+                                      contentPadding: EdgeInsets.only(left: 6),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      hintText: 'Thêm thẻ',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: Colors.black54),
+                                    ),
                                   ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color.fromARGB(255, 227, 227, 227),
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
                           ),
                           Padding(
@@ -1681,44 +1693,57 @@ class ProductsScreen extends StatelessWidget {
                             thickness: .6,
                             height: 20,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: TextField(
-                              autofocus: true,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              controller: value.tagController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                counterText: '',
-                                prefixIcon: SvgPicture.asset(
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 24),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 246, 247, 249),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.black26,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
                                   'asset/icons/locate_icon.svg',
-                                  fit: BoxFit.scaleDown,
+                                  width: 20,
+                                  height: 20,
                                   colorFilter: ColorFilter.mode(
-                                    Colors.black.withOpacity(.8),
+                                    Colors.black.withOpacity(.6),
                                     BlendMode.srcIn,
                                   ),
+                                  fit: BoxFit.scaleDown,
                                 ),
-                                hintText: 'Tên thẻ',
-                                hintStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.grey.shade500),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color.fromARGB(255, 227, 227, 227),
+                                Expanded(
+                                  child: TextField(
+                                    controller: value.tagController,
+                                    autofocus: true,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      counterText: '',
+                                      contentPadding: EdgeInsets.only(left: 6),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      hintText: 'Thêm thẻ',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: Colors.black54),
+                                    ),
                                   ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    width: 1,
-                                    color: Color.fromARGB(255, 227, 227, 227),
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
                           ),
                           Padding(

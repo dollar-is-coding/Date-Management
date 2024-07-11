@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sg_date/models/date.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
@@ -36,7 +37,6 @@ class CalcController extends ChangeNotifier {
   bool isShowResult = false;
   bool isExistedDate = false;
   bool isResultFound = false;
-  Color color = Colors.black.withOpacity(.4);
   int focusCounted = 0;
   int firstProductDateLength = 0;
   int? selectedProductId = 0;
@@ -63,15 +63,6 @@ class CalcController extends ChangeNotifier {
   CalcController() {
     onclickTextField(skuFocus, sku, focusCounted);
     onclickTextField(tagSearchFocus, tagSearch, focusTagCounted);
-    tagSearchFocus.addListener(
-      () {
-        if (tagSearchFocus.hasFocus) {
-          color = Color.fromARGB(255, 112, 82, 255);
-        } else {
-          color = Colors.black.withOpacity(.4);
-        }
-      },
-    );
   }
 
   countFocus() {
@@ -241,7 +232,7 @@ class CalcController extends ChangeNotifier {
     numberNewMfg = int.parse(splittedNewMfg.join(''));
     numberNewExp = int.parse(splittedNewExp.join(''));
     await productApi!.then(
-      (products) {
+      (products) async {
         for (var i = 0; i < products![0].dates.length; i++) {
           var splittedMfg = products[0].dates[i].mfg.split('/');
           var splittedExp = products[0].dates[i].exp.split('/');
@@ -256,7 +247,25 @@ class CalcController extends ChangeNotifier {
           isSaved = true;
           isExistedDate = true;
           firstProductDateLength = products[0].dates.length;
-          firstProductDateLength += 1;
+          Date newDate = Date(
+              sku: products[0].dates[0].sku,
+              mfg: tempMfg,
+              exp: tempExp,
+              twentyPercent: twentyPercentLeft,
+              thirtyPerrcent: thirtyPercentLeft,
+              fourtyPercent: fourtyPercentLeft);
+          for (var i = 0; i < products[0].dates.length; i++) {
+            var date = products[0].dates[i];
+            if (calcCurrentPercent(date.mfg, date.exp) >=
+                calcCurrentPercent(tempMfg, tempExp)) {
+              products[0].dates.insert(i, newDate);
+              break;
+            }
+          }
+          if (firstProductDateLength == products[0].dates.length) {
+            products[0].dates.add(newDate);
+          }
+          firstProductDateLength++;
           DioClient().addNewDateToSheet(
             sku,
             tempMfg,
@@ -568,5 +577,10 @@ class CalcController extends ChangeNotifier {
       );
     }
     notifyListeners();
+  }
+
+  DateTime turnStringIntoDate(String date) {
+    List<String> temp = date.split('/');
+    return DateTime(int.parse(temp[0]), int.parse(temp[1]), int.parse(temp[2]));
   }
 }

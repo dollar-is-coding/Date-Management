@@ -30,7 +30,6 @@ class ProductsController extends ChangeNotifier {
   var yPosition;
   List<List<bool>>? dateShowed = [];
   bool isFavoriteSort = false;
-  Color color = Colors.black.withOpacity(.4);
   // 0: remove - 1: add - 2:change
   int changeTagState = -1;
   List<bool>? proShowed = [];
@@ -41,8 +40,17 @@ class ProductsController extends ChangeNotifier {
   List<String> sortDisplayOptions = ['Mã sku', 'Tên sản phẩm'];
   int selectedFilter = 100;
   int selectedFilterIndex = 0;
-  List<int> filterOptions = [100, 40, 35, 30, 20];
-  List<String> filterDisplayOptions = ['100%', '40%', '35%', '30%', '20%'];
+  List<int> filterOptions = [100, 60, 50, 45, 40, 35, 30, 20];
+  List<String> filterDisplayOptions = [
+    '100%',
+    '60%',
+    '50%',
+    '45%',
+    '40%',
+    '35%',
+    '30%',
+    '20%'
+  ];
   int selectedTagIndex = 0;
   int selectedTag = 0;
   List<int> tagOptions = [0];
@@ -64,15 +72,6 @@ class ProductsController extends ChangeNotifier {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
           dateShowed!.add(singleList);
-        }
-      },
-    );
-    tagSearchFocus.addListener(
-      () {
-        if (tagSearchFocus.hasFocus) {
-          color = Color.fromARGB(255, 112, 82, 255);
-        } else {
-          color = Colors.black.withOpacity(.4);
         }
       },
     );
