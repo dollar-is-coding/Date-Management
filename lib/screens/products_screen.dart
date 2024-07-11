@@ -1355,7 +1355,7 @@ class ProductsScreen extends StatelessWidget {
                                                                 .bodyMedium,
                                                           ),
                                                           Text(
-                                                            '[ ${tagList[index].date} ]',
+                                                            '${tagList[index].date}',
                                                             style: Theme.of(
                                                                     context)
                                                                 .textTheme

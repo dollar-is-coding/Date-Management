@@ -1389,7 +1389,7 @@ class CalcScreen extends StatelessWidget {
                                                                 .bodyMedium,
                                                           ),
                                                           Text(
-                                                            '[ ${tagList[index].date} ]',
+                                                            '${tagList[index].date}',
                                                             style: Theme.of(
                                                                     context)
                                                                 .textTheme
@@ -1795,110 +1795,151 @@ class CalcScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: TextField(
-                              controller: value.dateTagController,
-                              autofocus: true,
-                              readOnly: true,
-                              textAlignVertical: TextAlignVertical.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .5,
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(2),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Colors.grey.shade400,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Stack(
-                                              alignment: Alignment.center,
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 246, 247, 249),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.black26,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'asset/icons/calendar_icon.svg',
+                                  width: 20,
+                                  height: 20,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(.6),
+                                    BlendMode.srcIn,
+                                  ),
+                                  fit: BoxFit.scaleDown,
+                                ),
+                                Expanded(
+                                  child: TextField(
+                                    controller: value.dateTagController,
+                                    autofocus: true,
+                                    readOnly: true,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .5,
+                                            child: Column(
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    IconButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context),
-                                                      icon: Icon(
-                                                          Icons.close_rounded),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.all(2),
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                        width: 1,
+                                                        color: Colors
+                                                            .grey.shade400,
+                                                      ),
                                                     ),
-                                                  ],
+                                                  ),
+                                                  child: Stack(
+                                                    alignment: Alignment.center,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          IconButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            icon: Icon(Icons
+                                                                .close_rounded),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            'Ngày cập nhật',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyMedium,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'Ngày cập nhật',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium,
+                                                Expanded(
+                                                  child: Container(
+                                                    child:
+                                                        Localizations.override(
+                                                      context: context,
+                                                      locale:
+                                                          const Locale('vi'),
+                                                      child:
+                                                          CupertinoDatePicker(
+                                                        initialDateTime:
+                                                            value.dateTag,
+                                                        dateOrder:
+                                                            DatePickerDateOrder
+                                                                .dmy,
+                                                        mode:
+                                                            CupertinoDatePickerMode
+                                                                .date,
+                                                        minimumYear: 2015,
+                                                        maximumYear: 2030,
+                                                        onDateTimeChanged:
+                                                            (date) {
+                                                          value
+                                                              .changeUpdateDate(
+                                                                  date);
+                                                        },
+                                                      ),
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              child: Localizations.override(
-                                                context: context,
-                                                locale: const Locale('vi'),
-                                                child: CupertinoDatePicker(
-                                                  initialDateTime:
-                                                      value.dateTag,
-                                                  dateOrder:
-                                                      DatePickerDateOrder.dmy,
-                                                  mode: CupertinoDatePickerMode
-                                                      .date,
-                                                  minimumYear: 2015,
-                                                  maximumYear: 2030,
-                                                  onDateTimeChanged: (date) {
-                                                    value
-                                                        .changeUpdateDate(date);
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      counterText: '',
+                                      contentPadding: EdgeInsets.only(left: 6),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                              decoration: InputDecoration(
-                                isDense: true,
-                                counterText: '',
-                                contentPadding: EdgeInsets.only(left: 6),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(8),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      hintText: 'Thêm ngày',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(color: Colors.black54),
+                                    ),
+                                  ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                hintText: 'Thêm ngày',
-                                hintStyle: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(color: Colors.black54),
-                              ),
+                              ],
                             ),
                           ),
                           Padding(
