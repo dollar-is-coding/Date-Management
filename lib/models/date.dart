@@ -14,7 +14,6 @@ class Date {
   @JsonKey(name: 'fourty_pct')
   String fourtyPercent;
 
-
   Date({
     this.id,
     required this.sku,

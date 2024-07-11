@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 import 'package:sg_date/services/dio_client.dart';
@@ -22,6 +23,8 @@ class ProductsController extends ChangeNotifier {
   final tagSearchFocus = FocusNode();
   final searchFocus = FocusNode();
   final tagSearch = TextEditingController();
+  final dateController = TextEditingController();
+  DateTime? dateTag;
 
   bool isCountResult = false;
   int focusTagCounted = 0;
@@ -317,7 +320,8 @@ class ProductsController extends ChangeNotifier {
 
   editTag(int tagId) async {
     String newTag = tagController.text.trim();
-    DioClient().replaceTagFromSheet(tagId.toString(), newTag);
+    DioClient()
+        .replaceTagFromSheet(tagId.toString(), newTag, dateController.text);
     apiTags = DioClient().getAllTags();
     getTagsForFilter();
     await apiProducts!.then(
@@ -432,6 +436,20 @@ class ProductsController extends ChangeNotifier {
         },
       );
     }
+    notifyListeners();
+  }
+
+  stringIntoDate(String string) {
+    var splittedString = string.split('/');
+    dateTag = DateTime(
+      int.parse(splittedString[2]),
+      int.parse(splittedString[1]),
+      int.parse(splittedString[0]),
+    );
+  }
+
+  changeUpdateDate(DateTime date) {
+    dateController.text = DateFormat('dd/MM/yyyy').format(date);
     notifyListeners();
   }
 }

@@ -6,7 +6,8 @@ part 'tag.g.dart';
 class Tag {
   int? id;
   String name;
-  Tag({required this.name});
+  String date;
+  Tag({required this.name, required this.date});
 
   factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
 

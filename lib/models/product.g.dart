@@ -7,15 +7,15 @@ part of 'product.dart';
 // **************************************************************************
 
 Product _$ProductFromJson(Map<String, dynamic> json) => Product(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       barcode: json['barcode'] as String,
-      sku: json['sku'] as int,
+      sku: (json['sku'] as num).toInt(),
       name: json['name'] as String,
       dates: (json['dates'] as List<dynamic>)
           .map((e) => Date.fromJson(e as Map<String, dynamic>))
           .toList(),
       tag: Tag.fromJson(json['tag'] as Map<String, dynamic>),
-      favorite: json['favorite'] as int,
+      favorite: (json['favorite'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{

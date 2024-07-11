@@ -1340,6 +1340,10 @@ class CalcScreen extends StatelessWidget {
                                                     tagList[index].id!, p);
                                                 calc.tagName.text =
                                                     tagList[index].name;
+                                                calc.dateTagController.text =
+                                                    tagList[index].date;
+                                                calc.stringIntoDate(
+                                                    tagList[index].date);
                                               },
                                               child: tagList[index].id != 1
                                                   ? ListTile(
@@ -1369,11 +1373,32 @@ class CalcScreen extends StatelessWidget {
                                                           },
                                                         ),
                                                       ),
-                                                      title: Text(
-                                                        '${tagList[index].name}',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium,
+                                                      title: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            '${tagList[index].name}',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodyMedium,
+                                                          ),
+                                                          Text(
+                                                            '[ ${tagList[index].date} ]',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall!
+                                                                .copyWith(
+                                                                    color: Colors
+                                                                        .black54),
+                                                          ),
+                                                        ],
                                                       ),
                                                       trailing: InkWell(
                                                         child: SvgPicture.asset(
@@ -1768,6 +1793,112 @@ class CalcScreen extends StatelessWidget {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: value.dateTagController,
+                              autofocus: true,
+                              readOnly: true,
+                              textAlignVertical: TextAlignVertical.center,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .5,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    IconButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      icon: Icon(
+                                                          Icons.close_rounded),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'Ngày cập nhật',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              child: Localizations.override(
+                                                context: context,
+                                                locale: const Locale('vi'),
+                                                child: CupertinoDatePicker(
+                                                  initialDateTime:
+                                                      value.dateTag,
+                                                  dateOrder:
+                                                      DatePickerDateOrder.dmy,
+                                                  mode: CupertinoDatePickerMode
+                                                      .date,
+                                                  minimumYear: 2015,
+                                                  maximumYear: 2030,
+                                                  onDateTimeChanged: (date) {
+                                                    value
+                                                        .changeUpdateDate(date);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              decoration: InputDecoration(
+                                isDense: true,
+                                counterText: '',
+                                contentPadding: EdgeInsets.only(left: 6),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                hintText: 'Thêm ngày',
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(color: Colors.black54),
+                              ),
                             ),
                           ),
                           Padding(

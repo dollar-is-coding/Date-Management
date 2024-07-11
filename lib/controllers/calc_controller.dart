@@ -17,6 +17,7 @@ class CalcController extends ChangeNotifier {
   final sku = TextEditingController();
   final tagSearch = TextEditingController();
   final tagName = TextEditingController();
+  final dateTagController = TextEditingController();
   final mfgFocus = FocusNode();
   final expFocus = FocusNode();
   final skuFocus = FocusNode();
@@ -57,6 +58,7 @@ class CalcController extends ChangeNotifier {
     DateTime.now().month,
     DateTime.now().day,
   );
+  DateTime? dateTag;
   String tempMfg = '';
   String tempExp = '';
 
@@ -489,7 +491,8 @@ class CalcController extends ChangeNotifier {
   replaceTag(int id) async {
     String newTag = tagName.text.trim();
     print(newTag);
-    DioClient().replaceTagFromSheet(id.toString(), tagName.text.trim());
+    String now = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    DioClient().replaceTagFromSheet(id.toString(), tagName.text.trim(), now);
     await productApi!.then(
       (value) {
         if (value![0].tag.id == id) value[0].tag.name = newTag;
@@ -582,5 +585,19 @@ class CalcController extends ChangeNotifier {
   DateTime turnStringIntoDate(String date) {
     List<String> temp = date.split('/');
     return DateTime(int.parse(temp[0]), int.parse(temp[1]), int.parse(temp[2]));
+  }
+
+  stringIntoDate(String string) {
+    var splittedString = string.split('/');
+    dateTag = DateTime(
+      int.parse(splittedString[2]),
+      int.parse(splittedString[1]),
+      int.parse(splittedString[0]),
+    );
+  }
+
+  changeUpdateDate(DateTime date) {
+    dateTagController.text = DateFormat('dd/MM/yyyy').format(date);
+    notifyListeners();
   }
 }

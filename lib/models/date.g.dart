@@ -7,8 +7,8 @@ part of 'date.dart';
 // **************************************************************************
 
 Date _$DateFromJson(Map<String, dynamic> json) => Date(
-      id: json['id'] as int?,
-      sku: json['sku'] as int,
+      id: (json['id'] as num?)?.toInt(),
+      sku: (json['sku'] as num).toInt(),
       mfg: json['mfg'] as String,
       exp: json['exp'] as String,
       twentyPercent: json['twenty_pct'] as String,

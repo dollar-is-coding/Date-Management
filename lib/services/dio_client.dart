@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbxTv6uZfBr3SmkfFVsIW2Th6vU8nOk80Yejs769BTQdVOuM6Jc1W9-4-RvGwaEvr18bKw/exec';
+      'https://script.google.com/macros/s/AKfycbwM5GPpd_Ix5PNZsgiIwKSgmbcRjx-rf7W24So7R8N_xyF4cIkk5dby7V4Nqka6KBA6zA/exec';
 
   Future<List<Product>?> getAnyProducts(String product, int tag_id) async {
     var response = await _dio.get(
@@ -68,6 +69,14 @@ class DioClient {
       if (response.statusCode == 200) {
         var getTags = response.data as List;
         tags = getTags.map((e) => Tag.fromJson(e)).toList();
+        for (var i = 0; i < tags.length; i++) {
+          String newDateType = tags[i].date.substring(8, 10) +
+              '/' +
+              tags[i].date.substring(5, 7) +
+              '/' +
+              tags[i].date.substring(0, 4);
+          tags[i].date = newDateType;
+        }
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {
@@ -119,8 +128,13 @@ class DioClient {
 
   Future<void> addTagToSheet(String name) async {
     try {
-      var response =
-          await _dio.post(_urlBase + '?action=addTag', data: {'name': name});
+      var response = await _dio.post(
+        _urlBase + '?action=addTag',
+        data: {
+          'name': name,
+          'date': DateFormat('dd/MM/yyyy').format(DateTime.now()),
+        },
+      );
       if (response.statusCode == 200) {
         print(response.data);
       } else
@@ -145,10 +159,10 @@ class DioClient {
     }
   }
 
-  Future<void> replaceTagFromSheet(String id, String name) async {
+  Future<void> replaceTagFromSheet(String id, String name, String date) async {
     try {
       var response = await _dio.post(_urlBase + '?action=replaceTag',
-          data: {'id': id, 'name': name});
+          data: {'id': id, 'name': name, 'date': date});
       if (response.statusCode == 200) {
         print(response.data);
       } else
