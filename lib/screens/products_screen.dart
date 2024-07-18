@@ -993,86 +993,84 @@ class ProductsScreen extends StatelessWidget {
                                                                                     bottomRight: Radius.circular(20),
                                                                                   ),
                                                                                 ),
-                                                                                child: Expanded(
-                                                                                  child: Column(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        '${dates[i].mfg} - ${dates[i].exp}',
-                                                                                      ),
-                                                                                      Row(
-                                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                                                        children: [
-                                                                                          Column(
-                                                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                            children: [
-                                                                                              Text(
-                                                                                                '40%: ${dates[i].fourtyPercent}',
-                                                                                              ),
-                                                                                              Text(
-                                                                                                '30%: ${dates[i].thirtyPercent}',
-                                                                                              ),
-                                                                                              Text(
-                                                                                                '20%: ${dates[i].twentyPercent}',
-                                                                                              ),
-                                                                                              Text(
-                                                                                                'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
-                                                                                              ),
-                                                                                              dates[i].note.isNotEmpty
-                                                                                                  ? Text(
-                                                                                                      '*${dates[i].note}',
-                                                                                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                                                                            fontStyle: FontStyle.italic,
-                                                                                                            color: Colors.black87,
-                                                                                                          ),
-                                                                                                    )
-                                                                                                  : Container(),
-                                                                                            ],
-                                                                                          ),
-                                                                                          IconButton(
-                                                                                            onPressed: () {
-                                                                                              Navigator.pop(context);
-                                                                                              Provider.of<CalcController>(context, listen: false).clearScreen();
-                                                                                              Provider.of<CalcController>(context, listen: false).clearAllFocuses(context);
-                                                                                              Provider.of<CalcController>(context, listen: false).setInput(
-                                                                                                products[index].sku.toString(),
-                                                                                                dates[i].mfg,
-                                                                                                dates[i].exp,
-                                                                                                dates[i].note,
-                                                                                              );
-                                                                                            },
-                                                                                            icon: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                borderRadius: BorderRadius.circular(20),
-                                                                                                boxShadow: [
-                                                                                                  BoxShadow(
-                                                                                                    color: Colors.black.withOpacity(.04),
-                                                                                                    spreadRadius: 2,
-                                                                                                    blurRadius: 3,
-                                                                                                    offset: Offset(0, 2),
-                                                                                                  ),
-                                                                                                ],
-                                                                                              ),
-                                                                                              child: CircleAvatar(
-                                                                                                backgroundColor: Color.fromARGB(160, 75, 124, 139),
-                                                                                                radius: 20,
-                                                                                                child: SvgPicture.asset(
-                                                                                                  'asset/icons/edit_icon.svg',
-                                                                                                  fit: BoxFit.scaleDown,
-                                                                                                  width: 20,
-                                                                                                  colorFilter: ColorFilter.mode(
-                                                                                                    Colors.white,
-                                                                                                    BlendMode.srcIn,
-                                                                                                  ),
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      '${dates[i].mfg} - ${dates[i].exp}',
+                                                                                    ),
+                                                                                    Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                                                      children: [
+                                                                                        Column(
+                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                          children: [
+                                                                                            Text(
+                                                                                              '40%: ${dates[i].fourtyPercent}',
+                                                                                            ),
+                                                                                            Text(
+                                                                                              '30%: ${dates[i].thirtyPercent}',
+                                                                                            ),
+                                                                                            Text(
+                                                                                              '20%: ${dates[i].twentyPercent}',
+                                                                                            ),
+                                                                                            Text(
+                                                                                              'Còn ${pro.calcDayLefts(dates[i].twentyPercent)} ngày',
+                                                                                            ),
+                                                                                            dates[i].note.isNotEmpty
+                                                                                                ? Text(
+                                                                                                    '*${dates[i].note}',
+                                                                                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                                                          fontStyle: FontStyle.italic,
+                                                                                                          color: Colors.black87,
+                                                                                                        ),
+                                                                                                  )
+                                                                                                : Container(),
+                                                                                          ],
+                                                                                        ),
+                                                                                        IconButton(
+                                                                                          onPressed: () {
+                                                                                            Navigator.pop(context);
+                                                                                            Provider.of<CalcController>(context, listen: false).clearScreen();
+                                                                                            Provider.of<CalcController>(context, listen: false).clearAllFocuses(context);
+                                                                                            Provider.of<CalcController>(context, listen: false).setInput(
+                                                                                              products[index].sku.toString(),
+                                                                                              dates[i].mfg,
+                                                                                              dates[i].exp,
+                                                                                              dates[i].note,
+                                                                                            );
+                                                                                          },
+                                                                                          icon: Container(
+                                                                                            decoration: BoxDecoration(
+                                                                                              borderRadius: BorderRadius.circular(20),
+                                                                                              boxShadow: [
+                                                                                                BoxShadow(
+                                                                                                  color: Colors.black.withOpacity(.04),
+                                                                                                  spreadRadius: 2,
+                                                                                                  blurRadius: 3,
+                                                                                                  offset: Offset(0, 2),
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                            child: CircleAvatar(
+                                                                                              backgroundColor: Color.fromARGB(160, 75, 124, 139),
+                                                                                              radius: 20,
+                                                                                              child: SvgPicture.asset(
+                                                                                                'asset/icons/edit_icon.svg',
+                                                                                                fit: BoxFit.scaleDown,
+                                                                                                width: 20,
+                                                                                                colorFilter: ColorFilter.mode(
+                                                                                                  Colors.white,
+                                                                                                  BlendMode.srcIn,
                                                                                                 ),
                                                                                               ),
                                                                                             ),
                                                                                           ),
-                                                                                        ],
-                                                                                      )
-                                                                                    ],
-                                                                                  ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    )
+                                                                                  ],
                                                                                 ),
                                                                               ),
                                                                               InkWell(
