@@ -10,9 +10,10 @@ class Date {
   @JsonKey(name: 'twenty_pct')
   String twentyPercent;
   @JsonKey(name: 'thirty_pct')
-  String thirtyPerrcent;
+  String thirtyPercent;
   @JsonKey(name: 'fourty_pct')
   String fourtyPercent;
+  String note;
 
   Date({
     this.id,
@@ -20,8 +21,9 @@ class Date {
     required this.mfg,
     required this.exp,
     required this.twentyPercent,
-    required this.thirtyPerrcent,
+    required this.thirtyPercent,
     required this.fourtyPercent,
+    required this.note,
   });
 
   factory Date.fromJson(Map<String, dynamic> json) => _$DateFromJson(json);

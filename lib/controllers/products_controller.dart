@@ -20,6 +20,7 @@ class ProductsController extends ChangeNotifier {
   final searchController = TextEditingController();
   final scrollController = ScrollController();
   final tagController = TextEditingController();
+  final noteController = TextEditingController();
   final tagSearchFocus = FocusNode();
   final searchFocus = FocusNode();
   final tagSearch = TextEditingController();
@@ -437,15 +438,6 @@ class ProductsController extends ChangeNotifier {
       );
     }
     notifyListeners();
-  }
-
-  stringIntoDate(String string) {
-    var splittedString = string.split('/');
-    dateTag = DateTime(
-      int.parse(splittedString[2]),
-      int.parse(splittedString[1]),
-      int.parse(splittedString[0]),
-    );
   }
 
   changeUpdateDate(DateTime date) {

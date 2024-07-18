@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:sg_date/models/date.dart';
 import 'package:sg_date/models/product.dart';
 import 'package:sg_date/models/tag.dart';
 
 class DioClient {
   final _dio = Dio();
   final _urlBase =
-      'https://script.google.com/macros/s/AKfycbwM5GPpd_Ix5PNZsgiIwKSgmbcRjx-rf7W24So7R8N_xyF4cIkk5dby7V4Nqka6KBA6zA/exec';
+      'https://script.google.com/macros/s/AKfycbwjk2IV58haqubONUdi9rcmvPjIFZiiR9t1v7LrOJ9I5F9VUk7MC1hjoMhKfHB2lK6knA/exec';
 
   Future<List<Product>?> getAnyProducts(String product, int tag_id) async {
     var response = await _dio.get(
@@ -69,14 +70,6 @@ class DioClient {
       if (response.statusCode == 200) {
         var getTags = response.data as List;
         tags = getTags.map((e) => Tag.fromJson(e)).toList();
-        for (var i = 0; i < tags.length; i++) {
-          String newDateType = tags[i].date.substring(8, 10) +
-              '/' +
-              tags[i].date.substring(5, 7) +
-              '/' +
-              tags[i].date.substring(0, 4);
-          tags[i].date = newDateType;
-        }
       } else
         print('Status code is ' + response.statusCode.toString());
     } catch (e) {
@@ -86,13 +79,13 @@ class DioClient {
   }
 
   Future<void> addNewDateToSheet(
-    String sku,
-    String mfg,
-    String exp,
-    String twenty_pct,
-    String thirty_pct,
-    String fourty_pct,
-  ) async {
+      String sku,
+      String mfg,
+      String exp,
+      String twenty_pct,
+      String thirty_pct,
+      String fourty_pct,
+      String note) async {
     try {
       var response = await _dio.post(_urlBase + '?action=addDate', data: {
         'sku': sku,
@@ -101,6 +94,7 @@ class DioClient {
         'twenty_pct': twenty_pct,
         'thirty_pct': thirty_pct,
         'fourty_pct': fourty_pct,
+        'note': note,
       });
       if (response.statusCode == 200) {
         print(response.data);
@@ -177,6 +171,30 @@ class DioClient {
     try {
       var response = await _dio.post(_urlBase + '?action=replaceProduct',
           data: {'id': id, 'tag_id': tagId});
+      if (response.statusCode == 200) {
+        print(response.data);
+      } else
+        print('It fails ${response.statusCode}');
+      print('right url ${response.headers['location']}');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> replaceDate(String id, Date date) async {
+    try {
+      var response = await _dio.post(
+        _urlBase + '?action=replaceDate',
+        data: {
+          'id': id,
+          'mfg': date.mfg,
+          'exp': date.exp,
+          'twenty_pct': date.twentyPercent,
+          'thirty_pct': date.thirtyPercent,
+          'fourty_pct': date.fourtyPercent,
+          'note': date.note,
+        },
+      );
       if (response.statusCode == 200) {
         print(response.data);
       } else

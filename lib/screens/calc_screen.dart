@@ -107,7 +107,7 @@ class CalcScreen extends StatelessWidget {
                 padding: EdgeInsets.all(12),
                 child: Column(
                   children: [
-                    // sku & barcode
+                    // product
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Container(
@@ -128,6 +128,7 @@ class CalcScreen extends StatelessWidget {
                             focusNode: calc.skuFocus,
                             controller: calc.sku,
                             style: Theme.of(context).textTheme.bodyMedium,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -448,6 +449,61 @@ class CalcScreen extends StatelessWidget {
                         ),
                       ],
                     ),
+                    // note
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(.04),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: Offset(0, 0),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          focusNode: calc.noteFocus,
+                          controller: calc.noteController,
+                          textCapitalization: TextCapitalization.sentences,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            counterText: '',
+                            prefixIcon: SvgPicture.asset(
+                              'asset/icons/note_icon.svg',
+                              fit: BoxFit.scaleDown,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(.7),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            hintText: 'Ghi chú',
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: Colors.grey.shade500),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: Color.fromARGB(255, 227, 227, 227),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     // Button
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 16),
@@ -511,6 +567,8 @@ class CalcScreen extends StatelessWidget {
                                 Container(
                                   padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       FutureBuilder<List<Product>?>(
                                         future: calc.productApi,
@@ -800,6 +858,13 @@ class CalcScreen extends StatelessWidget {
                                                 ),
                                                 Text(
                                                     'Còn: ${calc.allowedDay} ngày'),
+                                                calc.tempNote.isNotEmpty
+                                                    ? Divider(
+                                                        color: Colors
+                                                            .grey.shade300,
+                                                        height: 8,
+                                                      )
+                                                    : Container(),
                                               ],
                                             ),
                                           ),
@@ -837,6 +902,17 @@ class CalcScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
+                                      calc.tempNote.isNotEmpty
+                                          ? Text(
+                                              '*Ghi chú: ${calc.tempNote}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(
+                                                      fontStyle:
+                                                          FontStyle.italic),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                 ),
@@ -1342,8 +1418,6 @@ class CalcScreen extends StatelessWidget {
                                                     tagList[index].name;
                                                 calc.dateTagController.text =
                                                     tagList[index].date;
-                                                calc.stringIntoDate(
-                                                    tagList[index].date);
                                               },
                                               child: tagList[index].id != 1
                                                   ? ListTile(
@@ -1590,6 +1664,8 @@ class CalcScreen extends StatelessWidget {
                                   child: TextField(
                                     controller: value.tagName,
                                     autofocus: true,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
                                     textAlignVertical: TextAlignVertical.center,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
@@ -1769,6 +1845,8 @@ class CalcScreen extends StatelessWidget {
                                   child: TextField(
                                     controller: value.tagName,
                                     autofocus: true,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
                                     textAlignVertical: TextAlignVertical.center,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,

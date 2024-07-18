@@ -18,9 +18,11 @@ class CalcController extends ChangeNotifier {
   final tagSearch = TextEditingController();
   final tagName = TextEditingController();
   final dateTagController = TextEditingController();
+  final noteController = TextEditingController();
   final mfgFocus = FocusNode();
   final expFocus = FocusNode();
   final skuFocus = FocusNode();
+  final noteFocus = FocusNode();
   final tagSearchFocus = FocusNode();
   Future<List<Product>?>? productApi;
   Future<List<Product>?>? productApiForTag;
@@ -61,6 +63,7 @@ class CalcController extends ChangeNotifier {
   DateTime? dateTag;
   String tempMfg = '';
   String tempExp = '';
+  String tempNote = '';
 
   CalcController() {
     onclickTextField(skuFocus, sku, focusCounted);
@@ -75,11 +78,26 @@ class CalcController extends ChangeNotifier {
     this.sku.text = sku;
   }
 
+  setInput(String product, String mfg, String exp, String note) {
+    DateTime mfgDate = DateTime(
+      int.parse(mfg.substring(6, 10)),
+      int.parse(mfg.substring(3, 5)),
+      int.parse(mfg.substring(0, 2)),
+    );
+    DateTime expDate = DateTime(
+      int.parse(exp.substring(6, 10)),
+      int.parse(exp.substring(3, 5)),
+      int.parse(exp.substring(0, 2)),
+    );
+    sku.text = product;
+    noteController.text = note;
+    changeMfg(mfgDate);
+    changeExp(expDate);
+  }
+
   showResult(context) async {
     isSaved = false;
     isExistedDate = false;
-    tempExp = exp.text;
-    tempMfg = mfg.text;
     DateTime now = DateTime(
       DateTime.now().year,
       DateTime.now().month,
@@ -140,9 +158,15 @@ class CalcController extends ChangeNotifier {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (sku.text.isEmpty) {
+      tempExp = exp.text;
+      tempMfg = mfg.text;
+      tempNote = noteController.text.trim();
       calcThingsAboutDate();
       isShowResult = true;
     } else {
+      tempExp = exp.text;
+      tempMfg = mfg.text;
+      tempNote = noteController.text.trim();
       calcThingsAboutDate();
       getProducts();
       isShowResult = true;
@@ -202,7 +226,8 @@ class CalcController extends ChangeNotifier {
         for (var i = 0; i < tempItem.dates.length; i++) {
           var item = tempItem.dates[i];
           if (turnDateIntoInt(item.mfg) == turnDateIntoInt(tempMfg) &&
-              turnDateIntoInt(item.exp) == turnDateIntoInt(tempExp)) {
+              turnDateIntoInt(item.exp) == turnDateIntoInt(tempExp) &&
+              item.note == tempNote) {
             isSaved = true;
             break;
           }
@@ -229,6 +254,7 @@ class CalcController extends ChangeNotifier {
 
   saveNewDate(String sku, context) async {
     int numberNewMfg = 0, numberNewExp = 0;
+    bool isUpdate = false;
     var splittedNewMfg = tempMfg.split('/');
     var splittedNewExp = tempExp.split('/');
     numberNewMfg = int.parse(splittedNewMfg.join(''));
@@ -240,7 +266,9 @@ class CalcController extends ChangeNotifier {
           var splittedExp = products[0].dates[i].exp.split('/');
           var numberMfg = int.parse(splittedMfg.join(''));
           var numberExp = int.parse(splittedExp.join(''));
-          if (numberMfg == numberNewMfg && numberExp == numberNewExp) {
+          if (numberMfg == numberNewMfg &&
+              numberExp == numberNewExp &&
+              products[0].dates[i].note == tempNote) {
             isExistedDate = true;
             break;
           }
@@ -250,32 +278,52 @@ class CalcController extends ChangeNotifier {
           isExistedDate = true;
           firstProductDateLength = products[0].dates.length;
           Date newDate = Date(
-              sku: products[0].dates[0].sku,
-              mfg: tempMfg,
-              exp: tempExp,
-              twentyPercent: twentyPercentLeft,
-              thirtyPerrcent: thirtyPercentLeft,
-              fourtyPercent: fourtyPercentLeft);
+            sku: products[0].sku,
+            mfg: tempMfg,
+            exp: tempExp,
+            twentyPercent: twentyPercentLeft,
+            thirtyPercent: thirtyPercentLeft,
+            fourtyPercent: fourtyPercentLeft,
+            note: tempNote,
+          );
           for (var i = 0; i < products[0].dates.length; i++) {
-            var date = products[0].dates[i];
-            if (calcCurrentPercent(date.mfg, date.exp) >=
-                calcCurrentPercent(tempMfg, tempExp)) {
-              products[0].dates.insert(i, newDate);
+            var item = products[0].dates[i];
+            if (turnDateIntoInt(item.mfg) == turnDateIntoInt(tempMfg) &&
+                turnDateIntoInt(item.exp) == turnDateIntoInt(tempExp) &&
+                item.note != tempNote) {
+              isUpdate = true;
+              DioClient().replaceDate(item.id.toString(), newDate);
               break;
             }
           }
-          if (firstProductDateLength == products[0].dates.length) {
-            products[0].dates.add(newDate);
+          if (!isUpdate) {
+            for (var i = 0; i < products[0].dates.length; i++) {
+              var date = products[0].dates[i];
+              if (calcCurrentPercent(date.mfg, date.exp) >=
+                  calcCurrentPercent(tempMfg, tempExp)) {
+                products[0].dates.insert(i, newDate);
+                break;
+              }
+            }
+            if (firstProductDateLength == products[0].dates.length) {
+              products[0].dates.add(newDate);
+            }
+            if (firstProductDateLength == 0) {
+              products[0].dates = [];
+              products[0].dates.add(newDate);
+            }
+            firstProductDateLength++;
+            DioClient().addNewDateToSheet(
+              sku,
+              tempMfg,
+              tempExp,
+              twentyPercentLeft,
+              thirtyPercentLeft,
+              fourtyPercentLeft,
+              tempNote,
+            );
           }
-          firstProductDateLength++;
-          DioClient().addNewDateToSheet(
-            sku,
-            tempMfg,
-            tempExp,
-            twentyPercentLeft,
-            thirtyPercentLeft,
-            fourtyPercentLeft,
-          );
+
           snackBar = snackBarWidget(
             context: context,
             text: 'Đã lưu date mới',
@@ -338,6 +386,7 @@ class CalcController extends ChangeNotifier {
     sku.clear();
     mfg.clear();
     exp.clear();
+    noteController.clear();
     isShowResult = false;
     mfgDate = DateTime(
       DateTime.now().year,
@@ -580,20 +629,6 @@ class CalcController extends ChangeNotifier {
       );
     }
     notifyListeners();
-  }
-
-  DateTime turnStringIntoDate(String date) {
-    List<String> temp = date.split('/');
-    return DateTime(int.parse(temp[0]), int.parse(temp[1]), int.parse(temp[2]));
-  }
-
-  stringIntoDate(String string) {
-    var splittedString = string.split('/');
-    dateTag = DateTime(
-      int.parse(splittedString[2]),
-      int.parse(splittedString[1]),
-      int.parse(splittedString[0]),
-    );
   }
 
   changeUpdateDate(DateTime date) {

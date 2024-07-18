@@ -12,8 +12,9 @@ Date _$DateFromJson(Map<String, dynamic> json) => Date(
       mfg: json['mfg'] as String,
       exp: json['exp'] as String,
       twentyPercent: json['twenty_pct'] as String,
-      thirtyPerrcent: json['thirty_pct'] as String,
+      thirtyPercent: json['thirty_pct'] as String,
       fourtyPercent: json['fourty_pct'] as String,
+      note: json['note'] as String,
     );
 
 Map<String, dynamic> _$DateToJson(Date instance) => <String, dynamic>{
@@ -22,6 +23,7 @@ Map<String, dynamic> _$DateToJson(Date instance) => <String, dynamic>{
       'mfg': instance.mfg,
       'exp': instance.exp,
       'twenty_pct': instance.twentyPercent,
-      'thirty_pct': instance.thirtyPerrcent,
+      'thirty_pct': instance.thirtyPercent,
       'fourty_pct': instance.fourtyPercent,
+      'note': instance.note,
     };
