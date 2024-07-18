@@ -106,55 +106,61 @@ class CalcController extends ChangeNotifier {
     if (mfg.text.isEmpty || exp.text.isEmpty) {
       snackBar = snackBarWidget(
         context: context,
+        icon: 'asset/icons/chat_error_icon.svg',
+        backgroundColor: Color.fromARGB(255, 246, 75, 60),
+        iconColor: Color.fromARGB(255, 200, 25, 18),
+        header: 'Lỗi!',
         text: 'Không được để trống NSX và HSD',
-        icon: 'asset/icons/warning_icon.svg',
-        color: Color.fromARGB(255, 255, 121, 36),
-        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (mfgDate.isAfter(expDate)) {
       snackBar = snackBarWidget(
         context: context,
+        icon: 'asset/icons/chat_error_icon.svg',
+        backgroundColor: Color.fromARGB(255, 246, 75, 60),
+        iconColor: Color.fromARGB(255, 200, 25, 18),
+        header: 'Lỗi!',
         text: 'NSX không được lớn hơn HSD',
-        icon: 'asset/icons/warning_icon.svg',
-        color: Color.fromARGB(255, 255, 121, 36),
-        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (mfgDate.isAfter(now)) {
       snackBar = snackBarWidget(
         context: context,
+        icon: 'asset/icons/chat_error_icon.svg',
+        backgroundColor: Color.fromARGB(255, 246, 75, 60),
+        iconColor: Color.fromARGB(255, 200, 25, 18),
+        header: 'Lỗi!',
         text: 'NSX không được lớn hơn ngày hiện tại',
-        icon: 'asset/icons/warning_icon.svg',
-        color: Color.fromARGB(255, 255, 121, 36),
-        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (expDate.isBefore(now)) {
       snackBar = snackBarWidget(
         context: context,
+        icon: 'asset/icons/chat_error_icon.svg',
+        backgroundColor: Color.fromARGB(255, 246, 75, 60),
+        iconColor: Color.fromARGB(255, 200, 25, 18),
+        header: 'Lỗi!',
         text: 'HSD không được nhỏ hơn ngày hiện tại',
-        icon: 'asset/icons/warning_icon.svg',
-        color: Color.fromARGB(255, 255, 121, 36),
-        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (expDate == now && mfgDate == now) {
       snackBar = snackBarWidget(
         context: context,
+        icon: 'asset/icons/chat_error_icon.svg',
+        backgroundColor: Color.fromARGB(255, 246, 75, 60),
+        iconColor: Color.fromARGB(255, 200, 25, 18),
+        header: 'Lỗi!',
         text: 'NSX và HSD không được bằng nhau',
-        icon: 'asset/icons/warning_icon.svg',
-        color: Color.fromARGB(255, 255, 121, 36),
-        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (expDate.difference(mfgDate).inDays < 10) {
       snackBar = snackBarWidget(
         context: context,
+        icon: 'asset/icons/chat_error_icon.svg',
+        backgroundColor: Color.fromARGB(255, 246, 75, 60),
+        iconColor: Color.fromARGB(255, 200, 25, 18),
+        header: 'Lỗi!',
         text: 'Thời hạn sử dụng không được nhỏ hơn 10 ngày',
-        icon: 'asset/icons/warning_icon.svg',
-        color: Color.fromARGB(255, 255, 121, 36),
-        textColor: Colors.white,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else if (sku.text.isEmpty) {
@@ -323,21 +329,22 @@ class CalcController extends ChangeNotifier {
               tempNote,
             );
           }
-
           snackBar = snackBarWidget(
             context: context,
+            icon: 'asset/icons/chat_icon.svg',
+            backgroundColor: Color.fromARGB(255, 0, 112, 224),
+            iconColor: Color.fromARGB(255, 5, 71, 138),
+            header: 'Thành công!',
             text: 'Đã lưu date mới',
-            icon: 'asset/icons/info_icon.svg',
-            color: Color.fromARGB(255, 94, 18, 99),
-            textColor: Colors.white,
           );
         } else {
           snackBar = snackBarWidget(
             context: context,
+            icon: 'asset/icons/chat_error_icon.svg',
+            backgroundColor: Color.fromARGB(255, 246, 75, 60),
+            iconColor: Color.fromARGB(255, 200, 25, 18),
+            header: 'Lỗi!',
             text: 'Date đã tồn tại',
-            icon: 'asset/icons/warning_icon.svg',
-            color: Color.fromARGB(255, 255, 121, 36),
-            textColor: Colors.white,
           );
         }
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -507,10 +514,11 @@ class CalcController extends ChangeNotifier {
               );
               snackBar = snackBarWidget(
                 context: context,
+                icon: 'asset/icons/chat_icon.svg',
+                backgroundColor: Color.fromARGB(255, 0, 112, 224),
+                iconColor: Color.fromARGB(255, 5, 71, 138),
+                header: 'Thành công!',
                 text: 'Thêm thẻ cho sản phẩm thành công',
-                icon: 'asset/icons/info_icon.svg',
-                color: Color.fromARGB(255, 94, 18, 99),
-                textColor: Colors.white,
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }

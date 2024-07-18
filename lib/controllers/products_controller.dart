@@ -286,10 +286,11 @@ class ProductsController extends ChangeNotifier {
               );
               SnackBar snackBar = snackBarWidget(
                 context: context,
+                icon: 'asset/icons/chat_icon.svg',
+                backgroundColor: Color.fromARGB(255, 0, 112, 224),
+                iconColor: Color.fromARGB(255, 5, 71, 138),
+                header: 'Thành công!',
                 text: textInfo,
-                icon: 'asset/icons/info_icon.svg',
-                color: Color.fromARGB(255, 94, 18, 99),
-                textColor: Colors.white,
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             },

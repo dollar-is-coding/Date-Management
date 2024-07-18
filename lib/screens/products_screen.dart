@@ -18,7 +18,7 @@ class ProductsScreen extends StatelessWidget {
     return Consumer<ProductsController>(
       builder: (context, parentValue, child) {
         return PopScope(
-          canPop: false,
+          canPop: true,
           onPopInvokedWithResult: (didPop, result) {
             parentValue.setFavorite(false);
             parentValue.searchWithFilter(0, '', 0, false);
@@ -1020,7 +1020,7 @@ class ProductsScreen extends StatelessWidget {
                                                                                             ),
                                                                                             dates[i].note.isNotEmpty
                                                                                                 ? Text(
-                                                                                                    '*${dates[i].note}',
+                                                                                                    '* ${dates[i].note}',
                                                                                                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                                                                                           fontStyle: FontStyle.italic,
                                                                                                           color: Colors.black87,

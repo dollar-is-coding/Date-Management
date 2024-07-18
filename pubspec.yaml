@@ -106,6 +106,9 @@ flutter:
     - asset/icons/label_icon.svg
     - asset/icons/edit_icon.svg
     - asset/icons/note_icon.svg
+    - asset/icons/chat_icon.svg
+    - asset/icons/chat_error_icon.svg
+    - asset/icons/bubble_icon.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
