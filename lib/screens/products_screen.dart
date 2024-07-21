@@ -20,11 +20,14 @@ class ProductsScreen extends StatelessWidget {
         return PopScope(
           canPop: true,
           onPopInvokedWithResult: (didPop, result) {
-            parentValue.setFavorite(false);
-            parentValue.searchWithFilter(0, '', 0, false);
-            parentValue.changeSelectedFilter(100);
-            parentValue.changeSelectedSort(1);
-            parentValue.getTagsForFilter();
+            if (parentValue.isDetailProduct) {
+              parentValue.setFavorite(false);
+              parentValue.searchWithFilter(0, '', 0, false);
+              parentValue.changeSelectedFilter(100);
+              parentValue.changeSelectedSort(1);
+              parentValue.getTagsForFilter();
+              parentValue.setDetailProduct(false);
+            }
           },
           child: Scaffold(
             appBar: AppBar(
@@ -116,7 +119,6 @@ class ProductsScreen extends StatelessWidget {
                                             0, value, 0, pro.isFavoriteSort);
                                       pro.changeSelectedFilter(100);
                                       pro.changeSelectedSort(1);
-                                      pro.showCountedResult();
                                       pro.getTagsForFilter();
                                     }
                                   },
@@ -138,7 +140,6 @@ class ProductsScreen extends StatelessWidget {
                           parentValue.searchController.text,
                           parentValue.selectedTag,
                           parentValue.isFavoriteSort);
-                      parentValue.showCountedResult();
                     },
                     child: Icon(
                       !parentValue.isFavoriteSort
@@ -599,7 +600,6 @@ class ProductsScreen extends StatelessWidget {
                                                                           .text,
                                                                       pro.selectedTag,
                                                                       pro.isFavoriteSort);
-                                                                  pro.showCountedResult();
                                                                   Navigator.pop(
                                                                       context);
                                                                 },
@@ -642,24 +642,21 @@ class ProductsScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            pro.isCountResult
-                                ? Container(
-                                    margin: EdgeInsets.only(top: 3),
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 6),
-                                    decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 245, 34, 45),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    child: Text(
-                                      '${pro.dataLength}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                  )
-                                : Container(),
+                            Container(
+                              margin: EdgeInsets.only(top: 3),
+                              padding: EdgeInsets.symmetric(horizontal: 6),
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 245, 34, 45),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              child: Text(
+                                '${pro.dataLength}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelSmall!
+                                    .copyWith(color: Colors.white),
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -736,6 +733,11 @@ class ProductsScreen extends StatelessWidget {
                                             horizontalTitleGap: 4,
                                             minLeadingWidth: 0,
                                             child: ExpansionTile(
+                                              controller:
+                                                  pro.controllerList![index],
+                                              onExpansionChanged: (value) {
+                                                pro.changeExpansionState(index);
+                                              },
                                               shape: Border(),
                                               dense: true,
                                               childrenPadding:
@@ -744,16 +746,6 @@ class ProductsScreen extends StatelessWidget {
                                                 horizontal: 0,
                                                 vertical: -4,
                                               ),
-                                              key: GlobalKey(),
-                                              maintainState: false,
-                                              initiallyExpanded:
-                                                  pro.isExpanded![index],
-                                              onExpansionChanged: (isOpen) {
-                                                // print(
-                                                //     '${index} isOpen = ${isOpen}');
-                                                pro.changeExpansion(
-                                                    index, isOpen);
-                                              },
                                               leading: CircleAvatar(
                                                 backgroundColor: Color.fromARGB(
                                                     160, 210, 225, 255),
@@ -1021,10 +1013,10 @@ class ProductsScreen extends StatelessWidget {
                                                                                           ),
                                                                                           dates[i].note.isNotEmpty
                                                                                               ? Text(
-                                                                                                  '* ${dates[i].note}',
+                                                                                                  '(${dates[i].note})',
                                                                                                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                                                                                         fontStyle: FontStyle.italic,
-                                                                                                        color: Colors.black87,
+                                                                                                        color: Colors.black.withOpacity(.7),
                                                                                                       ),
                                                                                                 )
                                                                                               : Container(),

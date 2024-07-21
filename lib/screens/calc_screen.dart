@@ -753,41 +753,47 @@ class CalcScreen extends StatelessWidget {
                                                   ],
                                                 ),
                                               ),
-                                              trailing:
-                                                  product[0].dates.length > 0
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            if (product[0]
-                                                                    .dates
-                                                                    .length >
-                                                                0) {
-                                                              Provider.of<ProductsController>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .searchWithFilter(
-                                                                0,
-                                                                product[0]
-                                                                    .sku
-                                                                    .toString(),
-                                                                0,
-                                                                false,
-                                                              );
-                                                              Navigator.push(
-                                                                context,
-                                                                PageTransition(
-                                                                  child:
-                                                                      ProductsScreen(),
-                                                                  type: PageTransitionType
-                                                                      .rightToLeft,
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
-                                                          child: Icon(Icons
-                                                              .arrow_forward_rounded),
-                                                        )
-                                                      : null,
+                                              trailing: product[0]
+                                                          .dates
+                                                          .length >
+                                                      0
+                                                  ? InkWell(
+                                                      onTap: () {
+                                                        if (product[0]
+                                                                .dates
+                                                                .length >
+                                                            0) {
+                                                          Provider.of<ProductsController>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .searchWithFilter(
+                                                            0,
+                                                            product[0]
+                                                                .sku
+                                                                .toString(),
+                                                            0,
+                                                            false,
+                                                          );
+                                                          Provider.of<ProductsController>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .setDetailProduct(
+                                                                  true);
+                                                          Navigator.push(
+                                                            context,
+                                                            PageTransition(
+                                                              child:
+                                                                  ProductsScreen(),
+                                                              type: PageTransitionType
+                                                                  .rightToLeft,
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Icon(Icons
+                                                          .arrow_forward_rounded),
+                                                    )
+                                                  : null,
                                             );
                                           }
                                           // không data
@@ -909,8 +915,10 @@ class CalcScreen extends StatelessWidget {
                                                   .textTheme
                                                   .bodyMedium!
                                                   .copyWith(
-                                                      fontStyle:
-                                                          FontStyle.italic),
+                                                    fontStyle: FontStyle.italic,
+                                                    color: Colors.black
+                                                        .withOpacity(.7),
+                                                  ),
                                             )
                                           : Container(),
                                     ],

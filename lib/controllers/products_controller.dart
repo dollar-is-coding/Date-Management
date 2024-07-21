@@ -16,6 +16,7 @@ class ProductsController extends ChangeNotifier {
   GlobalKey positionedKey = GlobalKey();
   int displayDataLength = 0;
   int dataLength = 0;
+  int currentExpandIndex = -1;
 
   final searchController = TextEditingController();
   final scrollController = ScrollController();
@@ -25,17 +26,16 @@ class ProductsController extends ChangeNotifier {
   final searchFocus = FocusNode();
   final tagSearch = TextEditingController();
   final dateController = TextEditingController();
+  List<ExpansionTileController>? controllerList;
   DateTime? dateTag;
-  List<GlobalKey>? keyList;
-  List<bool>? isExpanded;
 
-  bool isCountResult = false;
   int focusTagCounted = 0;
   int focusSearchCounted = 0;
   var xPosition;
   var yPosition;
   List<List<bool>>? dateShowed = [];
   bool isFavoriteSort = false;
+  bool isDetailProduct = false;
   // 0: remove - 1: add - 2:change
   int changeTagState = -1;
   List<bool>? proShowed = [];
@@ -62,6 +62,11 @@ class ProductsController extends ChangeNotifier {
   List<int> tagOptions = [0];
   List<String> tagDisplayOptions = ['Tất cả'];
 
+  setDetailProduct(bool value) {
+    isDetailProduct = value;
+    notifyListeners();
+  }
+
   ProductsController() {
     onclickTextField(tagSearchFocus, tagSearch, focusTagCounted);
     onclickTextField(searchFocus, searchController, focusSearchCounted);
@@ -73,15 +78,12 @@ class ProductsController extends ChangeNotifier {
     apiProducts!.then(
       (proList) {
         dataLength = proList!.length;
+        notifyListeners();
         proShowed = List.filled(proList.length, true);
-        keyList = List.generate(
+        controllerList = List.generate(
           proList.length,
-          (index) => GlobalKey(),
+          (index) => ExpansionTileController(),
         );
-        isExpanded = List.filled(proList.length, false);
-        if (isExpanded!.length > 0) {
-          isExpanded![0] = true;
-        }
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
@@ -154,6 +156,12 @@ class ProductsController extends ChangeNotifier {
       (proList) {
         dataLength = proList!.length;
         proShowed = List.filled(proList.length, true);
+        currentExpandIndex = -1;
+        controllerList = null;
+        controllerList = List.generate(
+          proList.length,
+          (index) => ExpansionTileController(),
+        );
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
@@ -255,11 +263,6 @@ class ProductsController extends ChangeNotifier {
     selectedTagIndex = tagOptions.indexOf(value);
     selectedTag = tagOptions[selectedTagIndex];
     print(value);
-    notifyListeners();
-  }
-
-  showCountedResult() {
-    isCountResult = true;
     notifyListeners();
   }
 
@@ -456,14 +459,16 @@ class ProductsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeExpansion(int index, bool isOpen) {
-    if (isOpen) {
-      isExpanded = List.filled(isExpanded!.length, false);
-      isExpanded![index] = true;
+  changeExpansionState(int index) {
+    print('current ${currentExpandIndex} vs index ${index}');
+    if (controllerList![index].isExpanded) {
+      currentExpandIndex != -1 && currentExpandIndex != index
+          ? controllerList![currentExpandIndex].collapse()
+          : null;
+      currentExpandIndex = index;
     } else {
-      isExpanded![index] = false;
+      controllerList![index].collapse();
     }
-
     notifyListeners();
   }
 }
