@@ -26,6 +26,8 @@ class ProductsController extends ChangeNotifier {
   final tagSearch = TextEditingController();
   final dateController = TextEditingController();
   DateTime? dateTag;
+  List<GlobalKey>? keyList;
+  List<bool>? isExpanded;
 
   bool isCountResult = false;
   int focusTagCounted = 0;
@@ -72,6 +74,14 @@ class ProductsController extends ChangeNotifier {
       (proList) {
         dataLength = proList!.length;
         proShowed = List.filled(proList.length, true);
+        keyList = List.generate(
+          proList.length,
+          (index) => GlobalKey(),
+        );
+        isExpanded = List.filled(proList.length, false);
+        if (isExpanded!.length > 0) {
+          isExpanded![0] = true;
+        }
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
@@ -443,6 +453,17 @@ class ProductsController extends ChangeNotifier {
 
   changeUpdateDate(DateTime date) {
     dateController.text = DateFormat('dd/MM/yyyy').format(date);
+    notifyListeners();
+  }
+
+  changeExpansion(int index, bool isOpen) {
+    if (isOpen) {
+      isExpanded = List.filled(isExpanded!.length, false);
+      isExpanded![index] = true;
+    } else {
+      isExpanded![index] = false;
+    }
+
     notifyListeners();
   }
 }
