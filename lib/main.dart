@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sg_date/controllers/calc_controller.dart';
 import 'package:sg_date/controllers/camera_controller.dart';
@@ -32,7 +31,7 @@ class SGDate extends StatelessWidget {
         ],
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          fontFamily: GoogleFonts.poppins().fontFamily,
+          // fontFamily: GoogleFonts.poppins().fontFamily,
           scaffoldBackgroundColor: const Color.fromARGB(255, 239, 249, 255),
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,

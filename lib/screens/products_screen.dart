@@ -733,6 +733,8 @@ class ProductsScreen extends StatelessWidget {
                                             horizontalTitleGap: 4,
                                             minLeadingWidth: 0,
                                             child: ExpansionTile(
+                                              initiallyExpanded:
+                                                  pro.isDetailProduct,
                                               controller:
                                                   pro.controllerList![index],
                                               onExpansionChanged: (value) {
@@ -1014,7 +1016,7 @@ class ProductsScreen extends StatelessWidget {
                                                                                           dates[i].note.isNotEmpty
                                                                                               ? Text(
                                                                                                   '(${dates[i].note})',
-                                                                                                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                                                                                         fontStyle: FontStyle.italic,
                                                                                                         color: Colors.black.withOpacity(.7),
                                                                                                       ),
