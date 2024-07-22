@@ -733,10 +733,10 @@ class ProductsScreen extends StatelessWidget {
                                             horizontalTitleGap: 4,
                                             minLeadingWidth: 0,
                                             child: ExpansionTile(
-                                              initiallyExpanded:
-                                                  pro.isDetailProduct,
                                               controller:
                                                   pro.controllerList![index],
+                                              initiallyExpanded:
+                                                  pro.isDetailProduct,
                                               onExpansionChanged: (value) {
                                                 pro.changeExpansionState(index);
                                               },

@@ -78,12 +78,12 @@ class ProductsController extends ChangeNotifier {
     apiProducts!.then(
       (proList) {
         dataLength = proList!.length;
-        notifyListeners();
         proShowed = List.filled(proList.length, true);
         controllerList = List.generate(
           proList.length,
           (index) => ExpansionTileController(),
         );
+        notifyListeners();
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
@@ -155,6 +155,7 @@ class ProductsController extends ChangeNotifier {
     await apiProducts!.then(
       (proList) {
         dataLength = proList!.length;
+        isDetailProduct = dataLength > 1 ? false : true;
         proShowed = List.filled(proList.length, true);
         currentExpandIndex = -1;
         controllerList = null;
@@ -162,6 +163,7 @@ class ProductsController extends ChangeNotifier {
           proList.length,
           (index) => ExpansionTileController(),
         );
+
         for (var i = 0; i < proList.length; i++) {
           var singleList;
           singleList = List.filled(proList[i].dates.length, true);
